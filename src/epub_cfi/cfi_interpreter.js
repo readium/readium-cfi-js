@@ -75,7 +75,6 @@ EPUBcfi.Interpreter = {
         var CFIAST = EPUBcfi.Parser.parse(decodedCFI);
         var indirectionNode;
         var indirectionStepNum;
-        var currStepNum; 
 
         // Rationale: Since the correct content document for this CFI is already being passed, we can skip to the beginning 
         //   of the indirection step that referenced the content document.
@@ -102,7 +101,6 @@ EPUBcfi.Interpreter = {
         var CFIAST = EPUBcfi.Parser.parse(decodedCFI);
         var indirectionNode;
         var indirectionStepNum;
-        var currStepNum; 
         
         // Rationale: Since the correct content document for this CFI is already being passed, we can skip to the beginning 
         //   of the indirection step that referenced the content document.
