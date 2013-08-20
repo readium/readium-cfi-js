@@ -74,6 +74,7 @@ EPUBcfi.CFIInstructions = {
 
 	// Description: Injects an element at the specified text node
 	// Arguments: a cfi text termination string, a jquery object to the current node
+	// REFACTORING CANDIDATE: Rename this to indicate that it injects into a text terminus
 	textTermination : function ($currNode, textOffset, elementToInject) {
 
 		// Get the first node, this should be a text node
@@ -176,13 +177,14 @@ EPUBcfi.CFIInstructions = {
 
 					return $textNodeList.parent();
 				}
-				else if (currNodeMaxIndex == textOffset) {
+				else if (currNodeMaxIndex === textOffset) {
 					//the node should be injected directly after the complete text node
 					$injectedNode = $(elementToInject).insertAfter($textNodeList.eq(nodeNum));
 					return $textNodeList.parent();
 				}
 				else {
-					currTextPosition = currNodeMaxIndex;
+
+					currTextPosition = currTextPosition;
 				}
 			}
 		}

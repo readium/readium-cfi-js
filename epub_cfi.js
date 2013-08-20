@@ -1525,6 +1525,7 @@ EPUBcfi.CFIInstructions = {
 
 	// Description: Injects an element at the specified text node
 	// Arguments: a cfi text termination string, a jquery object to the current node
+	// REFACTORING CANDIDATE: Rename this to indicate that it injects into a text terminus
 	textTermination : function ($currNode, textOffset, elementToInject) {
 
 		// Get the first node, this should be a text node
@@ -1835,14 +1836,13 @@ EPUBcfi.Interpreter = {
         //   the package document is messed up.
     },
 
-    // Description: Inject an arbirtary html element into a position in a content document referenced by a CFI
+    // Description: Inject an arbitrary html element into a position in a content document referenced by a CFI
     injectElement : function (CFI, contentDocument, elementToInject, classBlacklist, elementBlacklist, idBlacklist) {
 
         var decodedCFI = decodeURI(CFI);
         var CFIAST = EPUBcfi.Parser.parse(decodedCFI);
         var indirectionNode;
         var indirectionStepNum;
-        var currStepNum; 
 
         // Rationale: Since the correct content document for this CFI is already being passed, we can skip to the beginning 
         //   of the indirection step that referenced the content document.
@@ -1862,14 +1862,13 @@ EPUBcfi.Interpreter = {
     },
 
     // Description: This method will return the element or node (say, a text node) that is the final target of the 
-    //   the CFI. 
+    //   the CFI.
     getTargetElement : function (CFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist) {
 
         var decodedCFI = decodeURI(CFI);
         var CFIAST = EPUBcfi.Parser.parse(decodedCFI);
         var indirectionNode;
         var indirectionStepNum;
-        var currStepNum; 
         
         // Rationale: Since the correct content document for this CFI is already being passed, we can skip to the beginning 
         //   of the indirection step that referenced the content document.
@@ -1883,6 +1882,60 @@ EPUBcfi.Interpreter = {
 
         // Return the element at the end of the CFI
         return $currElement;
+    },
+
+    // Description: This method allows a "partial" CFI to be used to reference a target in a content document, without a 
+    //   package document CFI component. 
+    // Arguments: {
+    //     contentDocumentCFI : This is a partial CFI that represents a path in a content document only. This partial must be 
+    //        syntactically valid, even though it references a path starting at the top of a content document (which is a CFI that
+    //        that has no defined meaning in the spec.)
+    //     contentDocument : A DOM representation of the content document to which the partial CFI refers. 
+    // }
+    // Rationale: This method exists to meet the requirements of the Readium-SDK and should be used with care
+    getTargetElementWithPartialCFI : function (contentDocumentCFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist) {
+
+        var decodedCFI = decodeURI(contentDocumentCFI);
+        var CFIAST = EPUBcfi.Parser.parse(decodedCFI);
+        var indirectionNode;
+        
+        // Interpret the path node 
+        var $currElement = this.interpretIndexStepNode(CFIAST.cfiString.path, $("html", contentDocument), classBlacklist, elementBlacklist, idBlacklist);
+
+        // Interpret the rest of the steps
+        $currElement = this.interpretLocalPath(CFIAST.cfiString, 0, $currElement, classBlacklist, elementBlacklist, idBlacklist);
+
+        // Return the element at the end of the CFI
+        return $currElement;        
+    },
+
+    // Description: This method allows a "partial" CFI to be used, with a content document, to return the text node and offset 
+    //    referenced by the partial CFI.
+    // Arguments: {
+    //     contentDocumentCFI : This is a partial CFI that represents a path in a content document only. This partial must be 
+    //        syntactically valid, even though it references a path starting at the top of a content document (which is a CFI that
+    //        that has no defined meaning in the spec.)
+    //     contentDocument : A DOM representation of the content document to which the partial CFI refers. 
+    // }
+    // Rationale: This method exists to meet the requirements of the Readium-SDK and should be used with care
+    getTextTerminusInfoWithPartialCFI : function (contentDocumentCFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist) {
+
+        var decodedCFI = decodeURI(contentDocumentCFI);
+        var CFIAST = EPUBcfi.Parser.parse(decodedCFI);
+        var indirectionNode;
+        var textOffset;
+        
+        // Interpret the path node 
+        var $currElement = this.interpretIndexStepNode(CFIAST.cfiString.path, $("html", contentDocument), classBlacklist, elementBlacklist, idBlacklist);
+
+        // Interpret the rest of the steps
+        $currElement = this.interpretLocalPath(CFIAST.cfiString, 0, $currElement, classBlacklist, elementBlacklist, idBlacklist);
+
+        // Return the element at the end of the CFI
+        textOffset = parseInt(CFIAST.cfiString.localPath.termStep.offsetValue);
+        return { textNode : $currElement,
+                 textOffset : textOffset
+            };
     },
 
     // ------------------------------------------------------------------------------------ //
@@ -2082,7 +2135,7 @@ EPUBcfi.CFIAssertionError = function (expectedAssertion, targetElementAssertion,
 
         // Call the recursive method to create all the steps up to the head element of the content document (the "html" element)
         contentDocCFI = this.createCFIElementSteps($(startTextNode).parent(), "html", classBlacklist, elementBlacklist, idBlacklist) + textNodeStep;
-        return contentDocCFI;
+        return contentDocCFI.substring(1, contentDocCFI.length);
     },
 
     generateElementCFIComponent : function (startElement, classBlacklist, elementBlacklist, idBlacklist) {
@@ -2093,7 +2146,9 @@ EPUBcfi.CFIAssertionError = function (expectedAssertion, targetElementAssertion,
 
         // Call the recursive method to create all the steps up to the head element of the content document (the "html" element)
         contentDocCFI = this.createCFIElementSteps($(startElement), "html", classBlacklist, elementBlacklist, idBlacklist);
-        return contentDocCFI;
+
+        // Remove the ! 
+        return contentDocCFI.substring(1, contentDocCFI.length);
     },
 
     generatePackageDocumentCFIComponent : function (contentDocumentName, packageDocument, classBlacklist, elementBlacklist, idBlacklist) {
@@ -2106,7 +2161,9 @@ EPUBcfi.CFIAssertionError = function (expectedAssertion, targetElementAssertion,
 
         // Create the steps up to the top element of the package document (the "package" element)
         packageDocCFIComponent = this.createCFIElementSteps($itemRefStartNode, "package", classBlacklist, elementBlacklist, idBlacklist);
-        return packageDocCFIComponent;
+
+        // Append an !; this assumes that a CFI content document CFI component will be appended at some point
+        return packageDocCFIComponent + "!";
     },
 
     generateCompleteCFI : function (packageDocumentCFIComponent, contentDocumentCFIComponent) {
