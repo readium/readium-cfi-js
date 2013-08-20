@@ -151,11 +151,11 @@ EPUBcfi.CFIInstructions = {
 		var $injectedNode;
 		var $newTextNode;
 		// The iteration counter may be incorrect here (should be $textNodeList.length - 1 ??)
-		for (nodeNum = 0; nodeNum <= $textNodeList.length; nodeNum++) {
+		for (nodeNum = 0; nodeNum <= $textNodeList.length - 1; nodeNum++) {
 
 			if ($textNodeList[nodeNum].nodeType === 3) {
 
-				currNodeMaxIndex = ($textNodeList[nodeNum].nodeValue.length - 1) + currTextPosition;
+				currNodeMaxIndex = $textNodeList[nodeNum].nodeValue.length + currTextPosition;
 				nodeOffset = textOffset - currTextPosition;
 
 				if (currNodeMaxIndex >= textOffset) {

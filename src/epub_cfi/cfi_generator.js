@@ -150,9 +150,8 @@ EPUBcfi.Generator = {
             }
         );
 
-        // Convert the text node index to a CFI odd-integer representation
-        CFIIndex = (indexOfTextNode * 2) + 1;
-
+        CFIIndex = indexOfTextNode + 1;
+			
         // TODO: text assertions are not in the grammar yet, I think, or they're just causing problems. This has
         //   been temporarily removed. 
 
