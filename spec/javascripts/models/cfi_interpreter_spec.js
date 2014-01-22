@@ -29,12 +29,133 @@ describe('CFI INTERPRETER OBJECT', function () {
         });
     });
 
-    it('can inject text when supplied with a content document', function () {
+    it('can inject into text when supplied with a content document', function () {
 
         var expectedResult = 'c01p0006';
-        var $result = EPUBcfi.Interpreter.injectElement(CFI, contentDocument, "<span></span>");
-        expect($result.attr("id")).toEqual(expectedResult);
+        var $injectedElement = EPUBcfi.Interpreter.injectElement(CFI, contentDocument, "<span></span>");
+        expect($injectedElement.parent().attr("id")).toBe(expectedResult);
     });
+
+    it('can inject into previously injected text node (dmitry)', function () {
+        var dom = 
+            "<html>"
+            +    "<div></div>"
+            +    "<div>"
+            +         "<div id='startParent'>"
+            +             "012"
+            +             "<span class='cfi-marker' id='start'></span>"
+            +             "34"
+            +             "<span class='cfi-marker' id='end'></span>"
+            +             "56789"
+            +         "</div>"
+            +     "</div>"
+            +     "<div></div>"
+            + "</html>";
+
+        var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+
+        var CFI = "epubcfi(/6/14!/4/2[startParent],/1:6,/1:7)";
+
+        var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
+            CFI, 
+            $dom, 
+            "<span id='start' class='cfi-marker'></span>", 
+            "<span id='end' class='cfi-marker'></span>",
+            ["cfi-marker"]
+            );
+
+
+        var result = $($($($dom.contents()).contents()[1]).contents()).contents()[6];
+        expect(result.data).toEqual("6");
+
+    });
+
+    it ('can inject a marker properly (dmitry)', function() {
+        var $currNode = $('<div>0<div class="cfiMarker"></div>12345<div class="cfiMarker"></div>6789</div>');
+        var $targetTextNodeList = EPUBcfi.CFIInstructions.getNextNode(1, $currNode, ["cfiMarker"], []);
+
+        var injectedNode = EPUBcfi.CFIInstructions.injectCFIMarkerIntoText($targetTextNodeList, 6, "<span id='start' class='cfi-marker'></span>");
+        expect(injectedNode.parent().contents()[5].nodeValue).toBe("6789");
+    });
+
+    it ('can inject a marker properly #2 (dmitry)', function() {
+        var $currNode = $('<div>012<div class="cfiMarker"></div>34<div class="cfiMarker"></div>56789</div>');
+        var $targetTextNodeList = EPUBcfi.CFIInstructions.getNextNode(1, $currNode, ["cfiMarker"], []);
+
+        var injectedNode = EPUBcfi.CFIInstructions.injectCFIMarkerIntoText($targetTextNodeList, 6, "<span id='start' class='cfi-marker'></span>");
+        expect(injectedNode.parent().contents()[4].nodeValue).toBe("5");
+    });
+
+
+    it('can inject into a node with a period in the id', function () {
+        var dom = 
+            "<html>"
+            +    "<div></div>"
+            +    "<div>"
+            +         "<div id='start.Parent'>"
+            +             "0"
+            +             "<span class='cfi-marker' id='start'></span>"
+            +             "12345"
+            +             "<span class='cfi-marker' id='end'></span>"
+            +             "6789"
+            +         "</div>"
+            +     "</div>"
+            +     "<div></div>"
+            + "</html>";
+
+        var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+
+        var CFI = "epubcfi(/6/14!/4/2[start.Parent],/1:6,/1:8)";
+
+        var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
+            CFI, 
+            $dom, 
+            "<span id='start' class='cfi-marker'></span>", 
+            "<span id='end' class='cfi-marker'></span>",
+            ["cfi-marker"]
+            );
+
+        var result = $($($($dom.contents()).contents()[1]).contents()).contents()[5];
+        expect(result.data).toEqual("67");
+
+    });
+
+
+
+    it('can inject into previously injected text node #2', function () {
+        var dom = 
+            "<html>"
+            +    "<div></div>"
+            +    "<div>"
+            +         "<div id='startParent'>"
+            +             "0"
+            +             "<span class='cfi-marker' id='start'></span>"
+            +             "12345"
+            +             "<span class='cfi-marker' id='end'></span>"
+            +             "6789"
+            +         "</div>"
+            +     "</div>"
+            +     "<div></div>"
+            + "</html>";
+
+        var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+
+        var CFI = "epubcfi(/6/14!/4/2[startParent],/1:6,/1:8)";
+
+        var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
+            CFI, 
+            $dom, 
+            "<span id='start' class='cfi-marker'></span>", 
+            "<span id='end' class='cfi-marker'></span>",
+            ["cfi-marker"]
+            );
+
+        var result = $($($($dom.contents()).contents()[1]).contents()).contents()[5];
+        expect(result.data).toEqual("67");
+
+    });
+
+
 
     it('returns a text node CFI target', function () {
 
@@ -62,13 +183,12 @@ describe('CFI INTERPRETER OBJECT', function () {
 
     it('injects an element for a text terminus with a text location assertion', function () {
 
-        var $expectedResult = 'Ther<span xmlns="http://www.w3.org/1999/xhtml" class="cfi_marker"></span>e now is your insular city of the Manhattoes, belted round by wharves as Indian isles by coral reefs—commerce surrounds it with her surf. Right and left, the streets take you waterward. Its extreme downtown is the battery, where that noble mole is washed by waves, and cooled by breezes, which a few hours previous were out of sight of land. Look at the crowds of water-gazers there.';
-        var $result = EPUBcfi.Interpreter.interpretTextTerminusNode(
+        var $injectedElement = EPUBcfi.Interpreter.interpretTextTerminusNode(
             CFIAST.cfiString.localPath.termStep,
             $($("#c01p0002", $contentDocument)[0].firstChild),
             '<span class="cfi_marker"></span>');
 
-        expect($result.html()).toEqual($expectedResult);
+        expect($injectedElement.parent().contents().length).toBe(3);
     });
 
     // Rationale: This test is really only testing the decodeURI() method, which does not require testing. This spec exists
@@ -77,13 +197,110 @@ describe('CFI INTERPRETER OBJECT', function () {
 
         var cfi = "epubcfi(/2[%20%25%22af]/4/1:4)";
         var decodedCFI = decodeURI(cfi);
-        expect(decodedCFI).toEqual('epubcfi(/2[ %"af]/4/1:4)');
+        expect(decodedCFI).toBe('epubcfi(/2[ %"af]/4/1:4)');
     });
 
     it('returns the href of a content document for the first indirection step of a cfi', function () {
 
         var result = EPUBcfi.Interpreter.getContentDocHref(CFI, $packageDocument);
-        expect(result).toEqual("chapter_001.xhtml");
+        expect(result).toBe("chapter_001.xhtml");
+    });
+
+    describe("range CFI interpretation", function () {
+
+        it("returns the href of a content document in the first local path", function () {
+
+            var CFI = "epubcfi(/6/14!/4,/4/4,/4/6)";
+            var href = EPUBcfi.Interpreter.getContentDocHref(CFI, $packageDocument);
+            expect(href).toBe("chapter_001.xhtml");
+        });
+
+        it('can inject into the same text node', function () {
+
+            var CFI = "epubcfi(/6/14!/4,/2/14/1:4,/2/14/1:18)";
+            var expectedResult = 'c01p0006';
+            var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
+                CFI, 
+                contentDocument, 
+                "<span id='start' class='injected-element'></span>", 
+                "<span id='end' class='injected-element'></span>",
+                ["injected-element"]
+                );
+            expect(rangeInfo.startElement.id).toBe("start");
+            expect(rangeInfo.endElement.id).toBe("end");
+            expect(rangeInfo.startElement.parentElement.id).toBe(expectedResult);
+            expect(rangeInfo.endElement.parentElement.id).toBe(expectedResult);
+        });
+
+        it('can inject into different text nodes', function () {
+
+            var CFI = "epubcfi(/6/14!/4,/2/14/1:4,/2/16/1:7)";
+            var targetElement1 = 'c01p0006';
+            var targetElement2 = 'c01p0007';
+            var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
+                CFI, 
+                contentDocument, 
+                "<span id='start' class='injected-element'></span>", 
+                "<span id='end' class='injected-element'></span>",
+                ["injected-element"]
+                );
+            expect(rangeInfo.startElement.id).toBe("start");
+            expect(rangeInfo.endElement.id).toBe("end");
+            expect(rangeInfo.startElement.parentElement.id).toBe(targetElement1);
+            expect(rangeInfo.endElement.parentElement.id).toBe(targetElement2);
+        });
+
+        it('can return target nodes when the target is the same text node', function () {
+
+            var CFI = "epubcfi(/6/14!/4,/2/14/1:4,/2/14/1:7)";
+            var rangeInfo = EPUBcfi.Interpreter.getRangeTargetElements(
+                CFI, 
+                contentDocument
+                );
+            expect(rangeInfo.startElement.nodeType).toBe(Node.TEXT_NODE);
+            expect(rangeInfo.endElement.nodeType).toBe(Node.TEXT_NODE);
+            expect(rangeInfo.startElement).toBe(rangeInfo.endElement);
+        });
+
+        it('can return target elements when the target is the same element', function () {
+
+            var CFI = "epubcfi(/6/14!/4,/2/14,/2/14)";
+            var targetElement1 = 'c01p0006';
+            var targetElement2 = 'c01p0006';
+            var rangeInfo = EPUBcfi.Interpreter.getRangeTargetElements(
+                CFI, 
+                contentDocument
+                );
+            expect(rangeInfo.startElement.id).toBe(targetElement1);
+            expect(rangeInfo.endElement.id).toBe(targetElement2);
+        });
+
+        it('can return target nodes when the targets are different text nodes', function () {
+
+            var CFI = "epubcfi(/6/14!/4,/2/14/1:4,/2/16/1:7)";
+            var targetElement1 = 'c01p0006';
+            var targetElement2 = 'c01p0007';
+            var rangeInfo = EPUBcfi.Interpreter.getRangeTargetElements(
+                CFI, 
+                contentDocument
+                );
+            expect(rangeInfo.startElement.nodeType).toBe(Node.TEXT_NODE);
+            expect(rangeInfo.endElement.nodeType).toBe(Node.TEXT_NODE);
+            expect(rangeInfo.startElement).not.toBe(rangeInfo.endElement);
+        });
+
+        it('can return target elements when the targets are different elements', function () {
+
+            var CFI = "epubcfi(/6/14!/4,/2/14,/2/16)";
+            var targetElement1 = 'c01p0006';
+            var targetElement2 = 'c01p0007';
+            var rangeInfo = EPUBcfi.Interpreter.getRangeTargetElements(
+                CFI, 
+                contentDocument
+                );
+            expect(rangeInfo.startElement.id).toBe(targetElement1);
+            expect(rangeInfo.endElement.id).toBe(targetElement2);
+        });
     });
 
     describe('The hack zone! Interpretation of partial CFIs', function () {
@@ -241,5 +458,8 @@ describe('ERROR HANDLING FOR ID AND TEXT ASSERTIONS', function () {
                 CFIAST.cfiString.localPath.steps[1],
                 undefined);
         });
+
+
+
     });
 });
