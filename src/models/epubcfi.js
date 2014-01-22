@@ -1374,6 +1374,17 @@ EPUBcfi.Parser = (function(){
                     matchFailed("\"_\"");
                   }
                 }
+                if (result0 === null) {
+                  if (input.charCodeAt(pos) === 46) {
+                    result0 = ".";
+                    pos++;
+                  } else {
+                    result0 = null;
+                    if (reportFailures === 0) {
+                      matchFailed("\".\"");
+                    }
+                  }
+                }
               }
             }
           }
