@@ -107,8 +107,8 @@ task :gen_module do
     path_to_this_dir = get_this_directory()
     parent_dir = get_parent_directory()
     template_file_path = path_to_this_dir + "/src/templates/" + get_template_name()
-    output_module_file_path = parent_dir + "/development/#{module_name}"
+    output_module_file_path = path_to_this_dir + "/development/#{module_name}"
 
     render_cfi_library_template(template_file_path, output_module_file_path, path_to_this_dir)
-    `cp -a "#{parent_dir}/development/#{module_name}" "#{path_to_this_dir}/lib"`
+    `cp -a "#{path_to_this_dir}/development/#{module_name}" "#{path_to_this_dir}/lib"`
 end
