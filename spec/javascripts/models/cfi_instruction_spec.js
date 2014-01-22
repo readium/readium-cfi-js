@@ -68,7 +68,6 @@ describe("CFI INSTRUCTION OBJECT", function () {
         var $currNode = $('<div> asdfasd <div class="cfiMarker"></div> aslasjd <div></div> alsjflkds </div>');
         var $targetTextNodeList = EPUBcfi.CFIInstructions.getNextNode(1, $currNode, ["cfiMarker"], []);
 
-        debugger;
 
         var $injectedElement = EPUBcfi.CFIInstructions.textTermination($targetTextNodeList, 12, '<span class="epub_cfi"></span>');
         var $currNodeChildren = $injectedElement.parent().contents();

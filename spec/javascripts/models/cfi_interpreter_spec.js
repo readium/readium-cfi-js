@@ -65,7 +65,6 @@ describe('CFI INTERPRETER OBJECT', function () {
             );
 
 
-        debugger;
         var result = $($($($dom.contents()).contents()[1]).contents()).contents()[6];
         expect(result.data).toEqual("6");
 
@@ -83,9 +82,42 @@ describe('CFI INTERPRETER OBJECT', function () {
         var $currNode = $('<div>012<div class="cfiMarker"></div>34<div class="cfiMarker"></div>56789</div>');
         var $targetTextNodeList = EPUBcfi.CFIInstructions.getNextNode(1, $currNode, ["cfiMarker"], []);
 
-        debugger;
         var injectedNode = EPUBcfi.CFIInstructions.injectCFIMarkerIntoText($targetTextNodeList, 6, "<span id='start' class='cfi-marker'></span>");
         expect(injectedNode.parent().contents()[4].nodeValue).toBe("5");
+    });
+
+
+    it('can inject into a node with a period in the id', function () {
+        var dom = 
+            "<html>"
+            +    "<div></div>"
+            +    "<div>"
+            +         "<div id='start.Parent'>"
+            +             "0"
+            +             "<span class='cfi-marker' id='start'></span>"
+            +             "12345"
+            +             "<span class='cfi-marker' id='end'></span>"
+            +             "6789"
+            +         "</div>"
+            +     "</div>"
+            +     "<div></div>"
+            + "</html>";
+
+        var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+
+        var CFI = "epubcfi(/6/14!/4/2[start.Parent],/1:6,/1:8)";
+
+        var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
+            CFI, 
+            $dom, 
+            "<span id='start' class='cfi-marker'></span>", 
+            "<span id='end' class='cfi-marker'></span>",
+            ["cfi-marker"]
+            );
+
+        var result = $($($($dom.contents()).contents()[1]).contents()).contents()[5];
+        expect(result.data).toEqual("67");
+
     });
 
 
@@ -110,7 +142,6 @@ describe('CFI INTERPRETER OBJECT', function () {
 
         var CFI = "epubcfi(/6/14!/4/2[startParent],/1:6,/1:8)";
 
-        debugger;
         var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
             CFI, 
             $dom, 
