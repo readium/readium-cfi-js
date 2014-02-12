@@ -181,6 +181,11 @@ EPUBcfi.CFIInstructions = {
                     return $injectedNode;
                 }
                 else {
+                    if (currNodeMaxIndex < textOffset && nodeNum == $textNodeList.length - 1) {
+                        //inject after the last of the text if the desired offset runs past the last index
+                        $injectedNode = $(elementToInject).insertAfter($textNodeList.eq(nodeNum));
+                        return $injectedNode;
+                    }
 
                     currTextPosition = currNodeMaxIndex;
                 }
@@ -266,60 +271,71 @@ EPUBcfi.CFIInstructions = {
 	},
 
 	applyBlacklist : function ($elements, classBlacklist, elementBlacklist, idBlacklist) {
-
+        // First, find elements in $elements which are blacklisted
+        var $blacklisted;
         var $filteredElements;
 
-        $filteredElements = $elements.filter(
-            function () {
+        var classFilter = (classBlacklist)?classBlacklist.join(',.'):'';
+        var idFilter = (idBlacklist)?idBlacklist.join(',#'):'';
+        var combinedFilters;
 
-                var $currElement = $(this);
-                var includeInList = true;
+        if (classFilter.length > 0) {
+            classFilter = '.' + classFilter;
+        }
+        if (idFilter.length > 0) {
+            idFilter = '#' + idFilter;
+        }
 
-                if (classBlacklist) {
+        if (classFilter.length > 0 && idFilter.length > 0) {
+            combinedFilters = classFilter + ',' + idFilter;
+        } else {
+            combinedFilters = (classFilter.length > 0)?classFilter:idFilter;
+        }
 
-                	// Filter each element with the class type
-                	$.each(classBlacklist, function (index, value) {
+        var filterElements = function($elementList) {
+            var $filtered = $();
 
-	                    if ($currElement.hasClass(value)) {
-	                    	includeInList = false;
-
-	                    	// Break this loop
-	                        return false;
-	                    }
-                	});
-                }
-
-                if (elementBlacklist) {
-                	
-	                // For each type of element
-	                $.each(elementBlacklist, function (index, value) {
-
-	                    if ($currElement.is(value)) {
-	                    	includeInList = false;
-
-	                    	// Break this loop
-	                        return false;
-	                    }
-	                });
-				}
-
-				if (idBlacklist) {
-                	
-	                // For each type of element
-	                $.each(idBlacklist, function (index, value) {
-
-	                    if ($currElement.attr("id") === value) {
-	                    	includeInList = false;
-
-	                    	// Break this loop
-	                        return false;
-	                    }
-	                });
-				}
-
-                return includeInList;
+            //element blacklist
+            if (elementBlacklist) {
+                $filtered = $filtered.add($elementList.filter($(elementBlacklist)));
             }
-        );
+
+            //class and id blacklists combined
+            if (combinedFilters) {
+                $filtered = $filtered.add($elementList.filter(combinedFilters));
+            }
+
+            return $filtered;
+        }
+
+        //calculat blacklisted elements
+        $blacklisted = filterElements($elements);
+
+        var $filteredElements = $($elements);
+
+        //replace blacklisted elements in our list with their non-blacklisted children
+        //We do it one at a time instead of all at once to keep proper order
+        $blacklisted.each(function(index, value) {
+            //get the list of the blacklisted element's children which are blacklisted
+            var $blacklistedChildren = filterElements($(this).children());
+            var $nonBlacklistedChildren = $(this).children().not($blacklistedChildren);
+            //get the index of the blacklisted element in the original list
+            var itemIndex = $filteredElements.index(this);
+            //just in case...
+            if (itemIndex < 0) {
+                return;
+            }
+
+            //replace the blacklisted element with its non-blacklistd children
+            if ($nonBlacklistedChildren.length > 0) {
+                var filteredElementArray = $.makeArray($filteredElements);
+                var children = $.makeArray($nonBlacklistedChildren);
+                Array.prototype.splice.apply(filteredElementArray, [itemIndex, 1].concat(children));
+                $filteredElements = $(filteredElementArray);
+            } else {
+                $filteredElements.splice(itemIndex, 1);
+            }
+        });
 
         return $filteredElements;
     }

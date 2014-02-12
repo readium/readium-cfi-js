@@ -322,7 +322,7 @@ EPUBcfi.Interpreter = {
 
         var $injectedElement = EPUBcfi.CFIInstructions.textTermination(
             $currElement, 
-            terminusNode.offsetValue, 
+            parseInt(terminusNode.offsetValue), 
             elementToInject
             );
 
