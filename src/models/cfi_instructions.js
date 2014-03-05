@@ -317,8 +317,8 @@ EPUBcfi.CFIInstructions = {
         //We do it one at a time instead of all at once to keep proper order
         $blacklisted.each(function(index, value) {
             //get the list of the blacklisted element's children which are blacklisted
-            var $blacklistedChildren = filterElements($(this).children());
-            var $nonBlacklistedChildren = $(this).children().not($blacklistedChildren);
+            var $blacklistedChildren = filterElements($(this).contents());
+            var $nonBlacklistedChildren = $(this).contents().not($blacklistedChildren);
             //get the index of the blacklisted element in the original list
             var itemIndex = $filteredElements.index(this);
             //just in case...
