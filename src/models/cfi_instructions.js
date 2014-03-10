@@ -56,7 +56,7 @@ EPUBcfi.CFIInstructions = {
 			$contentDocument = $currNode.contents();
 
 			// Go to the first XHTML element, which will be the first child of the top-level document object
-			$blacklistExcluded = this.applyBlacklist($contentDocument.children(), classBlacklist, elementBlacklist, idBlacklist);
+			$blacklistExcluded = this.applyBlacklist($contentDocument.children(), classBlacklist, elementBlacklist, idBlacklist, false);
 			$startElement = $($blacklistExcluded[0]);
 
 			// Follow an index step
@@ -118,7 +118,7 @@ EPUBcfi.CFIInstructions = {
 		var numElements;
 		var jqueryTargetNodeIndex = (CFIStepValue / 2) - 1;
 
-		$blacklistExcluded = this.applyBlacklist($currNode.children(), classBlacklist, elementBlacklist, idBlacklist);
+		$blacklistExcluded = this.applyBlacklist($currNode.children(), classBlacklist, elementBlacklist, idBlacklist, false);
 		numElements = $blacklistExcluded.length;
 
 		if (this.indexOutOfRange(jqueryTargetNodeIndex, numElements)) {
@@ -218,7 +218,7 @@ EPUBcfi.CFIInstructions = {
 		// Remove any cfi marker elements from the set of elements. 
 		// Rationale: A filtering function is used, as simply using a class selector with jquery appears to 
 		//   result in behaviour where text nodes are also filtered out, along with the class element being filtered.
-		$elementsWithoutMarkers = this.applyBlacklist($currNode.contents(), classBlacklist, elementBlacklist, idBlacklist);
+		$elementsWithoutMarkers = this.applyBlacklist($currNode.contents(), classBlacklist, elementBlacklist, idBlacklist, true);
 
 		// Convert CFIStepValue to logical index; assumes odd integer for the step value
 		targetLogicalTextNodeIndex = ((parseInt(CFIStepValue) + 1) / 2) - 1;
@@ -250,7 +250,7 @@ EPUBcfi.CFIInstructions = {
 					if (this.nodeType === Node.TEXT_NODE) {
 						prevNodeWasTextNode = true;
 					}
-					else if (prevNodeWasTextNode && (this.nodeType !== Node.TEXT_NODE) && (this !== $elementsWithoutMarkers.lastChild)) {
+					else if ((this.nodeType !== Node.TEXT_NODE) && (this !== $elementsWithoutMarkers.lastChild)) {
 						currLogicalTextNodeIndex++;
 						prevNodeWasTextNode = false;
 					}
@@ -263,14 +263,14 @@ EPUBcfi.CFIInstructions = {
 		// The filtering above should have counted the number of "logical" text nodes; this can be used to 
 		// detect out of range errors
 		if ($targetTextNodeList.length === 0) {
-			throw EPUBcfi.OutOfRangeError(logicalTargetTextNodeIndex, currLogicalTextNodeIndex, "Index out of range");
+			throw EPUBcfi.OutOfRangeError(targetLogicalTextNodeIndex, currLogicalTextNodeIndex, "Index out of range");
 		}
 
 		// return the text node list
 		return $targetTextNodeList;
 	},
 
-	applyBlacklist : function ($elements, classBlacklist, elementBlacklist, idBlacklist) {
+	applyBlacklist : function ($elements, classBlacklist, elementBlacklist, idBlacklist, includeTextNodes) {
         // First, find elements in $elements which are blacklisted
         var $blacklisted;
         var $filteredElements;
@@ -317,8 +317,8 @@ EPUBcfi.CFIInstructions = {
         //We do it one at a time instead of all at once to keep proper order
         $blacklisted.each(function(index, value) {
             //get the list of the blacklisted element's children which are blacklisted
-            var $blacklistedChildren = filterElements($(this).contents());
-            var $nonBlacklistedChildren = $(this).contents().not($blacklistedChildren);
+            var $blacklistedChildren = (includeTextNodes)?filterElements($(this).contents()):filterElements($(this).children());
+            var $nonBlacklistedChildren = (includeTextNodes)?$(this).contents().not($blacklistedChildren):$(this).children().not($blacklistedChildren);
             //get the index of the blacklisted element in the original list
             var itemIndex = $filteredElements.index(this);
             //just in case...
