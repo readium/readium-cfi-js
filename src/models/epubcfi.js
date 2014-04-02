@@ -44,6 +44,8 @@ EPUBcfi.Parser = (function(){
         "indexStep": parse_indexStep,
         "indirectionStep": parse_indirectionStep,
         "terminus": parse_terminus,
+        "spatial": parse_spatial,
+        "temporal": parse_temporal,
         "idAssertion": parse_idAssertion,
         "textLocationAssertion": parse_textLocationAssertion,
         "parameter": parse_parameter,
@@ -562,6 +564,163 @@ EPUBcfi.Parser = (function(){
         if (result0 === null) {
           pos = pos0;
         }
+        if (result0 === null) {
+          pos0 = pos;
+          result0 = parse_spatial();
+          if (result0 !== null) {
+            result0 = (function(offset, spatialData) {
+              return {
+                type: "spatialTerminus",
+                 horizontalOffset: spatialData.horizontalOffset,
+                verticalOffset: spatialData.verticalOffset
+              };
+            })(pos0, result0);
+          }
+          if (result0 === null) {
+            pos = pos0;
+          }
+          if (result0 === null) {
+            pos0 = pos;
+            result0 = parse_temporal();
+            if (result0 !== null) {
+              result0 = (function(offset, temporalData) {
+                return {
+                  type: "temporalTerminus",
+                  temporalOffset: temporalData.temporalOffset
+                };
+              })(pos0, result0);
+            }
+            if (result0 === null) {
+              pos = pos0;
+            }
+            if (result0 === null) {
+              pos0 = pos;
+              pos1 = pos;
+              result0 = parse_temporal();
+              if (result0 !== null) {
+                result1 = parse_spatial();
+                if (result1 !== null) {
+                  result0 = [result0, result1];
+                } else {
+                  result0 = null;
+                  pos = pos1;
+                }
+              } else {
+                result0 = null;
+                pos = pos1;
+              }
+              if (result0 !== null) {
+                result0 = (function(offset, temporalData, spatialData) {
+                  return {
+                    type: "temporalSpatialTerminus",
+                    temporalOffset: temporalData.temporalOffset,
+                    horizontalOffset: spatialData.horizontalOffset,
+                    verticalOffset: spatialData.verticalOffset
+                  };
+                })(pos0, result0[0], result0[1]);
+              }
+              if (result0 === null) {
+                pos = pos0;
+              }
+            }
+          }
+        }
+        return result0;
+      }
+      
+      function parse_spatial() {
+        var result0, result1, result2, result3;
+        var pos0, pos1;
+        
+        pos0 = pos;
+        pos1 = pos;
+        if (input.charCodeAt(pos) === 64) {
+          result0 = "@";
+          pos++;
+        } else {
+          result0 = null;
+          if (reportFailures === 0) {
+            matchFailed("\"@\"");
+          }
+        }
+        if (result0 !== null) {
+          result1 = parse_number();
+          if (result1 !== null) {
+            if (input.charCodeAt(pos) === 58) {
+              result2 = ":";
+              pos++;
+            } else {
+              result2 = null;
+              if (reportFailures === 0) {
+                matchFailed("\":\"");
+              }
+            }
+            if (result2 !== null) {
+              result3 = parse_number();
+              if (result3 !== null) {
+                result0 = [result0, result1, result2, result3];
+              } else {
+                result0 = null;
+                pos = pos1;
+              }
+            } else {
+              result0 = null;
+              pos = pos1;
+            }
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, horizontalOffset, verticalOffset) {
+            return { type: "spatialTerminus", horizontalOffset: horizontalOffset, verticalOffset: verticalOffset };
+          })(pos0, result0[1], result0[3]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
+        return result0;
+      }
+      
+      function parse_temporal() {
+        var result0, result1;
+        var pos0, pos1;
+        
+        pos0 = pos;
+        pos1 = pos;
+        if (input.charCodeAt(pos) === 126) {
+          result0 = "~";
+          pos++;
+        } else {
+          result0 = null;
+          if (reportFailures === 0) {
+            matchFailed("\"~\"");
+          }
+        }
+        if (result0 !== null) {
+          result1 = parse_number();
+          if (result1 !== null) {
+            result0 = [result0, result1];
+          } else {
+            result0 = null;
+            pos = pos1;
+          }
+        } else {
+          result0 = null;
+          pos = pos1;
+        }
+        if (result0 !== null) {
+          result0 = (function(offset, temporalOffset) {
+            return { type: "temporal", temporalOffset: temporalOffset };
+          })(pos0, result0[1]);
+        }
+        if (result0 === null) {
+          pos = pos0;
+        }
         return result0;
       }
       
@@ -907,56 +1066,35 @@ EPUBcfi.Parser = (function(){
       
       function parse_number() {
         var result0, result1, result2, result3;
-        var pos0, pos1, pos2;
+        var pos0, pos1;
         
         pos0 = pos;
         pos1 = pos;
-        pos2 = pos;
-        if (/^[1-9]/.test(input.charAt(pos))) {
-          result0 = input.charAt(pos);
+        if (/^[0-9]/.test(input.charAt(pos))) {
+          result1 = input.charAt(pos);
           pos++;
         } else {
-          result0 = null;
+          result1 = null;
           if (reportFailures === 0) {
-            matchFailed("[1-9]");
+            matchFailed("[0-9]");
           }
         }
-        if (result0 !== null) {
-          if (/^[0-9]/.test(input.charAt(pos))) {
-            result2 = input.charAt(pos);
-            pos++;
-          } else {
-            result2 = null;
-            if (reportFailures === 0) {
-              matchFailed("[0-9]");
-            }
-          }
-          if (result2 !== null) {
-            result1 = [];
-            while (result2 !== null) {
-              result1.push(result2);
-              if (/^[0-9]/.test(input.charAt(pos))) {
-                result2 = input.charAt(pos);
-                pos++;
-              } else {
-                result2 = null;
-                if (reportFailures === 0) {
-                  matchFailed("[0-9]");
-                }
+        if (result1 !== null) {
+          result0 = [];
+          while (result1 !== null) {
+            result0.push(result1);
+            if (/^[0-9]/.test(input.charAt(pos))) {
+              result1 = input.charAt(pos);
+              pos++;
+            } else {
+              result1 = null;
+              if (reportFailures === 0) {
+                matchFailed("[0-9]");
               }
             }
-          } else {
-            result1 = null;
-          }
-          if (result1 !== null) {
-            result0 = [result0, result1];
-          } else {
-            result0 = null;
-            pos = pos2;
           }
         } else {
           result0 = null;
-          pos = pos2;
         }
         if (result0 !== null) {
           if (input.charCodeAt(pos) === 46) {
@@ -969,8 +1107,6 @@ EPUBcfi.Parser = (function(){
             }
           }
           if (result1 !== null) {
-            pos2 = pos;
-            result2 = [];
             if (/^[0-9]/.test(input.charAt(pos))) {
               result3 = input.charAt(pos);
               pos++;
@@ -980,37 +1116,22 @@ EPUBcfi.Parser = (function(){
                 matchFailed("[0-9]");
               }
             }
-            while (result3 !== null) {
-              result2.push(result3);
-              if (/^[0-9]/.test(input.charAt(pos))) {
-                result3 = input.charAt(pos);
-                pos++;
-              } else {
-                result3 = null;
-                if (reportFailures === 0) {
-                  matchFailed("[0-9]");
+            if (result3 !== null) {
+              result2 = [];
+              while (result3 !== null) {
+                result2.push(result3);
+                if (/^[0-9]/.test(input.charAt(pos))) {
+                  result3 = input.charAt(pos);
+                  pos++;
+                } else {
+                  result3 = null;
+                  if (reportFailures === 0) {
+                    matchFailed("[0-9]");
+                  }
                 }
-              }
-            }
-            if (result2 !== null) {
-              if (/^[1-9]/.test(input.charAt(pos))) {
-                result3 = input.charAt(pos);
-                pos++;
-              } else {
-                result3 = null;
-                if (reportFailures === 0) {
-                  matchFailed("[1-9]");
-                }
-              }
-              if (result3 !== null) {
-                result2 = [result2, result3];
-              } else {
-                result2 = null;
-                pos = pos2;
               }
             } else {
               result2 = null;
-              pos = pos2;
             }
             if (result2 !== null) {
               result0 = [result0, result1, result2];
@@ -1027,13 +1148,53 @@ EPUBcfi.Parser = (function(){
           pos = pos1;
         }
         if (result0 !== null) {
-          result0 = (function(offset, intPartVal, fracPartVal) { 
+          result0 = (function(offset, integerValue, decimalValue) {
+            if (decimalValue) {
+              return (integerValue.join("") + "." + decimalValue.join(""));
+            }
         
-                return intPartVal.join('') + "." + fracPartVal.join(''); 
-            })(pos0, result0[0], result0[2]);
+            return integerValue.join("");
+          })(pos0, result0[0], result0[2]);
         }
         if (result0 === null) {
           pos = pos0;
+        }
+        if (result0 === null) {
+          pos0 = pos;
+          if (/^[0-9]/.test(input.charAt(pos))) {
+            result1 = input.charAt(pos);
+            pos++;
+          } else {
+            result1 = null;
+            if (reportFailures === 0) {
+              matchFailed("[0-9]");
+            }
+          }
+          if (result1 !== null) {
+            result0 = [];
+            while (result1 !== null) {
+              result0.push(result1);
+              if (/^[0-9]/.test(input.charAt(pos))) {
+                result1 = input.charAt(pos);
+                pos++;
+              } else {
+                result1 = null;
+                if (reportFailures === 0) {
+                  matchFailed("[0-9]");
+                }
+              }
+            }
+          } else {
+            result0 = null;
+          }
+          if (result0 !== null) {
+            result0 = (function(offset, integerValue) {
+              return integerValue.join("");
+            })(pos0, result0);
+          }
+          if (result0 === null) {
+            pos = pos0;
+          }
         }
         return result0;
       }

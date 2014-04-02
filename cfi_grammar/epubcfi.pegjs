@@ -72,6 +72,38 @@ terminus
 
         return { type:"textTerminus", offsetValue:textOffsetValue, textAssertion:textLocAssertVal[1] };
     }
+  / spatialData:spatial {
+    return {
+      type: "spatialTerminus",
+       horizontalOffset: spatialData.horizontalOffset,
+      verticalOffset: spatialData.verticalOffset
+    };
+  }
+  / temporalData:temporal {
+    return {
+      type: "temporalTerminus",
+      temporalOffset: temporalData.temporalOffset
+    };
+  }
+  / temporalData:temporal spatialData:spatial {
+    return {
+      type: "temporalSpatialTerminus",
+      temporalOffset: temporalData.temporalOffset,
+      horizontalOffset: spatialData.horizontalOffset,
+      verticalOffset: spatialData.verticalOffset
+    };
+  }
+
+spatial
+  = "@" horizontalOffset:number ":" verticalOffset:number {
+    return { type: "spatialTerminus", horizontalOffset: horizontalOffset, verticalOffset: verticalOffset };
+  }
+
+temporal
+  = "~" temporalOffset:number {
+    return { type: "temporal", temporalOffset: temporalOffset };
+  }
+
 
 // Must have an assertion if you create an assertion "[]" in the cfi string
 idAssertion
@@ -128,11 +160,17 @@ escapedSpecialChars
     }
 
 // Digit and digit-non-zero not included as separate terminals
-number 
-  = intPartVal:( [1-9][0-9]+ ) "." fracPartVal:( [0-9]* [1-9] ) { 
-
-        return intPartVal.join('') + "." + fracPartVal.join(''); 
+number
+  = integerValue:([0-9]+) "." decimalValue:([0-9]+) {
+    if (decimalValue) {
+      return (integerValue.join("") + "." + decimalValue.join(""));
     }
+
+    return integerValue.join("");
+  }
+  / integerValue:([0-9]+) {
+    return integerValue.join("");
+  }
 
 integer
   = integerVal:("0" / [1-9][0-9]*) { 
