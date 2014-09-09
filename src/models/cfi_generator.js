@@ -65,8 +65,8 @@ EPUBcfi.Generator = {
 
         // Create a document range to find the common ancestor
         docRange = document.createRange();
-        docRange.setStart(rangeStartElement);
-        docRange.setEnd(rangeEndElement);
+        docRange.setStartBefore(rangeStartElement);
+        docRange.setEndAfter(rangeEndElement);
         commonAncestor = docRange.commonAncestorContainer;
 
         // Generate range 1
