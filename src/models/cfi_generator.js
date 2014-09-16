@@ -65,8 +65,8 @@ EPUBcfi.Generator = {
 
         // Create a document range to find the common ancestor
         docRange = document.createRange();
-        docRange.setStartBefore(rangeStartElement);
-        docRange.setEndAfter(rangeEndElement);
+        docRange.setStart(rangeStartElement, 0);
+        docRange.setEnd(rangeEndElement, rangeEndElement.childNodes.length);
         commonAncestor = docRange.commonAncestorContainer;
 
         // Generate range 1
@@ -80,6 +80,48 @@ EPUBcfi.Generator = {
 
         // Return the result
         return commonCFIComponent.substring(1, commonCFIComponent.length) + "," + range1CFI + "," + range2CFI;
+    },
+
+    generateRangeComponent : function (rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist) {
+        if(rangeStartElement.nodeType === Node.ELEMENT_NODE && rangeEndElement.nodeType === Node.ELEMENT_NODE){
+            return generator.generateElementRangeComponent(rangeStartElement, rangeEndElement, classBlacklist, elementBlacklist, idBlacklist);
+        } else if(rangeStartElement.nodeType === Node.TEXT_NODE && rangeEndElement.nodeType === Node.TEXT_NODE){
+            return generator.generateCharOffsetRangeComponent(rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist);
+        } else {
+            var docRange, range1CFI, range1OffsetStep, range2CFI, range2OffsetStep;
+
+            // Create a document range to find the common ancestor
+            docRange = document.createRange();
+            docRange.setStart(rangeStartElement, rangeStartElement.nodeType === Node.ELEMENT_NODE ? 0 : startOffset);
+            docRange.setEnd(rangeEndElement, rangeEndElement.nodeType === Node.ELEMENT_NODE ? rangeEndElement.childNodes.length : endOffset);
+            commonAncestor = docRange.commonAncestorContainer;
+
+            if(rangeStartElement.nodeType === Node.ELEMENT_NODE){
+                this.validateStartElement(rangeStartElement);
+                range1CFI = this.createCFIElementSteps($(rangeStartElement), commonAncestor, classBlacklist, elementBlacklist, idBlacklist);
+            } else {
+                this.validateStartTextNode(rangeStartElement);
+                // Generate terminating offset and range 1
+                range1OffsetStep = this.createCFITextNodeStep($(rangeStartElement), startOffset, classBlacklist, elementBlacklist, idBlacklist);
+                range1CFI = this.createCFIElementSteps($(rangeStartElement).parent(), commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range1OffsetStep;
+            }
+
+            if(rangeEndElement.nodeType === Node.ELEMENT_NODE){
+                this.validateStartElement(rangeEndElement);
+                range2CFI = this.createCFIElementSteps($(rangeEndElement), commonAncestor, classBlacklist, elementBlacklist, idBlacklist);
+            } else {
+                this.validateStartTextNode(rangeEndElement);
+                // Generate terminating offset and range 1
+                range2OffsetStep = this.createCFITextNodeStep($(rangeEndElement), endOffset, classBlacklist, elementBlacklist, idBlacklist);
+                range2CFI = this.createCFIElementSteps($(rangeEndElement).parent(), commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range2OffsetStep;
+            }
+
+            // Generate shared component
+            commonCFIComponent = this.createCFIElementSteps($(commonAncestor), "html", classBlacklist, elementBlacklist, idBlacklist);
+
+            // Return the result
+            return commonCFIComponent.substring(1, commonCFIComponent.length) + "," + range1CFI + "," + range2CFI;
+        }
     },
 
     // Description: Generates a character offset CFI 
