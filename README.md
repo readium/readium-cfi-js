@@ -88,6 +88,7 @@ There are a number of dependencies for this project:
 * Git
 * [jasmine](http://pivotal.github.com/jasmine/)
 * [PEG.js](http://pegjs.majda.cz/). PEG.js is both a library and a command-line tool. The project assumes that the PEG.js command line tool can be found on your path. You can change this in the Rake file. 
+* You can easily install PEG.js using NPM: `npm install -g pegjs@0.7.0` (Note: PEG.js version 0.7.0 is required)
 
 Once all that is good to go, clone the [Github](https://github.com/justinHume/EPUBCFI) repository. 
 
@@ -96,9 +97,9 @@ Having cloned the repository to your system, there are a number of Rake tasks to
 * Generate a parser from the .pegjs grammar: `rake gen_parser`
 * Run the CFI library unit tests: `rake jasmine`
 * Generate a parser AND run the tests: `rake test_parser`
-* Generate a vesion of the stand-alone library: `rake gen_cfi_library`
+* Generate a vesion of the stand-alone library: `rake gen_module`
 
-That last Rake task will generate a single (production) javascript file that contains all of the library components. The library components are developed and tested separately in the development enviroment.
+That last Rake task will generate a single (production) javascript file that contains all of the library components. The library components are developed and tested separately in the development enviroment. The output is in the `bin` directory.
 
 # Future development priorities
 
