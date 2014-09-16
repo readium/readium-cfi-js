@@ -40,6 +40,10 @@ def get_template_name
     return "cfi_library_template.js.erb"
 end
 
+def get_test_template_name
+    return "cfi_library_test_template.js.erb"
+end
+
 def get_module_name
     return "epub_cfi.js"
 end
@@ -94,7 +98,7 @@ task :copy_dependencies do
     # Get all the epub module dependencies
     module_dependency_filenames.each do |filename|
       puts "---> #{filename}"
-        `cp -a "#{parent_dir}/development/#{filename}" "#{path_to_this_dir}/lib/#{filename}"`
+        `cp -a "#{parent_dir}/bin/#{filename}" "#{path_to_this_dir}/lib/#{filename}"`
     end
 end
 
@@ -107,8 +111,10 @@ task :gen_module do
     path_to_this_dir = get_this_directory()
     parent_dir = get_parent_directory()
     template_file_path = path_to_this_dir + "/src/templates/" + get_template_name()
-    output_module_file_path = path_to_this_dir + "/development/#{module_name}"
+    template_test_file_path = path_to_this_dir + "/src/templates/" + get_test_template_name()
+    output_module_file_path = path_to_this_dir + "/bin/#{module_name}"
+    output_test_module_file_path = path_to_this_dir + "/spec/javascripts/vendor/#{module_name}"
 
     render_cfi_library_template(template_file_path, output_module_file_path, path_to_this_dir)
-    `cp -a "#{path_to_this_dir}/development/#{module_name}" "#{path_to_this_dir}/lib"`
+    render_cfi_library_template(template_test_file_path, output_test_module_file_path, path_to_this_dir)
 end

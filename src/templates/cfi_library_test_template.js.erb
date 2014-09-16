@@ -1,4 +1,4 @@
-(function(global) {
+var EpubCFIModule = function () {
 
     var EPUBcfi = {};
 
@@ -12,27 +12,9 @@
     var generator = EPUBcfi.Generator;
     var instructions = EPUBcfi.CFIInstructions;
 
-
-    if (global.EPUBcfi) {
-
-        throw new Error('The EPUB cfi library has already been defined');
-    } else {
-
-        global.EPUBcfi = EPUBcfi;
-    }
-
     // The public interface
-    var CFIInstructions = EPUBcfi.CFIInstructions;
-    var Parser = EPUBcfi.Parser;
-    var OError = EPUBcfi.OutOfRangeError;
-    var Interp = EPUBcfi.Interpreter;
-    
-    var NodeTypeError = EPUBcfi.NodeTypeError;
-    var OutOfRangeError = EPUBcfi.OutOfRangeError;
-    var TerminusError = EPUBcfi.TerminusError;
-    var CFIAssertionError = EPUBcfi.CFIAssertionError;
-    
-    global.EPUBcfi = EPUBcfi =  {
+    return {
+
         getContentDocHref : function (CFI, packageDocument) {
             return interpreter.getContentDocHref(CFI, packageDocument);
         },
@@ -79,16 +61,4 @@
             return generator.generateElementRangeComponent(rangeStartElement, rangeEndElement, classBlacklist, elementBlacklist, idBlacklist);
         }
     };
-
-    EPUBcfi.CFIInstructions = CFIInstructions;
-    EPUBcfi.Parser = Parser;
-    EPUBcfi.OutOfRangeError = OError;
-    EPUBcfi.Interpreter = Interp;
-    EPUBcfi.Generator = generator;
-    
-    EPUBcfi.NodeTypeError = NodeTypeError;
-    EPUBcfi.OutOfRangeError = OutOfRangeError;
-    EPUBcfi.TerminusError = TerminusError;
-    EPUBcfi.CFIAssertionError = CFIAssertionError;
-    
-}) (typeof window === 'undefined' ? this : window);
+};
