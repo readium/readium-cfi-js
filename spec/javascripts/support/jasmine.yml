@@ -12,13 +12,13 @@
 #
 src_files:
     - spec/javascripts/test_namespace.js
-    - lib/jquery-1.9.1.js
+    - spec/javascripts/vendor/jquery-1.9.1.js
     - src/models/epubcfi.js
     - src/models/cfi_instructions.js
     - src/models/cfi_interpreter.js
     - src/models/runtime_errors.js
     - src/models/cfi_generator.js
-    - lib/epub_cfi.js
+    - spec/javascripts/vendor/epub_cfi.js
 
 # stylesheets
 #
