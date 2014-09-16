@@ -297,7 +297,7 @@ describe('CFI INSTRUCTION ERROR HANDLING', function () {
 		var nextNode;
 		var calledHref;
 
-		spyOn($, "ajax").andCallFake(function (params) {
+		spyOn($, "ajax").and.callFake(function (params) {
 
 			params.success(contentDoc);
 		});

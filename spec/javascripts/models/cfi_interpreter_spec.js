@@ -23,7 +23,7 @@ describe('CFI INTERPRETER OBJECT', function () {
         contentDocument = domParser.parseFromString(contentDocXHTML, 'text/xml');
         $contentDocument = $(contentDocument);
 
-        spyOn($, "ajax").andCallFake(function (params) {
+        spyOn($, "ajax").and.callFake(function (params) {
 
             params.success(domParser.parseFromString(contentDocXHTML, 'text/xml'));
         });
@@ -391,7 +391,7 @@ describe('ERROR HANDLING FOR ID AND TEXT ASSERTIONS', function () {
             var contentDocXHTML = jasmine.getFixtures().read("moby_dick_content_doc.xhtml");
             $contentDocument = $(domParser.parseFromString(contentDocXHTML, 'text/xml'));
 
-            spyOn($, "ajax").andCallFake(function (params) {
+            spyOn($, "ajax").and.callFake(function (params) {
 
                 params.success(domParser.parseFromString(contentDocXHTML, 'text/xml'));
             });
@@ -428,7 +428,7 @@ describe('ERROR HANDLING FOR ID AND TEXT ASSERTIONS', function () {
             CFIAST = EPUBcfi.Parser.parse("epubcfi(/6/14!/4[body2]/2/14[c01p0006]/1:4)");
 
             // Faking the follow indirection step, it'll return an element with an id that doesn't match the assertion
-            spyOn(EPUBcfi.CFIInstructions, "followIndirectionStep").andCallFake(function (params) {
+            spyOn(EPUBcfi.CFIInstructions, "followIndirectionStep").and.callFake(function (params) {
 
                 return $('<body></body>').attr("id", "body1");
             });
@@ -448,7 +448,7 @@ describe('ERROR HANDLING FOR ID AND TEXT ASSERTIONS', function () {
             CFIAST = EPUBcfi.Parser.parse("epubcfi(/6/14!/4[body1]/2/14[c01p0002]/1:4)");
 
             // Faking the follow indirection step, it'll return an element with an id that matches the assertion
-            spyOn(EPUBcfi.CFIInstructions, "followIndirectionStep").andCallFake(function (params) {
+            spyOn(EPUBcfi.CFIInstructions, "followIndirectionStep").and.callFake(function (params) {
 
                 return $('<body></body>').attr("id", "body1");
             });
