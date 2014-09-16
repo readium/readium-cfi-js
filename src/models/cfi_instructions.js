@@ -190,6 +190,10 @@ EPUBcfi.CFIInstructions = {
         throw EPUBcfi.TerminusError("Text", "Text offset:" + textOffset, "The offset exceeded the length of the text");
     },
 
+	// Rationale: In order to inject an element into a specific position, access to the parent object 
+	//   is required. This is obtained with the jquery parent() method. An alternative would be to 
+	//   pass in the parent with a filtered list containing only children that are part of the target text node.
+
 	// Description: This method finds a target text node and then injects an element into the appropriate node
 	// Rationale: The possibility that cfi marker elements have been injected into a text node at some point previous to 
 	//   this method being called (and thus splitting the original text node into two separate text nodes) necessitates that
