@@ -26,6 +26,31 @@ describe("CFI GENERATOR", function () {
             expect(generatedCFI).toEqual("/2[startParent]/2"); 
         });
 
+        it("can generate a range component between a text node and an element node", function () {
+
+            var dom = 
+                "<html>"
+                +    "<div></div>"
+                +    "<div>"
+                +         "<div id='startParent'>"
+                +             "<div></div>"
+                +             "textnode1"
+                +             "<div></div>"
+                +             "textNode2"
+                +             "<div></div>"
+                +         "</div>"
+                +     "</div>"
+                +     "<div></div>"
+                + "</html>";
+            var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+
+            var $startElement1 = $($('#startParent', $dom).contents()[1]);
+            var $startElement2 = $($('#startParent', $dom).contents()[3]);
+            var generatedCFI = EPUBcfi.Generator.generateRangeComponent($startElement1[0], 1, $startElement2[0], 0);
+
+            expect(generatedCFI).toEqual("/4/2[startParent],/1:1,/3:0");
+        });
+
         it("can generate an element range CFI for a node with a period in the ID", function () {
 
            var dom = 
