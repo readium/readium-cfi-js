@@ -84,11 +84,15 @@ EPUBcfi.Generator = {
 
     generateRangeComponent : function (rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist) {
         if(rangeStartElement.nodeType === Node.ELEMENT_NODE && rangeEndElement.nodeType === Node.ELEMENT_NODE){
-            return generator.generateElementRangeComponent(rangeStartElement, rangeEndElement, classBlacklist, elementBlacklist, idBlacklist);
+            return this.generateElementRangeComponent(rangeStartElement, rangeEndElement, classBlacklist, elementBlacklist, idBlacklist);
         } else if(rangeStartElement.nodeType === Node.TEXT_NODE && rangeEndElement.nodeType === Node.TEXT_NODE){
-            return generator.generateCharOffsetRangeComponent(rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist);
+            return this.generateCharOffsetRangeComponent(rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist);
         } else {
-            var docRange, range1CFI, range1OffsetStep, range2CFI, range2OffsetStep;
+            var docRange;
+            var range1CFI;
+            var range1OffsetStep;
+            var range2CFI;
+            var range2OffsetStep;
 
             // Create a document range to find the common ancestor
             docRange = document.createRange();
@@ -103,7 +107,11 @@ EPUBcfi.Generator = {
                 this.validateStartTextNode(rangeStartElement);
                 // Generate terminating offset and range 1
                 range1OffsetStep = this.createCFITextNodeStep($(rangeStartElement), startOffset, classBlacklist, elementBlacklist, idBlacklist);
-                range1CFI = this.createCFIElementSteps($(rangeStartElement).parent(), commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range1OffsetStep;
+                if($(rangeStartElement).parent().is(commonAncestor)){
+                    range1CFI = range1OffsetStep;
+                } else {
+                    range1CFI = this.createCFIElementSteps($(rangeStartElement).parent(), commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range1OffsetStep;    
+                }
             }
 
             if(rangeEndElement.nodeType === Node.ELEMENT_NODE){
@@ -111,9 +119,13 @@ EPUBcfi.Generator = {
                 range2CFI = this.createCFIElementSteps($(rangeEndElement), commonAncestor, classBlacklist, elementBlacklist, idBlacklist);
             } else {
                 this.validateStartTextNode(rangeEndElement);
-                // Generate terminating offset and range 1
+                // Generate terminating offset and range 2
                 range2OffsetStep = this.createCFITextNodeStep($(rangeEndElement), endOffset, classBlacklist, elementBlacklist, idBlacklist);
-                range2CFI = this.createCFIElementSteps($(rangeEndElement).parent(), commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range2OffsetStep;
+                if($(rangeEndElement).parent().is(commonAncestor)){
+                    range2CFI = range2OffsetStep;
+                } else {
+                    range2CFI = this.createCFIElementSteps($(rangeEndElement).parent(), commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range2OffsetStep;    
+                }                
             }
 
             // Generate shared component
