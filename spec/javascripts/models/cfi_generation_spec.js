@@ -33,10 +33,32 @@ describe("CFI GENERATOR", function () {
                 +    "<div></div>"
                 +    "<div>"
                 +         "<div id='startParent'>"
+                +             "textnode"
                 +             "<div></div>"
                 +             "textnode1"
                 +             "<div></div>"
-                +             "textNode2"
+                +         "</div>"
+                +     "</div>"
+                +     "<div></div>"
+                + "</html>";
+            var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+
+            var $startElement1 = $($('#startParent', $dom).contents()[0]);
+            var $startElement2 = $($('#startParent', $dom).contents()[1]);
+            var generatedCFI = EPUBcfi.Generator.generateRangeComponent($startElement1[0], 1, $startElement2[0], 0);
+            expect(generatedCFI).toEqual("/4/2[startParent],/1:1,/2");
+        });
+
+        it("can generate a range component between an element node and a text node", function () {
+
+            var dom = 
+                "<html>"
+                +    "<div></div>"
+                +    "<div>"
+                +         "<div id='startParent'>"
+                +             "textnode"
+                +             "<div></div>"
+                +             "textnode1"
                 +             "<div></div>"
                 +         "</div>"
                 +     "</div>"
@@ -45,10 +67,9 @@ describe("CFI GENERATOR", function () {
             var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
 
             var $startElement1 = $($('#startParent', $dom).contents()[1]);
-            var $startElement2 = $($('#startParent', $dom).contents()[3]);
-            var generatedCFI = EPUBcfi.Generator.generateRangeComponent($startElement1[0], 1, $startElement2[0], 0);
-
-            expect(generatedCFI).toEqual("/4/2[startParent],/1:1,/3:0");
+            var $startElement2 = $($('#startParent', $dom).contents()[2]);
+            var generatedCFI = EPUBcfi.Generator.generateRangeComponent($startElement1[0], 0, $startElement2[0], 1);
+            expect(generatedCFI).toEqual("/4/2[startParent],/2,/3:1");
         });
 
         it("can generate an element range CFI for a node with a period in the ID", function () {
@@ -397,7 +418,6 @@ describe("CFI GENERATOR", function () {
 
                 );
 
-                console.log(generatedCFI);
                 expect(generatedCFI).toEqual("/4/2[startParent],/1:14,/1:18");
             });
 
