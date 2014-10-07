@@ -54,13 +54,13 @@ local_path
 indexStep
   = "/" stepLengthVal:integer assertVal:("[" idAssertion "]")? { 
 
-        return { type:"indexStep", stepLength:stepLengthVal, idAssertion:assertVal[1] };
+        return { type:"indexStep", stepLength:stepLengthVal, idAssertion:assertVal?assertVal[1]:null };
     }
 
 indirectionStep
   = "!/" stepLengthVal:integer assertVal:("[" idAssertion "]")? { 
 
-        return { type:"indirectionStep", stepLength:stepLengthVal, idAssertion:assertVal[1] };
+        return { type:"indirectionStep", stepLength:stepLengthVal, idAssertion:assertVal?assertVal[1]:null };
     }
 
 // REFACTORING CANDIDATE: The termstep non-terminal may be redundant
@@ -70,7 +70,7 @@ termstep
 terminus
   = ":" textOffsetValue:integer textLocAssertVal:("[" textLocationAssertion "]")? { 
 
-        return { type:"textTerminus", offsetValue:textOffsetValue, textAssertion:textLocAssertVal[1] };
+        return { type:"textTerminus", offsetValue:textOffsetValue, textAssertion: textLocAssertVal?textLocAssertVal[1]:null };
     }
 
 // Must have an assertion if you create an assertion "[]" in the cfi string
