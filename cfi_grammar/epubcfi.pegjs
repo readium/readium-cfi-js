@@ -47,20 +47,20 @@ path
 local_path
   = localPathStepVal:(indexStep / indirectionStep)+ termStepVal:termstep? { 
 
-        return { steps:localPathStepVal, termStep:termStepVal }; 
+        return { steps:localPathStepVal, termStep:termStepVal?termStepVal:"" }; 
     }
 
 // assertVal[1] is used because assertVal is an array of the match 0:"[" 1:idAssertion 2:"]"
 indexStep
   = "/" stepLengthVal:integer assertVal:("[" idAssertion "]")? { 
 
-        return { type:"indexStep", stepLength:stepLengthVal, idAssertion:assertVal?assertVal[1]:null };
+        return { type:"indexStep", stepLength:stepLengthVal, idAssertion:assertVal?assertVal[1]:undefined };
     }
 
 indirectionStep
   = "!/" stepLengthVal:integer assertVal:("[" idAssertion "]")? { 
 
-        return { type:"indirectionStep", stepLength:stepLengthVal, idAssertion:assertVal?assertVal[1]:null };
+        return { type:"indirectionStep", stepLength:stepLengthVal, idAssertion:assertVal?assertVal[1]:undefined };
     }
 
 // REFACTORING CANDIDATE: The termstep non-terminal may be redundant
@@ -70,7 +70,7 @@ termstep
 terminus
   = ":" textOffsetValue:integer textLocAssertVal:("[" textLocationAssertion "]")? { 
 
-        return { type:"textTerminus", offsetValue:textOffsetValue, textAssertion: textLocAssertVal?textLocAssertVal[1]:null };
+        return { type:"textTerminus", offsetValue:textOffsetValue, textAssertion: textLocAssertVal?textLocAssertVal[1]:undefined };
     }
 
 // Must have an assertion if you create an assertion "[]" in the cfi string
@@ -84,19 +84,19 @@ idAssertion
 textLocationAssertion
   = csvVal:csv? paramVal:parameter? { 
 
-        return { type:"textLocationAssertion", csv:csvVal, parameter:paramVal }; 
+        return { type:"textLocationAssertion", csv:csvVal?csvVal:"", parameter:paramVal?paramVal:"" }; 
     }
 
 parameter
   = ";" paramLHSVal:valueNoSpace "=" paramRHSVal:valueNoSpace { 
 
-        return { type:"parameter", LHSValue:paramLHSVal, RHSValue:paramRHSVal }; 
+        return { type:"parameter", LHSValue:paramLHSVal?paramLHSVal:"", RHSValue:paramRHSVal?paramRHSVal:"" }; 
     }
 
 csv 
   = preAssertionVal:value? "," postAssertionVal:value? { 
 
-        return { type:"csv", preAssertion:preAssertionVal, postAssertion:postAssertionVal }; 
+        return { type:"csv", preAssertion:preAssertionVal?preAssertionVal:"", postAssertion:postAssertionVal?postAssertionVal:"" }; 
     }
 
 // PEG.js does not have an "except" operator. My understanding is that "value-no-space" means "no spaces at all"
