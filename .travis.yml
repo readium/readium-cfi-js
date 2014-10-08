@@ -2,12 +2,12 @@ branches:
   only:
   - grunt-migration
 language: node_js
-env:
-  global:
-  - secure: TH9j1xOzh7GNtEjOvOLpD3frDhp4hU289btmkwPYsAJ6ZeyGaLf6O44TDvgnjkeBRx81Qb86/yBpGQO3QV3ab4WFJT+9ia1y1rZq2uuSggZU9OyElwaWprXa7sMmbdg8lLyEuYPdqWsz6US8/+e2S85jU9UifMNlWyaUHENbRig=
-  - secure: ZBu5rd5akn9CT2ppBJSbWQUQi0I7NXray9z2yRw+Wk4lEhVanKY4/iGW1b68wMIzsc27c+1Q6PlCFgJSj8dofUyJ2CGsGvL6LosXeNbHKc4CqeOaIsH6/puF2BWj5Fq5GUivUkCCf5M6WDmqQshJ6wPdu7PbeV5JwGwmn1vM0lc=
 node_js:
 - '0.10'
+env:
+  - secure: TH9j1xOzh7GNtEjOvOLpD3frDhp4hU289btmkwPYsAJ6ZeyGaLf6O44TDvgnjkeBRx81Qb86/yBpGQO3QV3ab4WFJT+9ia1y1rZq2uuSggZU9OyElwaWprXa7sMmbdg8lLyEuYPdqWsz6US8/+e2S85jU9UifMNlWyaUHENbRig=
+  - secure: ZBu5rd5akn9CT2ppBJSbWQUQi0I7NXray9z2yRw+Wk4lEhVanKY4/iGW1b68wMIzsc27c+1Q6PlCFgJSj8dofUyJ2CGsGvL6LosXeNbHKc4CqeOaIsH6/puF2BWj5Fq5GUivUkCCf5M6WDmqQshJ6wPdu7PbeV5JwGwmn1vM0lc=
+
 before_install:
 - npm install -g grunt-cli
 install:
