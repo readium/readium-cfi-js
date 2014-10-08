@@ -13,7 +13,7 @@ module.exports = function(grunt) {
       },
       
     },
-    'template': {
+    template: {
           libraryTemplate: {
               options: {
                   data: {
@@ -28,14 +28,23 @@ module.exports = function(grunt) {
                   'dist/epub_cfi.js': ['src/templates/cfi_library_template.js.erb'],
               }
           }
+      },
+      karma: {
+        local: {
+          configFile: 'karma.conf.js'
+        },
+        travis:{
+          configFile: 'karma.travis.conf.js'
+        }
       }
   });
 
-  // Load the plugin that provides the "uglify" task.
   grunt.loadNpmTasks('grunt-peg');
   grunt.loadNpmTasks('grunt-template');
+  grunt.loadNpmTasks('grunt-karma');
 
-  // Default task(s).
-  grunt.registerTask('default', ['peg:cfi']);
+  grunt.registerTask('compile', ['peg', 'template']);
+  grunt.registerTask('default', ['compile', 'karma:local']);
+  grunt.registerTask('travis', ['compile', 'karma:travis']);
 
 };

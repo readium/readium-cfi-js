@@ -3,7 +3,21 @@
 
 module.exports = function(config) {
 
+  var customLaunchers = {
+    sl_chrome: {
+      base: 'SauceLabs',
+      browserName: 'chrome',
+      platform: 'Windows 7',
+      version: '36'
+    },
+  }
+
   config.set({
+
+    sauceLabs: {
+        testName: 'ReadiumCFI Unit Tests'
+    },
+    customLaunchers: customLaunchers,
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: '',
@@ -39,7 +53,7 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['dots'],
+    reporters: ['dots', 'saucelabs'],
 
 
     // web server port
@@ -62,7 +76,7 @@ module.exports = function(config) {
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
     //browsers: ['Chrome'],
-    browsers: ['Chrome'],
+    browsers: Object.keys(customLaunchers),
 
 
     // Continuous Integration mode
