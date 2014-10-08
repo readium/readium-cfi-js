@@ -88,7 +88,7 @@ There are a number of dependencies for this project:
 * Git
 * [jasmine](http://pivotal.github.com/jasmine/)
 * [PEG.js](http://pegjs.majda.cz/). PEG.js is both a library and a command-line tool. The project assumes that the PEG.js command line tool can be found on your path. You can change this in the Rake file. 
-* You can easily install PEG.js using NPM: `npm install -g pegjs@0.7.0` (Note: PEG.js version 0.7.0 is required)
+* You can easily install PEG.js using NPM: `npm install -g pegjs`
 
 Once all that is good to go, clone the [Github](https://github.com/justinHume/EPUBCFI) repository. 
 

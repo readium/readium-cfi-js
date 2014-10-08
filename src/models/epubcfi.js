@@ -55,7 +55,7 @@ EPUBcfi.Parser = (function() {
         peg$c11 = null,
         peg$c12 = function(localPathStepVal, termStepVal) { 
 
-                return { steps:localPathStepVal, termStep:termStepVal }; 
+                return { steps:localPathStepVal, termStep:termStepVal?termStepVal:"" }; 
             },
         peg$c13 = "/",
         peg$c14 = { type: "literal", value: "/", description: "\"/\"" },
@@ -65,19 +65,19 @@ EPUBcfi.Parser = (function() {
         peg$c18 = { type: "literal", value: "]", description: "\"]\"" },
         peg$c19 = function(stepLengthVal, assertVal) { 
 
-                return { type:"indexStep", stepLength:stepLengthVal, idAssertion:assertVal[1] };
+                return { type:"indexStep", stepLength:stepLengthVal, idAssertion:assertVal?assertVal[1]:undefined };
             },
         peg$c20 = "!/",
         peg$c21 = { type: "literal", value: "!/", description: "\"!/\"" },
         peg$c22 = function(stepLengthVal, assertVal) { 
 
-                return { type:"indirectionStep", stepLength:stepLengthVal, idAssertion:assertVal[1] };
+                return { type:"indirectionStep", stepLength:stepLengthVal, idAssertion:assertVal?assertVal[1]:undefined };
             },
         peg$c23 = ":",
         peg$c24 = { type: "literal", value: ":", description: "\":\"" },
         peg$c25 = function(textOffsetValue, textLocAssertVal) { 
 
-                return { type:"textTerminus", offsetValue:textOffsetValue, textAssertion:textLocAssertVal[1] };
+                return { type:"textTerminus", offsetValue:textOffsetValue, textAssertion: textLocAssertVal?textLocAssertVal[1]:undefined };
             },
         peg$c26 = function(idVal) { 
 
@@ -85,7 +85,7 @@ EPUBcfi.Parser = (function() {
             },
         peg$c27 = function(csvVal, paramVal) { 
 
-                return { type:"textLocationAssertion", csv:csvVal, parameter:paramVal }; 
+                return { type:"textLocationAssertion", csv:csvVal?csvVal:"", parameter:paramVal?paramVal:"" }; 
             },
         peg$c28 = ";",
         peg$c29 = { type: "literal", value: ";", description: "\";\"" },
@@ -93,11 +93,11 @@ EPUBcfi.Parser = (function() {
         peg$c31 = { type: "literal", value: "=", description: "\"=\"" },
         peg$c32 = function(paramLHSVal, paramRHSVal) { 
 
-                return { type:"parameter", LHSValue:paramLHSVal, RHSValue:paramRHSVal }; 
+                return { type:"parameter", LHSValue:paramLHSVal?paramLHSVal:"", RHSValue:paramRHSVal?paramRHSVal:"" }; 
             },
         peg$c33 = function(preAssertionVal, postAssertionVal) { 
 
-                return { type:"csv", preAssertion:preAssertionVal, postAssertion:postAssertionVal }; 
+                return { type:"csv", preAssertion:preAssertionVal?preAssertionVal:"", postAssertion:postAssertionVal?postAssertionVal:"" }; 
             },
         peg$c34 = function(stringVal) { 
 
