@@ -26,6 +26,7 @@ module.exports = function(grunt) {
               },
               files: {
                   'dist/epub_cfi.js': ['src/templates/cfi_library_template.js.erb'],
+                  'spec/javascripts/vendor/epub_cfi.js': ['src/templates/cfi_library_test_template.js.erb'],
               }
           }
       },
