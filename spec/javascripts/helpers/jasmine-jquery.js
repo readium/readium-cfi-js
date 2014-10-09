@@ -29,7 +29,8 @@ jasmine.getFixtures = function() {
 jasmine.Fixtures = function() {
   this.containerId = 'jasmine-fixtures';
   this.fixturesCache_ = {};
-  this.fixturesPath = 'spec/javascripts/fixtures';
+  this.fixturesPath = 'base/spec/javascripts/fixtures';
+
 };
 
 jasmine.Fixtures.prototype.set = function(html) {
@@ -245,7 +246,7 @@ jasmine.JQuery.matchersClass = {};
   };
 
   var bindMatcher = function(methodName) {
-    var builtInMatcher = jasmine.Matchers.prototype[methodName];
+    var builtInMatcher = jasmine.matchers[methodName];
 
     jasmine.JQuery.matchersClass[methodName] = function() {
       if (this.actual instanceof jQuery) {
@@ -268,8 +269,8 @@ jasmine.JQuery.matchersClass = {};
 })();
 
 beforeEach(function() {
-  this.addMatchers(jasmine.JQuery.matchersClass);
-  this.addMatchers({
+  jasmine.addMatchers(jasmine.JQuery.matchersClass);
+  jasmine.addMatchers({
     toHaveBeenTriggeredOn: function(selector) {
       this.message = function() {
         return [
