@@ -82,28 +82,24 @@ The CFI library can be used to generate CFIs in simple cases. This includes char
 
 There are a number of dependencies for this project: 
 
-* Ruby
-* Rake
-* The ERB template gem
-* Git
-* [jasmine](http://pivotal.github.com/jasmine/)
-* [PEG.js](http://pegjs.majda.cz/). PEG.js is both a library and a command-line tool. The project assumes that the PEG.js command line tool can be found on your path. You can change this in the Rake file. 
-* You can easily install PEG.js using NPM: `npm install -g pegjs`
+* Node.js and NPM
+* Grunt
+* [jasmine](http://pivotal.github.com/jasmine/). Used for testing.
+* [PEG.js](http://pegjs.majda.cz/). Used to generate the CFI parser.
 
-Once all that is good to go, clone the [Github](https://github.com/justinHume/EPUBCFI) repository. 
+You can get everything set up by just running: `npm install`
 
-Having cloned the repository to your system, there are a number of Rake tasks to help you with development: 
+Once all that is good to go, clone this repository. 
 
-* Generate a parser from the .pegjs grammar: `rake gen_parser`
-* Run the CFI library unit tests: `rake jasmine`
-* Generate a parser AND run the tests: `rake test_parser`
-* Generate a vesion of the stand-alone library: `rake gen_module`
+Having cloned the repository to your system, there are a number of Grunt tasks to help you with development: 
 
-That last Rake task will generate a single (production) javascript file that contains all of the library components. The library components are developed and tested separately in the development enviroment. The output is in the `bin` directory.
+* Generate a parser from the .pegjs grammar: `grunt peg`
+* Generate a parser and a vesion of the stand-alone library: `grunt compile`
+* Do all the above and run the tests using the default grunt task.
+r
+The default grunt task will generate a single (production) javascript file that contains all of the library components. The library components are developed and tested separately in the development enviroment. The output is in the `dist` directory.
 
 # Future development priorities
-
-This is an early version of this library and there are currently no guarantees about what will change. The library will evolve as I develop a better understanding of CFI use cases and how it might be integrated into readium systems (starting with Readium!). 
 
 The following are the development priorities (in order), going forward:
 
