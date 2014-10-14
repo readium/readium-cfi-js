@@ -1,7 +1,7 @@
 module.exports = function(grunt) {
 
   //grunt.template.addDelimiters('erb-like-delimiters', '<%= ', ' %>')
-  var fs = require('fs');
+  var fs = require('fs');   
 
   // Project configuration.
   grunt.initConfig({
