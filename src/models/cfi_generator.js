@@ -93,6 +93,8 @@ EPUBcfi.Generator = {
             var range1OffsetStep;
             var range2CFI;
             var range2OffsetStep;
+            var commonAncestor;
+            var commonCFIComponent;
 
             // Create a document range to find the common ancestor
             docRange = document.createRange();
