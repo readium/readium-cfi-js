@@ -116,7 +116,7 @@ describe("CFI GENERATOR", function () {
 
             var $startElement1 = $($('#startParent', $dom).children()[0]);
             var $startElement2 = $($('#startParent', $dom).children()[2]);
-            var generatedCFI = EPUBcfi.Generator.generateElementRangeComponent($startElement1[0], $startElement2[0]);
+            var generatedCFI = EPUBcfi.Generator.generateRangeComponent($startElement1[0], 0, $startElement2[0], $startElement2[0].childNodes.length);
 
             expect(generatedCFI).toEqual("/4/2[startParent],/2[period-.-in.id],/6");
         });
@@ -142,7 +142,7 @@ describe("CFI GENERATOR", function () {
 
             var $startElement1 = $($('#startParent', $dom).children()[0]);
             var $startElement2 = $($('#startParent', $dom).children()[2]);
-            var generatedCFI = EPUBcfi.Generator.generateElementRangeComponent($startElement1[0], $startElement2[0]);
+            var generatedCFI = EPUBcfi.Generator.generateRangeComponent($startElement1[0], 0, $startElement2[0], $startElement2[0].childNodes.length);
 
             expect(generatedCFI).toEqual("/4/2[startParent],/2,/6");
         });
@@ -169,7 +169,7 @@ describe("CFI GENERATOR", function () {
             var $startElement2 = $($('#startParent', $dom).children()[0]);
 
             expect(function () {
-                EPUBcfi.Generator.generateElementRangeComponent($startElement1[0], $startElement2[0])})
+                EPUBcfi.Generator.generateRangeComponent($startElement1[0], 0, $startElement2[0], $startElement2[0].childNodes.length)})
             .toThrow(
                 Error(
                     "Start and end element cannot be the same for a CFI range")
@@ -198,7 +198,7 @@ describe("CFI GENERATOR", function () {
 
                 var $startElement = $($('#startParent', $dom).children()[0].firstChild);
                 var $endElement = $($('#startParent', $dom).children()[2].firstChild)
-                var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
+                var generatedCFI = EPUBcfi.Generator.generateRangeComponent(
                     $startElement[0], 
                     6,
                     $endElement[0],
@@ -228,7 +228,7 @@ describe("CFI GENERATOR", function () {
 
                 var $startElement = $($('#startParent', $dom).children()[0].firstChild);
                 var $endElement = $($('#startParent', $dom).children()[0].firstChild)
-                var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
+                var generatedCFI = EPUBcfi.Generator.generateRangeComponent(
                     $startElement[0], 
                     2,
                     $endElement[0],
@@ -260,7 +260,7 @@ describe("CFI GENERATOR", function () {
 
                 var $startElement = $($('#startParent', $dom).contents()[1]);
                 var $endElement = $($('#startParent', $dom).contents()[5])
-                var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
+                var generatedCFI = EPUBcfi.Generator.generateRangeComponent(
                     $startElement[0], 
                     2,
                     $endElement[0],
@@ -289,7 +289,7 @@ describe("CFI GENERATOR", function () {
 
                 ////////////////////////////////////////////////
                 // test 1
-                var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
+                var generatedCFI = EPUBcfi.Generator.generateRangeComponent(
                     $startElement[0], 
                     0,
                     $endElement[0],
@@ -301,7 +301,7 @@ describe("CFI GENERATOR", function () {
                 
                 ////////////////////////////////////////////////
                 // test 2
-                generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
+                generatedCFI = EPUBcfi.Generator.generateRangeComponent(
                     $startElement[0], 
                     1,
                     $endElement[0],
@@ -313,7 +313,7 @@ describe("CFI GENERATOR", function () {
                 
                 ////////////////////////////////////////////////
                 // test 2
-                generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
+                generatedCFI = EPUBcfi.Generator.generateRangeComponent(
                     $startElement[0], 
                     2,
                     $endElement[0],
@@ -344,7 +344,7 @@ describe("CFI GENERATOR", function () {
 
                 var $startElement = $($('#startParent', $dom).contents()[1]);
                 var $endElement = $($('#startParent', $dom).contents()[3])
-                var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
+                var generatedCFI = EPUBcfi.Generator.generateRangeComponent(
                     $startElement[0], 
                     2,
                     $endElement[0],
@@ -374,7 +374,7 @@ describe("CFI GENERATOR", function () {
 
                 var $startElement = $($('#startParent', $dom).contents()[4]);
                 var $endElement = $($('#startParent', $dom).contents()[4])
-                var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
+                var generatedCFI = EPUBcfi.Generator.generateRangeComponent(
                     $startElement[0], 
                     0,
                     $endElement[0],
@@ -406,7 +406,7 @@ describe("CFI GENERATOR", function () {
 
                 var $startElement = $($('#startParent', $dom).contents()[4]);
                 var $endElement = $($('#startParent', $dom).contents()[4])
-                var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
+                var generatedCFI = EPUBcfi.Generator.generateRangeComponent(
                     $startElement[0], 
                     0,
                     $endElement[0],
@@ -433,7 +433,7 @@ describe("CFI GENERATOR", function () {
                 var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
                 var $startElement = $($('#startParent', $dom).contents()[4]);
                 var $endElement = $($('#startParent', $dom).contents()[4])
-                var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
+                var generatedCFI = EPUBcfi.Generator.generateRangeComponent(
                     $startElement[0], 
                     0,
                     $endElement[0],
