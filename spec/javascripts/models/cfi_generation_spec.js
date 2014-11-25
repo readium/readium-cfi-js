@@ -72,6 +72,29 @@ describe("CFI GENERATOR", function () {
             expect(generatedCFI).toEqual("/4/2[startParent],/2,/3:1");
         });
 
+        it("can generate a range component between a text node in an element node and a text node with the same parent", function () {
+  
+          var dom =
+            "<html>"
+              +    "<div></div>"
+              +    "<div>"
+              +         "<div id='startParent'>"
+              +             "textnode0"
+              +             "<div id='startElement'>textnode1</div>"
+              +             "textnode2"
+              +             "<div></div>"
+              +         "</div>"
+              +     "</div>"
+              +     "<div></div>"
+              + "</html>";
+          var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+  
+          var $startElement1 = $($('#startElement', $dom).contents()[0]);
+          var $startElement2 = $($('#startParent', $dom).contents()[2]);
+          var generatedCFI = EPUBcfi.Generator.generateRangeComponent($startElement1[0], 4, $startElement2[0], 4);
+          expect(generatedCFI).toEqual("/4/2[startParent],/2[startElement]/1:4,/3:4");
+        });
+      
         it("can generate a range component between an element node and a text node with different parents", function () {
 
             var dom = 
