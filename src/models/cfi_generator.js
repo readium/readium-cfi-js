@@ -5,6 +5,7 @@ EPUBcfi.Generator = {
     // ------------------------------------------------------------------------------------ //
 
     generateCharOffsetRangeComponent : function (rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist) {
+        var document = rangeStartElement.ownerDocument;
 
         var docRange;
         var commonAncestor;
@@ -49,6 +50,7 @@ EPUBcfi.Generator = {
     },
 
     generateElementRangeComponent : function (rangeStartElement, rangeEndElement, classBlacklist, elementBlacklist, idBlacklist) {
+        var document = rangeStartElement.ownerDocument;
 
         var docRange;
         var commonAncestor;
@@ -83,6 +85,8 @@ EPUBcfi.Generator = {
     },
 
     generateRangeComponent : function (rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist) {
+        var document = rangeStartElement.ownerDocument;
+
         if(rangeStartElement.nodeType === Node.ELEMENT_NODE && rangeEndElement.nodeType === Node.ELEMENT_NODE){
             return this.generateElementRangeComponent(rangeStartElement, rangeEndElement, classBlacklist, elementBlacklist, idBlacklist);
         } else if(rangeStartElement.nodeType === Node.TEXT_NODE && rangeEndElement.nodeType === Node.TEXT_NODE){
