@@ -197,7 +197,7 @@ describe("CFI GENERATOR", function () {
                 var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
 
                 var $startElement = $($('#startParent', $dom).children()[0].firstChild);
-                var $endElement = $($('#startParent', $dom).children()[2].firstChild)
+                var $endElement = $($('#startParent', $dom).children()[2].firstChild);
                 var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
                     $startElement[0], 
                     6,
@@ -227,7 +227,7 @@ describe("CFI GENERATOR", function () {
                 var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
 
                 var $startElement = $($('#startParent', $dom).children()[0].firstChild);
-                var $endElement = $($('#startParent', $dom).children()[0].firstChild)
+                var $endElement = $($('#startParent', $dom).children()[0].firstChild);
                 var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
                     $startElement[0], 
                     2,
@@ -259,7 +259,7 @@ describe("CFI GENERATOR", function () {
                 var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
 
                 var $startElement = $($('#startParent', $dom).contents()[1]);
-                var $endElement = $($('#startParent', $dom).contents()[5])
+                var $endElement = $($('#startParent', $dom).contents()[5]);
                 var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
                     $startElement[0], 
                     2,
@@ -267,7 +267,7 @@ describe("CFI GENERATOR", function () {
                     6
                 );
 
-                expect(generatedCFI).toEqual("/4/2[startParent],/1:2,/5:6");
+                expect(generatedCFI).toEqual("/4/2[startParent],/3:2,/7:6");
             });
 
             it("generates offsets with a simple node", function () {
@@ -343,7 +343,7 @@ describe("CFI GENERATOR", function () {
                 var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
 
                 var $startElement = $($('#startParent', $dom).contents()[1]);
-                var $endElement = $($('#startParent', $dom).contents()[3])
+                var $endElement = $($('#startParent', $dom).contents()[3]);
                 var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
                     $startElement[0], 
                     2,
@@ -351,7 +351,7 @@ describe("CFI GENERATOR", function () {
                     6
                 );
 
-                expect(generatedCFI).toEqual("/4/2[startParent],/1:2,/3:6");
+                expect(generatedCFI).toEqual("/4/2[startParent],/3:2,/5:6");
             });            
 
             it("generates offsets with the same parent element and a blacklist element", function () {
@@ -498,7 +498,7 @@ describe("CFI GENERATOR", function () {
             var textTerminus = EPUBcfi.Generator.createCFITextNodeStep($startNode, 3, ["cfi-marker"]);
             var generatedCFI = EPUBcfi.Generator.createCFIElementSteps($startNode.parent(), "html", ["cfi-marker"]) + textTerminus;
 
-            expect(generatedCFI).toEqual("!/4/2[startParent]/1:25"); // [ te,xtn]
+            expect(generatedCFI).toEqual("!/4/2[startParent]/3:25"); // [ te,xtn]
         });
 
         it("can generate a package document CFI with the spine index", function () {
@@ -558,7 +558,7 @@ describe("CFI GENERATOR", function () {
             var packageDocCFIComponent = EPUBcfi.Generator.generatePackageDocumentCFIComponent("contentDocId", packageDoc);
             var generatedCFI = EPUBcfi.Generator.generateCompleteCFI(packageDocCFIComponent, contentDocCFIComponent);
 
-            expect(generatedCFI).toEqual("epubcfi(/6/2/6!/4/2[startParent]/1:3)"); // [ te,xtn]
+            expect(generatedCFI).toEqual("epubcfi(/6/2/6!/4/2[startParent]/3:3)"); // [ te,xtn]
         });
 
         it('can generate a CFI for an actual epub', function () {
