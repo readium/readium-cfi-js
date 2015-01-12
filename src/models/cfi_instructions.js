@@ -227,7 +227,7 @@ EPUBcfi.CFIInstructions = {
 				if (currLogicalTextNodeIndex === targetLogicalTextNodeIndex) {
 
 					// If it's a text node
-					if (this.nodeType === Node.TEXT_NODE) {
+					if (this.nodeType === Node.TEXT_NODE || this.nodeType === Node.COMMENT_NODE  ) {
 						prevNodeWasTextNode = true;
 						return true;
 					}
@@ -242,7 +242,10 @@ EPUBcfi.CFIInstructions = {
 				// Don't return any elements
 				else {
 
-					if (this.nodeType === Node.TEXT_NODE) {
+					if (this.nodeType === Node.TEXT_NODE || this.nodeType === Node.COMMENT_NODE ) {
+						prevNodeWasTextNode = true;
+					}else if (!prevNodeWasTextNode && this.nodeType === Node.ELEMENT_NODE){
+                        currLogicalTextNodeIndex++;
 						prevNodeWasTextNode = true;
 					}
 					else if (prevNodeWasTextNode && (this.nodeType !== Node.TEXT_NODE) && (this !== $elementsWithoutMarkers.lastChild)) {
@@ -258,7 +261,7 @@ EPUBcfi.CFIInstructions = {
 		// The filtering above should have counted the number of "logical" text nodes; this can be used to 
 		// detect out of range errors
 		if ($targetTextNodeList.length === 0) {
-			throw EPUBcfi.OutOfRangeError(logicalTargetTextNodeIndex, currLogicalTextNodeIndex, "Index out of range");
+			throw EPUBcfi.OutOfRangeError(targetLogicalTextNodeIndex, currLogicalTextNodeIndex, "Index out of range");
 		}
 
 		// return the text node list
