@@ -227,7 +227,7 @@ EPUBcfi.CFIInstructions = {
 				if (currLogicalTextNodeIndex === targetLogicalTextNodeIndex) {
 
 					// If it's a text node
-					if (this.nodeType === Node.TEXT_NODE || this.nodeType === Node.COMMENT_NODE  ) {
+					if (this.nodeType === Node.TEXT_NODE || this.nodeType === Node.COMMENT_NODE || this.nodeType === Node.PROCESSING_INSTRUCTION_NODE) {
 						prevNodeWasTextNode = true;
 						return true;
 					}
@@ -235,14 +235,14 @@ EPUBcfi.CFIInstructions = {
 					//   text node) has been passed by the loop. 
 					else if (prevNodeWasTextNode && (this.nodeType !== Node.TEXT_NODE)) {
 						currLogicalTextNodeIndex++;
-						prevNodeWasTextNode = false;			
+						prevNodeWasTextNode = false;
 						return false;
 					}
 				}
 				// Don't return any elements
 				else {
 
-					if (this.nodeType === Node.TEXT_NODE || this.nodeType === Node.COMMENT_NODE ) {
+					if (this.nodeType === Node.TEXT_NODE || this.nodeType === Node.COMMENT_NODE || this.nodeType === Node.PROCESSING_INSTRUCTION_NODE) {
 						prevNodeWasTextNode = true;
 					}else if (!prevNodeWasTextNode && this.nodeType === Node.ELEMENT_NODE){
                         currLogicalTextNodeIndex++;

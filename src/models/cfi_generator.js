@@ -295,8 +295,7 @@ EPUBcfi.Generator = {
                         if (prevNodeWasTextNode) {
                             indexOfTextNode = indexOfFirstInSequence;
                             finalCharacterOffsetInSequence = characterOffsetSinceUnsplit;
-                        }
-                        else {
+                        } else {
                             indexOfTextNode = textNodeOnlyIndex;
                         }
                         
@@ -314,23 +313,30 @@ EPUBcfi.Generator = {
                 } else if (this.nodeType === Node.ELEMENT_NODE) {
                     textNodeOnlyIndex = textNodeOnlyIndex + 1;
                 } else if (this.nodeType === Node.COMMENT_NODE) {
-                        prevNodeWasTextNode = true;
-                        characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.length + 7;
-                        if (indexOfFirstInSequence === undefined) {
-                            indexOfFirstInSequence = textNodeOnlyIndex;
-                        }
+                    prevNodeWasTextNode = true;
+                    characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.length + 7; // <!--[comment]-->
+                    if (indexOfFirstInSequence === undefined) {
+                        indexOfFirstInSequence = textNodeOnlyIndex;
+                    }
+                } else if (this.nodeType === Node.PROCESSING_INSTRUCTION_NODE) {
+                    prevNodeWasTextNode = true;
+                    characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.data.length + this.target.length + 5; // <?[target] [data]?>
+                    if (indexOfFirstInSequence === undefined) {
+                        indexOfFirstInSequence = textNodeOnlyIndex;
                     }
                 }
-                // This node is not a text node
-                else if (this.nodeType === Node.ELEMENT_NODE) {
-                    prevNodeWasTextNode = false;
-                    indexOfFirstInSequence = undefined;
-                    characterOffsetSinceUnsplit  = 0;
-                } else if (this.nodeType === Node.COMMENT_NODE) {
-                    characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.length + 7;
-                }
             }
-        );
+            // This node is not a text node
+            else if (this.nodeType === Node.ELEMENT_NODE) {
+                prevNodeWasTextNode = false;
+                indexOfFirstInSequence = undefined;
+                characterOffsetSinceUnsplit  = 0;
+            } else if (this.nodeType === Node.COMMENT_NODE) {
+                characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.length + 7;
+            } else if (this.nodeType === Node.PROCESSING_INSTRUCTION_NODE) {
+                characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.data.length + this.target.length + 5;
+            }
+        });
 
         // Convert the text node index to a CFI odd-integer representation
         CFIIndex = (indexOfTextNode * 2) + 1;
