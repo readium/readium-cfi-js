@@ -89,6 +89,58 @@ describe("CFI INSTRUCTION OBJECT", function () {
 		expect($result[0].nodeValue).toEqual("asdfsd ");
 		expect($result[1].nodeValue).toEqual(" ddfd");
 	});
+	
+	it('returns the correct text node if the first text node is empty', function () {
+
+		var domParser = new window.DOMParser();
+		var xhtml = '<div><div>text1</div>text2</div>';
+		var doc = domParser.parseFromString(xhtml, 'text/xml');
+		var $currentNode = $(doc.firstChild);
+
+		var $result = EPUBcfi.CFIInstructions.getNextNode(3, $currentNode, ["cfiMarker"], []);
+		expect($result.length).toEqual(1);
+		expect($result[0].nodeValue).toEqual("text2");
+	});
+
+	it('returns the correct text node if a previous one contains a comment node', function () {
+
+		var domParser = new window.DOMParser();
+		var xhtml = '<div>text1<!--comment-->text2<div>text</div>text3</div>';
+		var doc = domParser.parseFromString(xhtml, 'text/xml');
+		var $currentNode = $(doc.firstChild);
+
+		var $result = EPUBcfi.CFIInstructions.getNextNode(3, $currentNode, ["cfiMarker"], []);
+		expect($result.length).toEqual(1);
+		expect($result[0].nodeValue).toEqual("text3");
+	});
+
+	it('returns the correct text node if it contains a comment node', function () {
+
+		var domParser = new window.DOMParser();
+		var xhtml = '<div>text1<div>text</div>text2<!--comment-->text3</div>';
+		var doc = domParser.parseFromString(xhtml, 'text/xml');
+		var $currentNode = $(doc.firstChild);
+
+		var $result = EPUBcfi.CFIInstructions.getNextNode(3, $currentNode, ["cfiMarker"], []);
+		expect($result.length).toEqual(3);
+		expect($result[0].nodeValue).toEqual("text2");
+		expect($result[1].nodeValue).toEqual("comment");
+		expect($result[2].nodeValue).toEqual("text3");
+	});
+
+	it('returns the correct text node if it contains a processing instruction node', function () {
+
+		var domParser = new window.DOMParser();
+		var xhtml = '<div>text1<div>text</div>text2<?xml-stylesheet type="text/css" href="style.css"?>text3</div>';
+		var doc = domParser.parseFromString(xhtml, 'text/xml');
+		var $currentNode = $(doc.firstChild);
+
+		var $result = EPUBcfi.CFIInstructions.getNextNode(3, $currentNode, ["cfiMarker"], []);
+		expect($result.length).toEqual(3);
+		expect($result[0].nodeValue).toEqual("text2");
+		expect($result[1].nodeValue).toEqual("type=\"text/css\" href=\"style.css\"");
+		expect($result[2].nodeValue).toEqual("text3");
+	});
 
 	it('returns the correct text node if the node is in the first position of a set of child nodes', function () {
 

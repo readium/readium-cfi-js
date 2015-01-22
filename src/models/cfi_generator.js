@@ -284,9 +284,10 @@ EPUBcfi.Generator = {
         $.each($contentsExcludingMarkers, 
             function (index) {
 
-                // If this is a text node, check if it matches and return the current index
-                if (this.nodeType === Node.TEXT_NODE) {
+            // If this is a text node, check if it matches and return the current index
+            if (this.nodeType === Node.TEXT_NODE || !prevNodeWasTextNode) {
 
+                if (this.nodeType === Node.TEXT_NODE) {
                     if (this === $startTextNode[0]) {
 
                         // Set index as the first in the adjacent sequence of text nodes, or as the index of the current node if this 
@@ -294,8 +295,7 @@ EPUBcfi.Generator = {
                         if (prevNodeWasTextNode) {
                             indexOfTextNode = indexOfFirstInSequence;
                             finalCharacterOffsetInSequence = characterOffsetSinceUnsplit;
-                        }
-                        else {
+                        } else {
                             indexOfTextNode = textNodeOnlyIndex;
                         }
                         
@@ -305,20 +305,38 @@ EPUBcfi.Generator = {
 
                     // Save this index as the first in sequence of adjacent text nodes, if it is not already set by this point
                     prevNodeWasTextNode = true;
-                    characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.length
+                    characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.length;
                     if (indexOfFirstInSequence === undefined) {
                         indexOfFirstInSequence = textNodeOnlyIndex;
                         textNodeOnlyIndex = textNodeOnlyIndex + 1;
                     }
-                }
-                // This node is not a text node
-                else {
-                    prevNodeWasTextNode = false;
-                    indexOfFirstInSequence = undefined;
-                    characterOffsetSinceUnsplit  = 0;
+                } else if (this.nodeType === Node.ELEMENT_NODE) {
+                    textNodeOnlyIndex = textNodeOnlyIndex + 1;
+                } else if (this.nodeType === Node.COMMENT_NODE) {
+                    prevNodeWasTextNode = true;
+                    characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.length + 7; // <!--[comment]-->
+                    if (indexOfFirstInSequence === undefined) {
+                        indexOfFirstInSequence = textNodeOnlyIndex;
+                    }
+                } else if (this.nodeType === Node.PROCESSING_INSTRUCTION_NODE) {
+                    prevNodeWasTextNode = true;
+                    characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.data.length + this.target.length + 5; // <?[target] [data]?>
+                    if (indexOfFirstInSequence === undefined) {
+                        indexOfFirstInSequence = textNodeOnlyIndex;
+                    }
                 }
             }
-        );
+            // This node is not a text node
+            else if (this.nodeType === Node.ELEMENT_NODE) {
+                prevNodeWasTextNode = false;
+                indexOfFirstInSequence = undefined;
+                characterOffsetSinceUnsplit  = 0;
+            } else if (this.nodeType === Node.COMMENT_NODE) {
+                characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.length + 7;
+            } else if (this.nodeType === Node.PROCESSING_INSTRUCTION_NODE) {
+                characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.data.length + this.target.length + 5;
+            }
+        });
 
         // Convert the text node index to a CFI odd-integer representation
         CFIIndex = (indexOfTextNode * 2) + 1;
