@@ -314,13 +314,13 @@ EPUBcfi.Generator = {
                     textNodeOnlyIndex = textNodeOnlyIndex + 1;
                 } else if (this.nodeType === Node.COMMENT_NODE) {
                     prevNodeWasTextNode = true;
-                    characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.length + 7; // <!--[comment]-->
+                    characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.length + 7; // 7 is the size of the html comment tag <!--[comment]-->
                     if (indexOfFirstInSequence === undefined) {
                         indexOfFirstInSequence = textNodeOnlyIndex;
                     }
                 } else if (this.nodeType === Node.PROCESSING_INSTRUCTION_NODE) {
                     prevNodeWasTextNode = true;
-                    characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.data.length + this.target.length + 5; // <?[target] [data]?>
+                    characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.data.length + this.target.length + 5; // 5 is the size of the instruction processing tag including the required space between the target and the data <?[target] [data]?>
                     if (indexOfFirstInSequence === undefined) {
                         indexOfFirstInSequence = textNodeOnlyIndex;
                     }
@@ -332,9 +332,9 @@ EPUBcfi.Generator = {
                 indexOfFirstInSequence = undefined;
                 characterOffsetSinceUnsplit  = 0;
             } else if (this.nodeType === Node.COMMENT_NODE) {
-                characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.length + 7;
+                characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.length + 7; // <!--[comment]-->
             } else if (this.nodeType === Node.PROCESSING_INSTRUCTION_NODE) {
-                characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.data.length + this.target.length + 5;
+                characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.data.length + this.target.length + 5; // <?[target] [data]?>
             }
         });
 
