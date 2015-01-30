@@ -273,7 +273,7 @@ EPUBcfi.Generator = {
 
         // Find text node position in the set of child elements, ignoring any blacklisted elements 
         $parentNode = $startTextNode.parent();
-        $contentsExcludingMarkers = EPUBcfi.CFIInstructions.applyBlacklist($parentNode.contents(), classBlacklist, elementBlacklist, idBlacklist);
+        $contentsExcludingMarkers = EPUBcfi.CFIInstructions.applyBlacklist($parentNode.contents(), classBlacklist, elementBlacklist, idBlacklist, true);
 
         // Find the text node index in the parent list, inferring nodes that were originally a single text node
         var prevNodeWasTextNode;
@@ -369,7 +369,7 @@ EPUBcfi.Generator = {
         var elementStep; 
 
         // Find position of current node in parent list
-        $blacklistExcluded = EPUBcfi.CFIInstructions.applyBlacklist($currNode.parent().children(), classBlacklist, elementBlacklist, idBlacklist);
+        $blacklistExcluded = EPUBcfi.CFIInstructions.applyBlacklist($currNode.parent().children(), classBlacklist, elementBlacklist, idBlacklist, false);
         $.each($blacklistExcluded, 
             function (index, value) {
 
@@ -382,15 +382,19 @@ EPUBcfi.Generator = {
                 }
         });
 
-        // Convert position to the CFI even-integer representation
-        CFIPosition = (currNodePosition + 1) * 2;
+        if (currNodePosition !== undefined) {
+            // Convert position to the CFI even-integer representation
+            CFIPosition = (currNodePosition + 1) * 2;
 
-        // Create CFI step with id assertion, if the element has an id
-        if ($currNode.attr("id")) {
-            elementStep = "/" + CFIPosition + "[" + $currNode.attr("id") + "]";
-        }
-        else {
-            elementStep = "/" + CFIPosition;
+            // Create CFI step with id assertion, if the element has an id
+            if ($currNode.attr("id")) {
+                elementStep = "/" + CFIPosition + "[" + $currNode.attr("id") + "]";
+            }
+            else {
+                elementStep = "/" + CFIPosition;
+            }
+        } else {
+            elementStep = "";
         }
 
         // If a parent is an html element return the (last) step for this content document, otherwise, continue.
