@@ -261,6 +261,33 @@ describe("CFI GENERATOR", function () {
                 expect(generatedCFI).toEqual("/4/2[startParent]/2,/1:2,/1:6");
             });
 
+            it("generates for different node level", function () {
+
+               var dom = 
+                    "<html>"
+                    +    "<div></div>"
+                    +    "<div>"
+                    +         "<div id='startParent'>"
+                    +             "text target for start"
+                    +             "<div>text target for end</div>"
+                    +         "</div>"
+                    +     "</div>"
+                    +     "<div></div>"
+                    + "</html>";
+                var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+
+                var $startElement = $($('#startParent', $dom).contents()[0]);
+                var $endElement = $($('#startParent', $dom).children()[0].firstChild);
+                var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
+                    $startElement[0], 
+                    2,
+                    $endElement[0],
+                    6
+                );
+
+                expect(generatedCFI).toEqual("/4/2[startParent],/1:2,/2/1:6");
+            });
+
             it("generates for an element with multiple child text nodes", function () {
 
                 var dom = 
