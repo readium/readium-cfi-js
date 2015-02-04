@@ -142,6 +142,19 @@ describe("CFI INSTRUCTION OBJECT", function () {
 		expect($result[2].nodeValue).toEqual("text3");
 	});
 
+	it('returns the correct text node if it start with a processing instruction node', function () {
+
+		var domParser = new window.DOMParser();
+		var xhtml = '<div><?xml-stylesheet type="text/css" href="style.css"?>text</div>';
+		var doc = domParser.parseFromString(xhtml, 'text/xml');
+		var $currentNode = $(doc.firstChild);
+
+		var $result = EPUBcfi.CFIInstructions.getNextNode(1, $currentNode, ["cfiMarker"], []);
+		expect($result.length).toEqual(2);
+		expect($result[0].nodeValue).toEqual("type=\"text/css\" href=\"style.css\"");
+		expect($result[1].nodeValue).toEqual("text");
+	});
+
 	it('returns the correct text node if the node is in the first position of a set of child nodes', function () {
 
 		var domParser = new window.DOMParser();

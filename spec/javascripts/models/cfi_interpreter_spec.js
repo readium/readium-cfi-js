@@ -36,6 +36,97 @@ describe('CFI INTERPRETER OBJECT', function () {
         expect($injectedElement.parent().attr("id")).toBe(expectedResult);
     });
 
+    it('can inject into a node containing comments', function () {
+        var dom = 
+            "<html>"
+            +    "<div></div>"
+            +    "<div>"
+            +         "<div id='startParent'>"
+            +             "<!-- comment -->" // size=16
+            +             "text1 text2 text3"
+            +         "</div>"
+            +     "</div>"
+            +     "<div></div>"
+            + "</html>";
+
+        var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+
+        var CFI = "epubcfi(/6/14!/4/2[startParent],/1:22,/1:27)";
+
+        var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
+            CFI, 
+            $dom, 
+            "<span id='start' class='cfi-marker'></span>", 
+            "<span id='end' class='cfi-marker'></span>",
+            ["cfi-marker"]
+            );
+
+        var result = $($($($dom.contents()).contents()[1]).contents()).contents()[3];
+        expect(result.data).toEqual("text2");
+
+    });
+
+    it('can inject into a node containing processing instructions', function () {
+        var dom = 
+            "<html>"
+            +    "<div></div>"
+            +    "<div>"
+            +         "<div id='startParent'>"
+            +             "<?xml-stylesheet type='text/css' href='style.css'?>" // size=51
+            +             "text1 text2 text3"
+            +         "</div>"
+            +     "</div>"
+            +     "<div></div>"
+            + "</html>";
+
+        var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+
+        var CFI = "epubcfi(/6/14!/4/2[startParent],/1:57,/1:62)";
+
+        var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
+            CFI, 
+            $dom, 
+            "<span id='start' class='cfi-marker'></span>", 
+            "<span id='end' class='cfi-marker'></span>",
+            ["cfi-marker"]
+            );
+
+        var result = $($($($dom.contents()).contents()[1]).contents()).contents()[3];
+        expect(result.data).toEqual("text2");
+
+    });
+
+    it('can inject into a node containing processing instructions and comments', function () {
+        var dom = 
+            "<html>"
+            +    "<div></div>"
+            +    "<div>"
+            +         "<div id='startParent'>"
+            +             "<?xml-stylesheet type='text/css' href='style.css'?>" // size=51
+            +             "<!-- comment -->" // size=16
+            +             "text1 text2 text3"
+            +         "</div>"
+            +     "</div>"
+            +     "<div></div>"
+            + "</html>";
+
+        var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+
+        var CFI = "epubcfi(/6/14!/4/2[startParent],/1:73,/1:78)";
+
+        var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
+            CFI, 
+            $dom, 
+            "<span id='start' class='cfi-marker'></span>", 
+            "<span id='end' class='cfi-marker'></span>",
+            ["cfi-marker"]
+            );
+
+        var result = $($($($dom.contents()).contents()[1]).contents()).contents()[4];
+
+        expect(result.data).toEqual("text2");
+    });
+
     it('can inject into previously injected text node (dmitry)', function () {
         var dom = 
             "<html>"

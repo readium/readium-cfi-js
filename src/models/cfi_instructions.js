@@ -155,7 +155,7 @@ EPUBcfi.CFIInstructions = {
         // The iteration counter may be incorrect here (should be $textNodeList.length - 1 ??)
         for (nodeNum = 0; nodeNum <= $textNodeList.length; nodeNum++) {
 
-            if ($textNodeList[nodeNum].nodeType === 3) {
+            if ($textNodeList[nodeNum].nodeType === Node.TEXT_NODE) {
 
                 currNodeMaxIndex = $textNodeList[nodeNum].nodeValue.length  + currTextPosition;
                 nodeOffset = textOffset - currTextPosition;
@@ -181,9 +181,14 @@ EPUBcfi.CFIInstructions = {
                     return $injectedNode;
                 }
                 else {
-
                     currTextPosition = currNodeMaxIndex;
                 }
+            } else if($textNodeList[nodeNum].nodeType === Node.COMMENT_NODE){
+            	currNodeMaxIndex = $textNodeList[nodeNum].nodeValue.length + 7 + currTextPosition;
+                currTextPosition = currNodeMaxIndex;
+            } else if($textNodeList[nodeNum].nodeType === Node.PROCESSING_INSTRUCTION_NODE){
+            	currNodeMaxIndex = $textNodeList[nodeNum].nodeValue.length + $textNodeList[nodeNum].target.length + 5
+                currTextPosition = currNodeMaxIndex;
             }
         }
 
