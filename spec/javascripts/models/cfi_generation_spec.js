@@ -266,6 +266,32 @@ describe("CFI GENERATOR", function () {
                 expect(generatedCFI).toEqual("/4/2[startParent],/1:2,/2/1:6");
             });
 
+            // https://github.com/readium/readium-cfi-js/issues/28
+            it("generates for different node level II", function () {
+
+               var dom = 
+                    "  <html>"  + 
+                    "    <body>" +
+                    "        <h1>Title</h1>" +
+                    "        <p>Some <strong>very important</strong> text</p>" +
+                    "    </body>" +
+                    "</html>";
+                    
+                var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+                // per the issue The CFI for "important text" should be : /2/4, /2/1:5, /3:5
+                var $startElement = $($("strong", $dom).contents()[0]); // "very important"
+                var $endElement = $($("p", $dom).contents()[2]); // " text"
+                var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
+                    $startElement[0], 
+                    5,
+                    $endElement[0],
+                    5
+                );
+
+                expect(generatedCFI).toEqual("/2/4,/2/1:5,/3:5");
+            });
+
+
             it("generates for an element with multiple child text nodes", function () {
 
                 var dom = 
