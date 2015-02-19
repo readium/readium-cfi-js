@@ -261,6 +261,7 @@ describe("CFI GENERATOR", function () {
                 expect(generatedCFI).toEqual("/4/2[startParent]/2,/1:2,/1:6");
             });
 
+            // https://github.com/readium/readium-cfi-js/issues/28
             it("generates for different node level", function () {
 
                var dom = 
