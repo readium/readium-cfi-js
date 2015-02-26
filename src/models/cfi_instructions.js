@@ -144,6 +144,7 @@ EPUBcfi.CFIInstructions = {
 	//   is required. This is obtained with the jquery parent() method. An alternative would be to 
 	//   pass in the parent with a filtered list containing only children that are part of the target text node.
     injectCFIMarkerIntoText : function ($textNodeList, textOffset, elementToInject) {
+        var document = $textNodeList[0].ownerDocument;
 
         var nodeNum;
         var currNodeLength;
