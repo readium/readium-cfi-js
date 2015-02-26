@@ -298,6 +298,13 @@ describe('CFI INTERPRETER OBJECT', function () {
     });
 
     describe("range CFI interpretation", function () {
+        
+        it("can determine that a CFI is a range CFI or not", function(){
+            var rangeCFI = "epubcfi(/6/14!/4,/2/14/1:4,/2/16/1:7)",
+                nonRangeCFI = "epubcfi(/6/14!/4/2/14[c01p0006]/1:4)";
+            expect(EPUBcfi.Interpreter.isRangeCfi(rangeCFI)).toEqual(true);
+            expect(EPUBcfi.Interpreter.isRangeCfi(nonRangeCFI)).toEqual(false);
+        });
 
         it("returns the href of a content document in the first local path", function () {
 
