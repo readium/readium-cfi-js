@@ -62,6 +62,9 @@ var EpubCFIModule = function () {
         },
         generateRangeComponent : function (rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist) {
             return generator.generateRangeComponent(rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist);
+        },
+        isRangeCfi : function (cfi) {
+          return interpreter.isRangeCfi(cfi);
         }
     };
 };
