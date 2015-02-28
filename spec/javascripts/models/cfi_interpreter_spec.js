@@ -358,6 +358,8 @@ describe('CFI INTERPRETER OBJECT', function () {
             expect(rangeInfo.startElement.nodeType).toBe(Node.TEXT_NODE);
             expect(rangeInfo.endElement.nodeType).toBe(Node.TEXT_NODE);
             expect(rangeInfo.startElement).toBe(rangeInfo.endElement);
+            expect(rangeInfo.startOffset).toEqual(4);
+            expect(rangeInfo.endOffset).toEqual(7);
         });
 
         it('can return target elements when the target is the same element', function () {
@@ -385,6 +387,8 @@ describe('CFI INTERPRETER OBJECT', function () {
             expect(rangeInfo.startElement.nodeType).toBe(Node.TEXT_NODE);
             expect(rangeInfo.endElement.nodeType).toBe(Node.TEXT_NODE);
             expect(rangeInfo.startElement).not.toBe(rangeInfo.endElement);
+            expect(rangeInfo.startOffset).toEqual(4);
+            expect(rangeInfo.endOffset).toEqual(7);
         });
 
         it('can return target elements when the targets are different elements', function () {
@@ -398,6 +402,10 @@ describe('CFI INTERPRETER OBJECT', function () {
                 );
             expect(rangeInfo.startElement.id).toBe(targetElement1);
             expect(rangeInfo.endElement.id).toBe(targetElement2);
+
+            //there should be no character offset data
+            expect(rangeInfo.startOffset).toBeUndefined();
+            expect(rangeInfo.endOffset).toBeUndefined();
         });
     });
 
