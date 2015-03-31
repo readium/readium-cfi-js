@@ -44,7 +44,7 @@ require.config({
     // Path is relative to this config file
     out: process._readium.buildOutputPath + "build-output/_single-bundle/" + process._readium.targetName + "_all.js",
     
-    insertRequire: [],
+    insertRequire: ["readium-cfi-js"],
     
     // Paths are relative to the baseUrl (defined in the common config file)
     packages: [
