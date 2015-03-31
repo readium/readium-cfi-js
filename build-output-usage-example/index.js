@@ -1,35 +1,32 @@
 
-require(["globalsSetup", "readium-plugin-annotations"], function () {
-
-    require(['views/reader_view'], function (ReaderView) {
-
-    // ------- Comment above and uncomment below to demonstrate on-demand init/registration of plugin
-    // require(['views/reader_view', 'readium-plugin-example'], function (ReaderView, examplePluginConfig) {
-        // examplePluginConfig.borderColor = "blue";
-        // examplePluginConfig.backgroundColor = "cyan";
-    // ------- 
-
-        ReadiumSDK.on(ReadiumSDK.Events.PLUGINS_LOADED, function(reader) {
+require(["readium-cfi-js"], function () {
+    
+require(["cfi-parser", "cfi-instructions"], function (cfiParser, cfiInstructions) {
+    
+    $(document).ready(function () {
+        console.log(window.EPUBcfi);
+        /*
+    EPUBcfi.Interpreter = cfiInterpreter;
+    EPUBcfi.Generator = cfiGenerator;
+    
+    EPUBcfi.NodeTypeError= cfiRuntimeErrors.NodeTypeError;
+    EPUBcfi.OutOfRangeError = cfiRuntimeErrors.OutOfRangeError;
+    EPUBcfi.TerminusError = cfiRuntimeErrors.TerminusError;
+    EPUBcfi.CFIAssertionError = cfiRuntimeErrors.CFIAssertionError;
+    */
+    
+        if (cfiParser === window.EPUBcfi.Parser) {
+            console.log("OKAY => EPUBcfi.Parser");
+        } else {
+            console.log("ERROR! => EPUBcfi.Parser");
+        }
         
-            // readium built-in (should have been require()'d outside this scope)
-            console.log(reader.plugins.annotations);
-            
-            // external (require()'d via Dependency Injection, see examplePluginConfig function parameter passed above)
-            console.log(reader.plugins.example);
-        });
-        
-        $(document).ready(function () {
-            
-
-            ReadiumSDK.reader = new ReaderView(
-            {
-                needsFixedLayoutScalerWorkAround: false,
-                el:"#viewport",
-                annotationCSSUrl: undefined
-            });
-
-            //Globals.emit(Globals.Events.READER_INITIALIZED, ReadiumSDK.reader);
-            ReadiumSDK.emit(ReadiumSDK.Events.READER_INITIALIZED, ReadiumSDK.reader);
-        });
+        if (cfiInstructions === window.EPUBcfi.CFIInstructions) {
+            console.log("OKAY => EPUBcfi.CFIInstructions");
+        } else {
+            console.log("ERROR! => EPUBcfi.CFIInstructions");
+        }
     });
+
+});
 });

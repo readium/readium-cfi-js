@@ -2813,4 +2813,6 @@ function (cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGener
 });
 
 
+require(["readium-cfi-js"]);
+
 //# sourceMappingURL=readium-cfi-js.js.map
