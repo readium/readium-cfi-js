@@ -33,6 +33,8 @@ require.config({
     {
         "readium-cfi-js": '../build-config/readium-cfi-js',
         
+        'cfi-parser': '../build-output/cfi_parser',
+        
         'cfi-generator': 'cfi_generator',
         'cfi-instructions': 'cfi_instructions',
         'cfi-interpreter': 'cfi_interpreter',
@@ -50,5 +52,10 @@ require.config({
 
     shim:
     {
+        'cfi-parser':
+        {
+            deps: ['jquery'],
+            exports: 'EPUBcfiParser'
+        }
     }
 });

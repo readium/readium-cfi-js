@@ -98,9 +98,9 @@ devDependencies:
 
     almond: "latest"
     
+    jquery: "latest"
+
     "pegjs": "latest"
-    
-#    "lodash.template": "latest"
     
     "karma": "latest"
     "karma-chrome-launcher": "latest"
@@ -202,7 +202,7 @@ scripts:
 
 #=====================
     'build:scripts': '
-        node ./node_modules/pegjs/bin/pegjs --export-var EPUBcfi.Parser js/cfi_parser.pegjs build-output/cfi_parser.js
+        node ./node_modules/pegjs/bin/pegjs --export-var EPUBcfiParser cfi_parser.pegjs js/cfi_parser.js
         &&
         node node_modules/requirejs/bin/r.js
              -o

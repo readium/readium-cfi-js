@@ -1,4 +1,20 @@
-EPUBcfi.Generator = {
+//  Copyright (c) 2014 Readium Foundation and/or its licensees. All rights reserved.
+//  
+//  Redistribution and use in source and binary forms, with or without modification, 
+//  are permitted provided that the following conditions are met:
+//  1. Redistributions of source code must retain the above copyright notice, this 
+//  list of conditions and the following disclaimer.
+//  2. Redistributions in binary form must reproduce the above copyright notice, 
+//  this list of conditions and the following disclaimer in the documentation and/or 
+//  other materials provided with the distribution.
+//  3. Neither the name of the organization nor the names of its contributors may be 
+//  used to endorse or promote products derived from this software without specific 
+//  prior written permission.
+
+define(['jquery', 'cfi-instructions', 'cfi-runtime-errors'],
+function ($, cfiInstructions, cfiRuntimeErrors) {
+
+return {
 
     // ------------------------------------------------------------------------------------ //
     //  "PUBLIC" METHODS (THE API)                                                          //
@@ -217,28 +233,28 @@ EPUBcfi.Generator = {
         
         // Check that the text node to start from IS a text node
         if (!startTextNode) {
-            throw new EPUBcfi.NodeTypeError(startTextNode, "Cannot generate a character offset from a starting point that is not a text node");
+            throw new cfiRuntimeErrors.NodeTypeError(startTextNode, "Cannot generate a character offset from a starting point that is not a text node");
         } else if (startTextNode.nodeType != 3) {
-            throw new EPUBcfi.NodeTypeError(startTextNode, "Cannot generate a character offset from a starting point that is not a text node");
+            throw new cfiRuntimeErrors.NodeTypeError(startTextNode, "Cannot generate a character offset from a starting point that is not a text node");
         }
 
         // Check that the character offset is within a valid range for the text node supplied
         if (characterOffset < 0) {
-            throw new EPUBcfi.OutOfRangeError(characterOffset, 0, "Character offset cannot be less than 0");
+            throw new cfiRuntimeErrors.OutOfRangeError(characterOffset, 0, "Character offset cannot be less than 0");
         }
         else if (characterOffset > startTextNode.nodeValue.length) {
-            throw new EPUBcfi.OutOfRangeError(characterOffset, startTextNode.nodeValue.length - 1, "character offset cannot be greater than the length of the text node");
+            throw new cfiRuntimeErrors.OutOfRangeError(characterOffset, startTextNode.nodeValue.length - 1, "character offset cannot be greater than the length of the text node");
         }
     },
 
     validateStartElement : function (startElement) {
 
         if (!startElement) {
-            throw new EPUBcfi.NodeTypeError(startElement, "CFI target element is undefined");
+            throw new cfiRuntimeErrors.NodeTypeError(startElement, "CFI target element is undefined");
         }
 
         if (!(startElement.nodeType && startElement.nodeType === 1)) {
-            throw new EPUBcfi.NodeTypeError(startElement, "CFI target element is not an HTML element");
+            throw new cfiRuntimeErrors.NodeTypeError(startElement, "CFI target element is not an HTML element");
         }
     },
 
@@ -277,7 +293,7 @@ EPUBcfi.Generator = {
 
         // Find text node position in the set of child elements, ignoring any blacklisted elements 
         $parentNode = $startTextNode.parent();
-        $contentsExcludingMarkers = EPUBcfi.CFIInstructions.applyBlacklist($parentNode.contents(), classBlacklist, elementBlacklist, idBlacklist);
+        $contentsExcludingMarkers = cfiInstructions.applyBlacklist($parentNode.contents(), classBlacklist, elementBlacklist, idBlacklist);
 
         // Find the text node index in the parent list, inferring nodes that were originally a single text node
         var prevNodeWasTextNode;
@@ -373,7 +389,7 @@ EPUBcfi.Generator = {
         var elementStep; 
 
         // Find position of current node in parent list
-        $blacklistExcluded = EPUBcfi.CFIInstructions.applyBlacklist($currNode.parent().children(), classBlacklist, elementBlacklist, idBlacklist);
+        $blacklistExcluded = cfiInstructions.applyBlacklist($currNode.parent().children(), classBlacklist, elementBlacklist, idBlacklist);
         $.each($blacklistExcluded, 
             function (index, value) {
 
@@ -419,3 +435,5 @@ EPUBcfi.Generator = {
         }
     }
 };
+
+});

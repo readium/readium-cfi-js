@@ -46,6 +46,7 @@
   "devDependencies": {
     "requirejs": "latest",
     "almond": "latest",
+    "jquery": "latest",
     "pegjs": "latest",
     "karma": "latest",
     "karma-chrome-launcher": "latest",
@@ -69,6 +70,6 @@
     "prebuild": "npm run clean",
     "build": "npm run build:scripts",
     "lint": "node build-tools/jshint_glob.js js/**.js",
-    "build:scripts": "node ./node_modules/pegjs/bin/pegjs --export-var EPUBcfi.Parser js/cfi_parser.pegjs build-output/cfi_parser.js && node node_modules/requirejs/bin/r.js -o build-config/RequireJS_config_single-bundle.js && node node_modules/requirejs/bin/r.js -o build-config/RequireJS_config_multiple-bundles.js"
+    "build:scripts": "node ./node_modules/pegjs/bin/pegjs --export-var EPUBcfiParser cfi_parser.pegjs js/cfi_parser.js && node node_modules/requirejs/bin/r.js -o build-config/RequireJS_config_single-bundle.js && node node_modules/requirejs/bin/r.js -o build-config/RequireJS_config_multiple-bundles.js"
   }
 }

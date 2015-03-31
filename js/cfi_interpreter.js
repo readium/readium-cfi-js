@@ -1,3 +1,17 @@
+//  Copyright (c) 2014 Readium Foundation and/or its licensees. All rights reserved.
+//  
+//  Redistribution and use in source and binary forms, with or without modification, 
+//  are permitted provided that the following conditions are met:
+//  1. Redistributions of source code must retain the above copyright notice, this 
+//  list of conditions and the following disclaimer.
+//  2. Redistributions in binary form must reproduce the above copyright notice, 
+//  this list of conditions and the following disclaimer in the documentation and/or 
+//  other materials provided with the distribution.
+//  3. Neither the name of the organization nor the names of its contributors may be 
+//  used to endorse or promote products derived from this software without specific 
+//  prior written permission.
+
+
 // Description: This is an interpreter that inteprets an Abstract Syntax Tree (AST) for a CFI. The result of executing the interpreter
 //   is to inject an element, or set of elements, into an EPUB content document (which is just an XHTML document). These element(s) will
 //   represent the position or area in the EPUB referenced by a CFI.
@@ -13,7 +27,10 @@
 // REFACTORING CANDIDATE: The use of the 'nodeType' property is confusing as this is a DOM node property and the two are unrelated. 
 //   Whoops. There shouldn't be any interference, however, I think this should be changed. 
 
-EPUBcfi.Interpreter = {
+define(['jquery', 'cfi-parser', 'cfi-instructions', 'cfi-runtime-errors'],
+function ($, cfiParser, cfiInstructions, cfiRuntimeErrors) {
+
+return {
 
     // ------------------------------------------------------------------------------------ //
     //  "PUBLIC" METHODS (THE API)                                                          //
@@ -28,10 +45,10 @@ EPUBcfi.Interpreter = {
 
         var $packageDocument = $(packageDocument);
         var decodedCFI = decodeURI(CFI);
-        var CFIAST = EPUBcfi.Parser.parse(decodedCFI);
+        var CFIAST = cfiParser.parse(decodedCFI);
 
         if (!CFIAST || CFIAST.type !== "CFIAST") { 
-            throw EPUBcfi.NodeTypeError(CFIAST, "expected CFI AST root node");
+            throw cfiRuntimeErrors.NodeTypeError(CFIAST, "expected CFI AST root node");
         }
 
         // Interpet the path node (the package document step)
@@ -51,7 +68,7 @@ EPUBcfi.Interpreter = {
     injectElement : function (CFI, contentDocument, elementToInject, classBlacklist, elementBlacklist, idBlacklist) {
 
         var decodedCFI = decodeURI(CFI);
-        var CFIAST = EPUBcfi.Parser.parse(decodedCFI);
+        var CFIAST = cfiParser.parse(decodedCFI);
         var indirectionNode;
         var indirectionStepNum;
         var $currElement;
@@ -77,7 +94,7 @@ EPUBcfi.Interpreter = {
     injectRangeElements : function (rangeCFI, contentDocument, startElementToInject, endElementToInject, classBlacklist, elementBlacklist, idBlacklist) {
 
         var decodedCFI = decodeURI(rangeCFI);
-        var CFIAST = EPUBcfi.Parser.parse(decodedCFI);
+        var CFIAST = cfiParser.parse(decodedCFI);
         var indirectionNode;
         var indirectionStepNum;
         var $currElement;
@@ -114,7 +131,7 @@ EPUBcfi.Interpreter = {
     getTargetElement : function (CFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist) {
 
         var decodedCFI = decodeURI(CFI);
-        var CFIAST = EPUBcfi.Parser.parse(decodedCFI);
+        var CFIAST = cfiParser.parse(decodedCFI);
         var indirectionNode;
         var indirectionStepNum;
         var $currElement;
@@ -137,7 +154,7 @@ EPUBcfi.Interpreter = {
     getRangeTargetElements : function (rangeCFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist) {
 
         var decodedCFI = decodeURI(rangeCFI);
-        var CFIAST = EPUBcfi.Parser.parse(decodedCFI);
+        var CFIAST = cfiParser.parse(decodedCFI);
         var indirectionNode;
         var indirectionStepNum;
         var $currElement;
@@ -185,7 +202,7 @@ EPUBcfi.Interpreter = {
     getTargetElementWithPartialCFI : function (contentDocumentCFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist) {
 
         var decodedCFI = decodeURI(contentDocumentCFI);
-        var CFIAST = EPUBcfi.Parser.parse(decodedCFI);
+        var CFIAST = cfiParser.parse(decodedCFI);
         var indirectionNode;
         
         // Interpret the path node 
@@ -210,7 +227,7 @@ EPUBcfi.Interpreter = {
     getTextTerminusInfoWithPartialCFI : function (contentDocumentCFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist) {
 
         var decodedCFI = decodeURI(contentDocumentCFI);
-        var CFIAST = EPUBcfi.Parser.parse(decodedCFI);
+        var CFIAST = cfiParser.parse(decodedCFI);
         var indirectionNode;
         var textOffset;
         
@@ -228,7 +245,7 @@ EPUBcfi.Interpreter = {
     },
     // Description: This function will determine if the input CFI is expressed as a range
     isRangeCfi: function (cfi) {
-        var CFIAST = EPUBcfi.Parser.parse(cfi);
+        var CFIAST = cfiParser.parse(cfi);
         return CFIAST.cfiString.range1 ? true : false;
     },
 
@@ -277,18 +294,18 @@ EPUBcfi.Interpreter = {
         // Check node type; throw error if wrong type
         if (indexStepNode === undefined || indexStepNode.type !== "indexStep") {
 
-            throw EPUBcfi.NodeTypeError(indexStepNode, "expected index step node");
+            throw cfiRuntimeErrors.NodeTypeError(indexStepNode, "expected index step node");
         }
 
         // Index step
-        var $stepTarget = EPUBcfi.CFIInstructions.getNextNode(indexStepNode.stepLength, $currElement, classBlacklist, elementBlacklist, idBlacklist);
+        var $stepTarget = cfiInstructions.getNextNode(indexStepNode.stepLength, $currElement, classBlacklist, elementBlacklist, idBlacklist);
 
         // Check the id assertion, if it exists
         if (indexStepNode.idAssertion) {
 
-            if (!EPUBcfi.CFIInstructions.targetIdMatchesIdAssertion($stepTarget, indexStepNode.idAssertion)) {
+            if (!cfiInstructions.targetIdMatchesIdAssertion($stepTarget, indexStepNode.idAssertion)) {
 
-                throw EPUBcfi.CFIAssertionError(indexStepNode.idAssertion, $stepTarget.attr('id'), "Id assertion failed");
+                throw cfiRuntimeErrors.CFIAssertionError(indexStepNode.idAssertion, $stepTarget.attr('id'), "Id assertion failed");
             }
         }
 
@@ -300,11 +317,11 @@ EPUBcfi.Interpreter = {
         // Check node type; throw error if wrong type
         if (indirectionStepNode === undefined || indirectionStepNode.type !== "indirectionStep") {
 
-            throw EPUBcfi.NodeTypeError(indirectionStepNode, "expected indirection step node");
+            throw cfiRuntimeErrors.NodeTypeError(indirectionStepNode, "expected indirection step node");
         }
 
         // Indirection step
-        var $stepTarget = EPUBcfi.CFIInstructions.followIndirectionStep(
+        var $stepTarget = cfiInstructions.followIndirectionStep(
             indirectionStepNode.stepLength, 
             $currElement, 
             classBlacklist, 
@@ -313,9 +330,9 @@ EPUBcfi.Interpreter = {
         // Check the id assertion, if it exists
         if (indirectionStepNode.idAssertion) {
 
-            if (!EPUBcfi.CFIInstructions.targetIdMatchesIdAssertion($stepTarget, indirectionStepNode.idAssertion)) {
+            if (!cfiInstructions.targetIdMatchesIdAssertion($stepTarget, indirectionStepNode.idAssertion)) {
 
-                throw EPUBcfi.CFIAssertionError(indirectionStepNode.idAssertion, $stepTarget.attr('id'), "Id assertion failed");
+                throw cfiRuntimeErrors.CFIAssertionError(indirectionStepNode.idAssertion, $stepTarget.attr('id'), "Id assertion failed");
             }
         }
 
@@ -329,10 +346,10 @@ EPUBcfi.Interpreter = {
 
         if (terminusNode === undefined || terminusNode.type !== "textTerminus") {
 
-            throw EPUBcfi.NodeTypeError(terminusNode, "expected text terminus node");
+            throw cfiRuntimeErrors.NodeTypeError(terminusNode, "expected text terminus node");
         }
 
-        var $injectedElement = EPUBcfi.CFIInstructions.textTermination(
+        var $injectedElement = cfiInstructions.textTermination(
             $currElement, 
             terminusNode.offsetValue, 
             elementToInject
@@ -361,10 +378,12 @@ EPUBcfi.Interpreter = {
             // Found the content document href referenced by the spine item 
             if ($currElement.is("itemref")) {
 
-                return EPUBcfi.CFIInstructions.retrieveItemRefHref($currElement, $packageDocument);
+                return cfiInstructions.retrieveItemRefHref($currElement, $packageDocument);
             }
         }
 
         return undefined;
     }
 };
+
+});
