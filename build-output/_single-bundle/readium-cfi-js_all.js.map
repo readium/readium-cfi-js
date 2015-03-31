@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "file": "C:/Users/Daniel/GitHub/readium-cfi-js/build-output/_single-bundle/readium-cfi-js_all.js",
+  "file": "C:/Users/Daniel/GitHub/readium-js-viewer/readium-js/readium-shared-js/readium-cfi-js/build-output/_single-bundle/readium-cfi-js_all.js",
   "sources": [
     "../node_modules/almond/almond.js",
     "cfi_parser.js",
