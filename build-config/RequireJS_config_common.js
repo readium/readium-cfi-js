@@ -33,12 +33,13 @@ require.config({
     {
         "readium-cfi-js": '../build-config/readium-cfi-js',
         
-        'cfi-parser': '../build-output/cfi_parser',
-        
         'cfi-generator': 'cfi_generator',
         'cfi-instructions': 'cfi_instructions',
         'cfi-interpreter': 'cfi_interpreter',
         'cfi-runtime-errors': 'cfi_runtime_errors',
+        
+        // Generated from PegJS! (at build time, prior to this RequireJS build)
+        'cfi-parser': 'cfi_parser',
         
         
         // ------ NPM MODULEs
