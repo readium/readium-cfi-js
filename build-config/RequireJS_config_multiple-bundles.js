@@ -22,7 +22,8 @@ function(thiz){
     // Path is relative to mainConfigFile[0]
     process._readium.buildOutputPath = "../";
     
-    process._readium.targetName = "readium-cfi-js";
+    // Path is relative to mainConfigFile[0].dir
+    process._readium.cfiJsPath = "../../";
     
     return true;
 }(this)
@@ -31,7 +32,7 @@ function(thiz){
     // The order is IMPORTANT!
     // Paths are relative to this file (they are intentionally convoluted, to test the parameterized RequireJS build workflow from readium-js)
     mainConfigFile: [
-    "../build-config/RequireJS_config_single-bundle_.js",
+    "../build-config/RequireJS_config_multiple-bundles_.js",
     "./RequireJS_config_common.js"
     ],
     
@@ -39,7 +40,7 @@ function(thiz){
     onModuleBundleComplete: function(data) {
         
         //console.log(process.cwd());
-        var filePath = process.cwd() + "/build-config/RequireJS_config_single-bundle_onModuleBundleComplete.js";
+        var filePath = process.cwd() + "/build-config/RequireJS_config_multiple-bundles_onModuleBundleComplete.js";
         
         var fs = nodeRequire("fs");
         fs.readFile(

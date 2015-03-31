@@ -11,6 +11,7 @@
 //  used to endorse or promote products derived from this software without specific 
 //  prior written permission.
 
-define(['globalsSetup', 'plugins-controller', 'views/reader_view'], function (globalsSetup, PluginsController, ReaderView) {
-//noop
+define(['cfi-parser', 'cfi-generator', 'cfi-instructions', 'cfi-interpreter', 'cfi-runtime-errors'],
+function (cfiParser, cfiInstructions, cfiInterpreter, cfiRuntimeErrors) {
+
 });
