@@ -13,6 +13,8 @@
 
 (function(global) {
 
+var init = function($, cfiInstructions, cfiRuntimeErrors) {
+    
 var obj = {
 
     // ------------------------------------------------------------------------------------ //
@@ -458,8 +460,8 @@ var obj = {
     }
 };
 
-
-
+return obj;
+}
 
 
 
@@ -468,15 +470,27 @@ var obj = {
 
 
 if (typeof define == 'function' && typeof define.amd == 'object') {
+    console.log("RequireJS ... cfi_generator");
+    
     define(['jquery', 'cfi-instructions', 'cfi-runtime-errors'],
     function ($, cfiInstructions, cfiRuntimeErrors) {
-        return obj;
+        return init($, cfiInstructions, cfiRuntimeErrors);
     });
 } else {
+    console.log("!RequireJS ... cfi_generator");
+    
     if (!global["EPUBcfi"]) {
         throw new Error("EPUBcfi not initialised on global object?! (window or this context)");
     }
-    global.EPUBcfi.Generator = obj;
+    global.EPUBcfi.Generator = 
+    init($,
+        global.EPUBcfi.CFIInstructions,
+        {
+            NodeTypeError: global.EPUBcfi.NodeTypeError,
+            OutOfRangeError: global.EPUBcfi.OutOfRangeError,
+            TerminusError: global.EPUBcfi.TerminusError,
+            CFIAssertionError: global.EPUBcfi.CFIAssertionError
+        });
 }
 
 })(typeof window !== "undefined" ? window : this);

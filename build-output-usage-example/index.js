@@ -26,7 +26,8 @@ var check = function(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeError
 
 
 if (typeof define == 'function' && typeof define.amd == 'object') {
-
+    console.log("RequireJS ... index.js");
+    
     // For attaching the global window objects
     require(["readium-cfi-js"], function () {
         
@@ -39,6 +40,8 @@ if (typeof define == 'function' && typeof define.amd == 'object') {
     });
 
 } else {
+    console.log("!RequireJS ... index.js");
+    
     if (!window["EPUBcfi"]) {
         throw new Error("EPUBcfi not initialised on global object?! (window or this context)");
     }

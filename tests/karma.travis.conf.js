@@ -1,6 +1,3 @@
-// Karma configuration
-// Generated on Tue Oct 07 2014 15:09:42 GMT-0400 (EDT)
-
 module.exports = function(config) {
 
   var customLaunchers = {
@@ -30,12 +27,16 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      {pattern: 'spec/javascripts/fixtures/*.*', included: false, served: true},
-      'spec/javascripts/vendor/**/*.js',
-      'dist/*.js',
-      'spec/javascripts/helpers/**/*.js',
-      'spec/javascripts/models/**/*.js'
-
+      '../build-output/_single-bundle/readium-cfi-js_all.js',
+      {pattern: '../build-output/_single-bundle/readium-cfi-js_all.js.map', included: false, served: true},
+      
+      {pattern: 'spec/fixtures/*.*', included: false, served: true},
+      
+      'spec/helpers/*.js',
+      
+      'spec/models/*.js',
+      
+      'spec/karma-loaded.js'
     ],
 
 

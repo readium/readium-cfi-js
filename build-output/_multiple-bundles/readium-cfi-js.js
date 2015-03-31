@@ -1440,7 +1440,7 @@ EPUBcfiParser = (function() {
   };
 })();
 
-define("cfi-parser", ["jquery"], (function (global) {
+define("cfi-parser", (function (global) {
     return function () {
         var ret, fn;
         return ret || global.EPUBcfiParser;
@@ -1460,6 +1460,8 @@ define("cfi-parser", ["jquery"], (function (global) {
 //  used to endorse or promote products derived from this software without specific 
 //  prior written permission.
 
+(function(global) {
+
 
 // Description: This is a set of runtime errors that the CFI interpreter can throw. 
 // Rationale: These error types extend the basic javascript error object so error things like the stack trace are 
@@ -1469,12 +1471,8 @@ define("cfi-parser", ["jquery"], (function (global) {
 //   provided it is error-free, and as such, the AST should never really have any node type errors, which are essentially errors
 //   in the structure of the AST. This error should probably be refactored out when the grammar and interpreter are more stable.
 
+var obj = {
 
-define('cfi-runtime-errors',[],
-function () {
-
-return {
-    
 NodeTypeError: function (node, message) {
 
     function NodeTypeError () {
@@ -1535,7 +1533,36 @@ CFIAssertionError: function (expectedAssertion, targetElementAssertion, message)
 
 };
 
-});
+
+
+
+
+
+
+
+
+
+if (typeof define == 'function' && typeof define.amd == 'object') {
+    console.log("RequireJS ... cfi_errors");
+    
+    define('cfi-runtime-errors',[],
+    function () {
+        return obj;
+    });
+} else {
+    console.log("!RequireJS ... cfi_errors");
+    
+    if (!global["EPUBcfi"]) {
+        throw new Error("EPUBcfi not initialised on global object?! (window or this context)");
+    }
+    
+    global.EPUBcfi.NodeTypeError = obj.NodeTypeError;
+    global.EPUBcfi.OutOfRangeError = obj.OutOfRangeError;
+    global.EPUBcfi.TerminusError = obj.TerminusError;
+    global.EPUBcfi.CFIAssertionError = obj.CFIAssertionError;
+}
+
+})(typeof window !== "undefined" ? window : this);
 
 //  Copyright (c) 2014 Readium Foundation and/or its licensees. All rights reserved.
 //  
@@ -1550,15 +1577,15 @@ CFIAssertionError: function (expectedAssertion, targetElementAssertion, message)
 //  used to endorse or promote products derived from this software without specific 
 //  prior written permission.
 
+(function(global) {
+
+var init = function($, cfiRuntimeErrors) {
+    
+var obj = {
 
 // Description: This model contains the implementation for "instructions" included in the EPUB CFI domain specific language (DSL). 
 //   Lexing and parsing a CFI produces a set of executable instructions for processing a CFI (represented in the AST). 
 //   This object contains a set of functions that implement each of the executable instructions in the AST. 
-
-define('cfi-instructions',['jquery', 'cfi-runtime-errors'],
-function ($, cfiRuntimeErrors) {
-
-return {
 
 	// ------------------------------------------------------------------------------------ //
 	//  "PUBLIC" METHODS (THE API)                                                          //
@@ -1890,7 +1917,42 @@ return {
     }
 };
 
-});
+return obj;
+}
+
+
+
+
+
+
+
+
+
+
+if (typeof define == 'function' && typeof define.amd == 'object') {
+    console.log("RequireJS ... cfi_instructions");
+    
+    define('cfi-instructions',['jquery', 'cfi-runtime-errors'],
+    function ($, cfiRuntimeErrors) {
+        return init($, cfiRuntimeErrors);
+    });
+} else {
+    console.log("!RequireJS ... cfi_instructions");
+    
+    if (!global["EPUBcfi"]) {
+        throw new Error("EPUBcfi not initialised on global object?! (window or this context)");
+    }
+    global.EPUBcfi.CFIInstructions = 
+    init($,
+        {
+            NodeTypeError: global.EPUBcfi.NodeTypeError,
+            OutOfRangeError: global.EPUBcfi.OutOfRangeError,
+            TerminusError: global.EPUBcfi.TerminusError,
+            CFIAssertionError: global.EPUBcfi.CFIAssertionError
+        });
+}
+
+})(typeof window !== "undefined" ? window : this);
 
 //  Copyright (c) 2014 Readium Foundation and/or its licensees. All rights reserved.
 //  
@@ -1905,6 +1967,11 @@ return {
 //  used to endorse or promote products derived from this software without specific 
 //  prior written permission.
 
+(function(global) {
+
+var init = function($, cfiParser, cfiInstructions, cfiRuntimeErrors) {
+    
+var obj = {
 
 // Description: This is an interpreter that inteprets an Abstract Syntax Tree (AST) for a CFI. The result of executing the interpreter
 //   is to inject an element, or set of elements, into an EPUB content document (which is just an XHTML document). These element(s) will
@@ -1920,11 +1987,6 @@ return {
 //   Might want to make the script die in those instances, once the grammar and interpreter are more stable. 
 // REFACTORING CANDIDATE: The use of the 'nodeType' property is confusing as this is a DOM node property and the two are unrelated. 
 //   Whoops. There shouldn't be any interference, however, I think this should be changed. 
-
-define('cfi-interpreter',['jquery', 'cfi-parser', 'cfi-instructions', 'cfi-runtime-errors'],
-function ($, cfiParser, cfiInstructions, cfiRuntimeErrors) {
-
-return {
 
     // ------------------------------------------------------------------------------------ //
     //  "PUBLIC" METHODS (THE API)                                                          //
@@ -2280,7 +2342,44 @@ return {
     }
 };
 
-});
+return obj;
+}
+
+
+
+
+
+
+
+
+
+
+if (typeof define == 'function' && typeof define.amd == 'object') {
+    console.log("RequireJS ... cfi_interpreter");
+    
+    define('cfi-interpreter',['jquery', 'cfi-parser', 'cfi-instructions', 'cfi-runtime-errors'],
+    function ($, cfiParser, cfiInstructions, cfiRuntimeErrors) {
+        return init($, cfiParser, cfiInstructions, cfiRuntimeErrors);
+    });
+} else {
+    console.log("!RequireJS ... cfi_interpreter");
+    
+    if (!global["EPUBcfi"]) {
+        throw new Error("EPUBcfi not initialised on global object?! (window or this context)");
+    }
+    global.EPUBcfi.Interpreter = 
+    init($,
+        global.EPUBcfi.Parser,
+        global.EPUBcfi.CFIInstructions,
+        {
+            NodeTypeError: global.EPUBcfi.NodeTypeError,
+            OutOfRangeError: global.EPUBcfi.OutOfRangeError,
+            TerminusError: global.EPUBcfi.TerminusError,
+            CFIAssertionError: global.EPUBcfi.CFIAssertionError
+        });
+}
+
+})(typeof window !== "undefined" ? window : this);
 
 //  Copyright (c) 2014 Readium Foundation and/or its licensees. All rights reserved.
 //  
@@ -2295,10 +2394,11 @@ return {
 //  used to endorse or promote products derived from this software without specific 
 //  prior written permission.
 
-define('cfi-generator',['jquery', 'cfi-instructions', 'cfi-runtime-errors'],
-function ($, cfiInstructions, cfiRuntimeErrors) {
+(function(global) {
 
-return {
+var init = function($, cfiInstructions, cfiRuntimeErrors) {
+    
+var obj = {
 
     // ------------------------------------------------------------------------------------ //
     //  "PUBLIC" METHODS (THE API)                                                          //
@@ -2720,7 +2820,40 @@ return {
     }
 };
 
-});
+return obj;
+}
+
+
+
+
+
+
+
+if (typeof define == 'function' && typeof define.amd == 'object') {
+    console.log("RequireJS ... cfi_generator");
+    
+    define('cfi-generator',['jquery', 'cfi-instructions', 'cfi-runtime-errors'],
+    function ($, cfiInstructions, cfiRuntimeErrors) {
+        return init($, cfiInstructions, cfiRuntimeErrors);
+    });
+} else {
+    console.log("!RequireJS ... cfi_generator");
+    
+    if (!global["EPUBcfi"]) {
+        throw new Error("EPUBcfi not initialised on global object?! (window or this context)");
+    }
+    global.EPUBcfi.Generator = 
+    init($,
+        global.EPUBcfi.CFIInstructions,
+        {
+            NodeTypeError: global.EPUBcfi.NodeTypeError,
+            OutOfRangeError: global.EPUBcfi.OutOfRangeError,
+            TerminusError: global.EPUBcfi.TerminusError,
+            CFIAssertionError: global.EPUBcfi.CFIAssertionError
+        });
+}
+
+})(typeof window !== "undefined" ? window : this);
 
 //  Copyright (c) 2014 Readium Foundation and/or its licensees. All rights reserved.
 //  
@@ -2735,10 +2868,12 @@ return {
 //  used to endorse or promote products derived from this software without specific 
 //  prior written permission.
 
-define('readium-cfi-js',['cfi-parser', 'cfi-interpreter', 'cfi-instructions', 'cfi-runtime-errors', 'cfi-generator'],
-function (cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator) {
+(function(global) {
 
-    var EPUBcfi = {
+var init = function(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator) {
+    
+    var obj = {
+    
         getContentDocHref : function (CFI, packageDocument) {
             return cfiInterpreter.getContentDocHref(CFI, packageDocument);
         },
@@ -2794,24 +2929,64 @@ function (cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGener
     
     
     // TODO: remove global (should not be necessary in properly-configured RequireJS build!)
+    // ...but we leave it here as a "legacy" mechanism to access the CFI lib functionality
     // -----
-    EPUBcfi.CFIInstructions = cfiInstructions;
-    EPUBcfi.Parser = cfiParser;
-    EPUBcfi.Interpreter = cfiInterpreter;
-    EPUBcfi.Generator = cfiGenerator;
+    obj.CFIInstructions = cfiInstructions;
+    obj.Parser = cfiParser;
+    obj.Interpreter = cfiInterpreter;
+    obj.Generator = cfiGenerator;
     
-    EPUBcfi.NodeTypeError= cfiRuntimeErrors.NodeTypeError;
-    EPUBcfi.OutOfRangeError = cfiRuntimeErrors.OutOfRangeError;
-    EPUBcfi.TerminusError = cfiRuntimeErrors.TerminusError;
-    EPUBcfi.CFIAssertionError = cfiRuntimeErrors.CFIAssertionError;
+    obj.NodeTypeError= cfiRuntimeErrors.NodeTypeError;
+    obj.OutOfRangeError = cfiRuntimeErrors.OutOfRangeError;
+    obj.TerminusError = cfiRuntimeErrors.TerminusError;
+    obj.CFIAssertionError = cfiRuntimeErrors.CFIAssertionError;
     
-    window.EPUBcfi = EPUBcfi;
+    global.EPUBcfi = obj;
     // -----
     
+    console.log("#######################################");
+    // console.log(global.EPUBcfi);
+    // console.log("#######################################");
     
-    return EPUBcfi;
-});
+    return obj;
+}
 
+
+
+
+
+
+if (typeof define == 'function' && typeof define.amd == 'object') {
+    console.log("RequireJS ... readium-cfi-js");
+    
+    define('readium-cfi-js',['cfi-parser', 'cfi-interpreter', 'cfi-instructions', 'cfi-runtime-errors', 'cfi-generator'],
+    function (cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator) {
+        
+        return init(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator);
+    });
+} else {
+    console.log("!RequireJS ... readium-cfi-js");
+    
+    if (!global["EPUBcfi"]) {
+        throw new Error("EPUBcfi not initialised on global object?! (window or this context)");
+    }
+    
+    init(global.EPUBcfi.Parser,
+        global.EPUBcfi.Interpreter,
+        global.EPUBcfi.CFIInstructions,
+        {
+            NodeTypeError: global.EPUBcfi.NodeTypeError,
+            OutOfRangeError: global.EPUBcfi.OutOfRangeError,
+            TerminusError: global.EPUBcfi.TerminusError,
+            CFIAssertionError: global.EPUBcfi.CFIAssertionError
+        },
+        global.EPUBcfi.Generator);
+}
+
+})(typeof window !== "undefined" ? window : this);
+
+
+console.log("readium-cfi-js ...");
 
 require(["readium-cfi-js"]);
 
