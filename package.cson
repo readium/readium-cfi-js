@@ -238,17 +238,25 @@ scripts:
 #=====================
 #### BLOCKING! (CTRL-C) [watch:build]
     watch: '
-    
         parallelshell
             \"npm run watch:build\"
+            \"npm run watch:test\"
     '
-    #   \"npm run watch:test\
+    
+#=====================
+    'watch:test': '
+        node node_modules/karma/bin/karma start tests/karma.conf.js
+    '
 
 #=====================
-#   'watch:test': 'karma start'
+    'test': '
+       node node_modules/karma/bin/karma start tests/karma.conf.js
+    '
 
 #=====================
-#   test: 'karma start --singleRun'
+    'test:travis': '
+       node node_modules/karma/bin/karma start tests/karma.travis.conf.js
+    '
 
 #=====================
 #### BLOCKING! (CTRL-C) [watch or nodemon]

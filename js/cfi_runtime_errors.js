@@ -94,11 +94,15 @@ CFIAssertionError: function (expectedAssertion, targetElementAssertion, message)
 
 
 if (typeof define == 'function' && typeof define.amd == 'object') {
+    console.log("RequireJS ... cfi_errors");
+    
     define([],
     function () {
         return obj;
     });
 } else {
+    console.log("!RequireJS ... cfi_errors");
+    
     if (!global["EPUBcfi"]) {
         throw new Error("EPUBcfi not initialised on global object?! (window or this context)");
     }

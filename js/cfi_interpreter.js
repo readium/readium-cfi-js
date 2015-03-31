@@ -13,6 +13,8 @@
 
 (function(global) {
 
+var init = function($, cfiParser, cfiInstructions, cfiRuntimeErrors) {
+    
 var obj = {
 
 // Description: This is an interpreter that inteprets an Abstract Syntax Tree (AST) for a CFI. The result of executing the interpreter
@@ -384,6 +386,9 @@ var obj = {
     }
 };
 
+return obj;
+}
+
 
 
 
@@ -394,15 +399,28 @@ var obj = {
 
 
 if (typeof define == 'function' && typeof define.amd == 'object') {
+    console.log("RequireJS ... cfi_interpreter");
+    
     define(['jquery', 'cfi-parser', 'cfi-instructions', 'cfi-runtime-errors'],
     function ($, cfiParser, cfiInstructions, cfiRuntimeErrors) {
-        return obj;
+        return init($, cfiParser, cfiInstructions, cfiRuntimeErrors);
     });
 } else {
+    console.log("!RequireJS ... cfi_interpreter");
+    
     if (!global["EPUBcfi"]) {
         throw new Error("EPUBcfi not initialised on global object?! (window or this context)");
     }
-    global.EPUBcfi.Interpreter = obj;
+    global.EPUBcfi.Interpreter = 
+    init($,
+        global.EPUBcfi.Parser,
+        global.EPUBcfi.CFIInstructions,
+        {
+            NodeTypeError: global.EPUBcfi.NodeTypeError,
+            OutOfRangeError: global.EPUBcfi.OutOfRangeError,
+            TerminusError: global.EPUBcfi.TerminusError,
+            CFIAssertionError: global.EPUBcfi.CFIAssertionError
+        });
 }
 
 })(typeof window !== "undefined" ? window : this);

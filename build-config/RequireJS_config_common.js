@@ -55,7 +55,7 @@ require.config({
     {
         'cfi-parser':
         {
-            deps: ['jquery'],
+            //deps: ['jquery'],
             exports: 'EPUBcfiParser'
         }
     }

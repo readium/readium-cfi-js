@@ -1,6 +1,3 @@
-// Karma configuration
-// Generated on Tue Oct 07 2014 15:09:42 GMT-0400 (EDT)
-
 module.exports = function(config) {
 
   config.set({
@@ -16,12 +13,16 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      {pattern: 'spec/javascripts/fixtures/*.*', included: false, served: true},
-      'spec/javascripts/vendor/**/*.js',
-      'dist/*.js',
-      'spec/javascripts/helpers/**/*.js',
-      'spec/javascripts/models/**/*.js'
-
+      '../build-output/_single-bundle/readium-cfi-js_all.js',
+      {pattern: '../build-output/_single-bundle/readium-cfi-js_all.js.map', included: false, served: true},
+      
+      {pattern: 'spec/fixtures/*.*', included: false, served: true},
+      
+      'spec/helpers/*.js',
+      
+      'spec/models/*.js',
+      
+      'spec/karma-loaded.js'
     ],
 
 
@@ -56,7 +57,7 @@ module.exports = function(config) {
 
 
     // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: false,
+    autoWatch: true,
 
 
     // start these browsers
@@ -67,6 +68,6 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: true
+    singleRun: false
   });
 };

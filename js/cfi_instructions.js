@@ -13,6 +13,8 @@
 
 (function(global) {
 
+var init = function($, cfiRuntimeErrors) {
+    
 var obj = {
 
 // Description: This model contains the implementation for "instructions" included in the EPUB CFI domain specific language (DSL). 
@@ -349,6 +351,9 @@ var obj = {
     }
 };
 
+return obj;
+}
+
 
 
 
@@ -359,15 +364,26 @@ var obj = {
 
 
 if (typeof define == 'function' && typeof define.amd == 'object') {
+    console.log("RequireJS ... cfi_instructions");
+    
     define(['jquery', 'cfi-runtime-errors'],
     function ($, cfiRuntimeErrors) {
-        return obj;
+        return init($, cfiRuntimeErrors);
     });
 } else {
+    console.log("!RequireJS ... cfi_instructions");
+    
     if (!global["EPUBcfi"]) {
         throw new Error("EPUBcfi not initialised on global object?! (window or this context)");
     }
-    global.EPUBcfi.CFIInstructions = obj;
+    global.EPUBcfi.CFIInstructions = 
+    init($,
+        {
+            NodeTypeError: global.EPUBcfi.NodeTypeError,
+            OutOfRangeError: global.EPUBcfi.OutOfRangeError,
+            TerminusError: global.EPUBcfi.TerminusError,
+            CFIAssertionError: global.EPUBcfi.CFIAssertionError
+        });
 }
 
 })(typeof window !== "undefined" ? window : this);
