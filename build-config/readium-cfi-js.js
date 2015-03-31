@@ -11,10 +11,12 @@
 //  used to endorse or promote products derived from this software without specific 
 //  prior written permission.
 
-define(['cfi-parser', 'cfi-interpreter', 'cfi-instructions', 'cfi-runtime-errors', 'cfi-generator'],
-function (cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator) {
+(function(global) {
 
-    var EPUBcfi = {
+var init = function(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator) {
+    
+    var obj = {
+    
         getContentDocHref : function (CFI, packageDocument) {
             return cfiInterpreter.getContentDocHref(CFI, packageDocument);
         },
@@ -70,20 +72,51 @@ function (cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGener
     
     
     // TODO: remove global (should not be necessary in properly-configured RequireJS build!)
+    // ...but we leave it here as a "legacy" mechanism to access the CFI lib functionality
     // -----
-    EPUBcfi.CFIInstructions = cfiInstructions;
-    EPUBcfi.Parser = cfiParser;
-    EPUBcfi.Interpreter = cfiInterpreter;
-    EPUBcfi.Generator = cfiGenerator;
+    obj.CFIInstructions = cfiInstructions;
+    obj.Parser = cfiParser;
+    obj.Interpreter = cfiInterpreter;
+    obj.Generator = cfiGenerator;
     
-    EPUBcfi.NodeTypeError= cfiRuntimeErrors.NodeTypeError;
-    EPUBcfi.OutOfRangeError = cfiRuntimeErrors.OutOfRangeError;
-    EPUBcfi.TerminusError = cfiRuntimeErrors.TerminusError;
-    EPUBcfi.CFIAssertionError = cfiRuntimeErrors.CFIAssertionError;
+    obj.NodeTypeError= cfiRuntimeErrors.NodeTypeError;
+    obj.OutOfRangeError = cfiRuntimeErrors.OutOfRangeError;
+    obj.TerminusError = cfiRuntimeErrors.TerminusError;
+    obj.CFIAssertionError = cfiRuntimeErrors.CFIAssertionError;
     
-    window.EPUBcfi = EPUBcfi;
+    global.EPUBcfi = obj;
     // -----
     
     
-    return EPUBcfi;
-});
+    return obj;
+}
+
+
+
+
+
+
+if (typeof define == 'function' && typeof define.amd == 'object') {
+    define(['cfi-parser', 'cfi-interpreter', 'cfi-instructions', 'cfi-runtime-errors', 'cfi-generator'],
+    function (cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator) {
+
+        return init(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator);
+    });
+} else {
+    if (!global["EPUBcfi"]) {
+        throw new Error("EPUBcfi not initialised on global object?! (window or this context)");
+    }
+    
+    init(global.EPUBcfi.Parser,
+        global.EPUBcfi.Interpreter,
+        global.EPUBcfi.CFIInstructions,
+        {
+            NodeTypeError: global.EPUBcfi.NodeTypeError,
+            OutOfRangeError: global.EPUBcfi.OutOfRangeError,
+            TerminusError: global.EPUBcfi.TerminusError,
+            CFIAssertionError: global.EPUBcfi.CFIAssertionError
+        },
+        global.EPUBcfi.Generator);
+}
+
+})(typeof window !== "undefined" ? window : this);

@@ -11,15 +11,13 @@
 //  used to endorse or promote products derived from this software without specific 
 //  prior written permission.
 
+(function(global) {
+
+var obj = {
 
 // Description: This model contains the implementation for "instructions" included in the EPUB CFI domain specific language (DSL). 
 //   Lexing and parsing a CFI produces a set of executable instructions for processing a CFI (represented in the AST). 
 //   This object contains a set of functions that implement each of the executable instructions in the AST. 
-
-define(['jquery', 'cfi-runtime-errors'],
-function ($, cfiRuntimeErrors) {
-
-return {
 
 	// ------------------------------------------------------------------------------------ //
 	//  "PUBLIC" METHODS (THE API)                                                          //
@@ -351,4 +349,25 @@ return {
     }
 };
 
-});
+
+
+
+
+
+
+
+
+
+if (typeof define == 'function' && typeof define.amd == 'object') {
+    define(['jquery', 'cfi-runtime-errors'],
+    function ($, cfiRuntimeErrors) {
+        return obj;
+    });
+} else {
+    if (!global["EPUBcfi"]) {
+        throw new Error("EPUBcfi not initialised on global object?! (window or this context)");
+    }
+    global.EPUBcfi.CFIInstructions = obj;
+}
+
+})(typeof window !== "undefined" ? window : this);

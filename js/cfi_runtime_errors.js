@@ -11,6 +11,8 @@
 //  used to endorse or promote products derived from this software without specific 
 //  prior written permission.
 
+(function(global) {
+
 
 // Description: This is a set of runtime errors that the CFI interpreter can throw. 
 // Rationale: These error types extend the basic javascript error object so error things like the stack trace are 
@@ -20,12 +22,8 @@
 //   provided it is error-free, and as such, the AST should never really have any node type errors, which are essentially errors
 //   in the structure of the AST. This error should probably be refactored out when the grammar and interpreter are more stable.
 
+var obj = {
 
-define([],
-function () {
-
-return {
-    
 NodeTypeError: function (node, message) {
 
     function NodeTypeError () {
@@ -86,4 +84,29 @@ CFIAssertionError: function (expectedAssertion, targetElementAssertion, message)
 
 };
 
-});
+
+
+
+
+
+
+
+
+
+if (typeof define == 'function' && typeof define.amd == 'object') {
+    define([],
+    function () {
+        return obj;
+    });
+} else {
+    if (!global["EPUBcfi"]) {
+        throw new Error("EPUBcfi not initialised on global object?! (window or this context)");
+    }
+    
+    global.EPUBcfi.NodeTypeError = obj.NodeTypeError;
+    global.EPUBcfi.OutOfRangeError = obj.OutOfRangeError;
+    global.EPUBcfi.TerminusError = obj.TerminusError;
+    global.EPUBcfi.CFIAssertionError = obj.CFIAssertionError;
+}
+
+})(typeof window !== "undefined" ? window : this);

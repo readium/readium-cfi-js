@@ -11,6 +11,9 @@
 //  used to endorse or promote products derived from this software without specific 
 //  prior written permission.
 
+(function(global) {
+
+var obj = {
 
 // Description: This is an interpreter that inteprets an Abstract Syntax Tree (AST) for a CFI. The result of executing the interpreter
 //   is to inject an element, or set of elements, into an EPUB content document (which is just an XHTML document). These element(s) will
@@ -26,11 +29,6 @@
 //   Might want to make the script die in those instances, once the grammar and interpreter are more stable. 
 // REFACTORING CANDIDATE: The use of the 'nodeType' property is confusing as this is a DOM node property and the two are unrelated. 
 //   Whoops. There shouldn't be any interference, however, I think this should be changed. 
-
-define(['jquery', 'cfi-parser', 'cfi-instructions', 'cfi-runtime-errors'],
-function ($, cfiParser, cfiInstructions, cfiRuntimeErrors) {
-
-return {
 
     // ------------------------------------------------------------------------------------ //
     //  "PUBLIC" METHODS (THE API)                                                          //
@@ -386,4 +384,25 @@ return {
     }
 };
 
-});
+
+
+
+
+
+
+
+
+
+if (typeof define == 'function' && typeof define.amd == 'object') {
+    define(['jquery', 'cfi-parser', 'cfi-instructions', 'cfi-runtime-errors'],
+    function ($, cfiParser, cfiInstructions, cfiRuntimeErrors) {
+        return obj;
+    });
+} else {
+    if (!global["EPUBcfi"]) {
+        throw new Error("EPUBcfi not initialised on global object?! (window or this context)");
+    }
+    global.EPUBcfi.Interpreter = obj;
+}
+
+})(typeof window !== "undefined" ? window : this);
