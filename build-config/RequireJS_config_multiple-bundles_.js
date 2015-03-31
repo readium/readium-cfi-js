@@ -12,46 +12,22 @@
 //  prior written permission.
 
 require.config({
-    stubModules: [],
-    
     optimize: "none",
     generateSourceMaps: true,
     preserveLicenseComments: true,
     
-    /*
-    optimize: "uglify2",
-    generateSourceMaps: true,
-    preserveLicenseComments: false,
-
-    // uglify2: {
-    //   mangle: true,
-    //   except: [
-    //         'zzzzz'
-    //   ],
-    //   output: {
-    //     beautify: true,
-    //   },
-    //   beautify: {
-    //     semicolons: false
-    //   }
-    // },
-    */
-
-    name: process._readium.targetName + "_all",
-    
-    include: ["readium-cfi-js"],
-    
     // Path is relative to this config file
-    out: process._readium.buildOutputPath + "build-output/_single-bundle/" + process._readium.targetName + "_all.js",
+    dir: process._readium.buildOutputPath + "build-output/_multiple-bundles",
     
-    insertRequire: [],
-    
-    // Paths are relative to the baseUrl (defined in the common config file)
+    // Paths are relative to the above dir
     packages: [
+    ],
+    
+    modules:
+    [
         {
-            name: process._readium.targetName + "_all",
-            location: '../node_modules/almond',
-            main: 'almond'
+            name: "readium-cfi-js",
+            exclude: ['jquery']
         }
     ]
 });

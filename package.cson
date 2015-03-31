@@ -96,6 +96,8 @@ devDependencies:
 
     requirejs: "latest"
 
+    almond: "latest"
+    
     "pegjs": "latest"
     
 #    "lodash.template": "latest"
@@ -200,9 +202,13 @@ scripts:
 
 #=====================
     'build:scripts': '
-        node ./node_modules/pegjs/bin/pegjs --export-var EPUBcfi.Parser cfi_grammar/epubcfi.pegjs build-output/epubcfi.js
+        node ./node_modules/pegjs/bin/pegjs --export-var EPUBcfi.Parser js/cfi_parser.pegjs build-output/cfi_parser.js
         &&
         node node_modules/requirejs/bin/r.js
              -o
              build-config/RequireJS_config_single-bundle.js
+        &&
+        node node_modules/requirejs/bin/r.js
+             -o
+             build-config/RequireJS_config_multiple-bundles.js
     '
