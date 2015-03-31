@@ -1,8 +1,25 @@
+//  Copyright (c) 2014 Readium Foundation and/or its licensees. All rights reserved.
+//  
+//  Redistribution and use in source and binary forms, with or without modification, 
+//  are permitted provided that the following conditions are met:
+//  1. Redistributions of source code must retain the above copyright notice, this 
+//  list of conditions and the following disclaimer.
+//  2. Redistributions in binary form must reproduce the above copyright notice, 
+//  this list of conditions and the following disclaimer in the documentation and/or 
+//  other materials provided with the distribution.
+//  3. Neither the name of the organization nor the names of its contributors may be 
+//  used to endorse or promote products derived from this software without specific 
+//  prior written permission.
+
+
 // Description: This model contains the implementation for "instructions" included in the EPUB CFI domain specific language (DSL). 
 //   Lexing and parsing a CFI produces a set of executable instructions for processing a CFI (represented in the AST). 
 //   This object contains a set of functions that implement each of the executable instructions in the AST. 
 
-EPUBcfi.CFIInstructions = {
+define(['jquery', 'cfi-runtime-errors'],
+function ($, cfiRuntimeErrors) {
+
+return {
 
 	// ------------------------------------------------------------------------------------ //
 	//  "PUBLIC" METHODS (THE API)                                                          //
@@ -46,7 +63,7 @@ EPUBcfi.CFIInstructions = {
 		// Only expects iframes, at the moment
 		if ($currNode === undefined || !$currNode.is("iframe")) {
 
-			throw EPUBcfi.NodeTypeError($currNode, "expected an iframe element");
+			throw cfiRuntimeErrors.NodeTypeError($currNode, "expected an iframe element");
 		}
 
 		// Check node type; only iframe indirection is handled, at the moment
@@ -81,11 +98,11 @@ EPUBcfi.CFIInstructions = {
 		// Get the first node, this should be a text node
 		if ($currNode === undefined) {
 
-			throw EPUBcfi.NodeTypeError($currNode, "expected a terminating node, or node list");
+			throw cfiRuntimeErrors.NodeTypeError($currNode, "expected a terminating node, or node list");
 		} 
 		else if ($currNode.length === 0) {
 
-			throw EPUBcfi.TerminusError("Text", "Text offset:" + textOffset, "no nodes found for termination condition");
+			throw cfiRuntimeErrors.TerminusError("Text", "Text offset:" + textOffset, "no nodes found for termination condition");
 		}
 
 		$injectedElement = this.injectCFIMarkerIntoText($currNode, textOffset, elementToInject);
@@ -123,7 +140,7 @@ EPUBcfi.CFIInstructions = {
 
 		if (this.indexOutOfRange(jqueryTargetNodeIndex, numElements)) {
 
-			throw EPUBcfi.OutOfRangeError(jqueryTargetNodeIndex, numElements - 1, "");
+			throw cfiRuntimeErrors.OutOfRangeError(jqueryTargetNodeIndex, numElements - 1, "");
 		}
 
 	    $targetNode = $($blacklistExcluded[jqueryTargetNodeIndex]);
@@ -193,7 +210,7 @@ EPUBcfi.CFIInstructions = {
             }
         }
 
-        throw EPUBcfi.TerminusError("Text", "Text offset:" + textOffset, "The offset exceeded the length of the text");
+        throw cfiRuntimeErrors.TerminusError("Text", "Text offset:" + textOffset, "The offset exceeded the length of the text");
     },
 
 	// Rationale: In order to inject an element into a specific position, access to the parent object 
@@ -267,7 +284,7 @@ EPUBcfi.CFIInstructions = {
 		// The filtering above should have counted the number of "logical" text nodes; this can be used to 
 		// detect out of range errors
 		if ($targetTextNodeList.length === 0) {
-			throw EPUBcfi.OutOfRangeError(targetLogicalTextNodeIndex, currLogicalTextNodeIndex, "Index out of range");
+			throw cfiRuntimeErrors.OutOfRangeError(targetLogicalTextNodeIndex, currLogicalTextNodeIndex, "Index out of range");
 		}
 
 		// return the text node list
@@ -334,4 +351,4 @@ EPUBcfi.CFIInstructions = {
     }
 };
 
-
+});
