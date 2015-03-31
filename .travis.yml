@@ -13,6 +13,5 @@ env:
 install:
 - npm install
 script:
-- npm run prepare
 - npm run build
 - npm run test:travis
