@@ -11,10 +11,9 @@
 //  used to endorse or promote products derived from this software without specific 
 //  prior written permission.
 
-define(['jquery', 'cfi-instructions', 'cfi-runtime-errors'],
-function ($, cfiInstructions, cfiRuntimeErrors) {
+(function(global) {
 
-return {
+var obj = {
 
     // ------------------------------------------------------------------------------------ //
     //  "PUBLIC" METHODS (THE API)                                                          //
@@ -436,4 +435,25 @@ return {
     }
 };
 
-});
+
+
+
+
+
+
+
+
+
+if (typeof define == 'function' && typeof define.amd == 'object') {
+    define(['jquery', 'cfi-instructions', 'cfi-runtime-errors'],
+    function ($, cfiInstructions, cfiRuntimeErrors) {
+        return obj;
+    });
+} else {
+    if (!global["EPUBcfi"]) {
+        throw new Error("EPUBcfi not initialised on global object?! (window or this context)");
+    }
+    global.EPUBcfi.Generator = obj;
+}
+
+})(typeof window !== "undefined" ? window : this);
