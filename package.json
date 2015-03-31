@@ -1,19 +1,73 @@
 {
+  "/*": "----------------------------------------------------------------------------",
+  "..": "This package.json (JSON) is automatically generated from package.cson (CSON)",
+  ".-": "DO NOT invoke 'npm init' or 'npm install --save' ('--save-dev' / '--save-optional')",
+  "._": "as this would overwrite / update the JSON, not the master CSON!",
+  "*/": "----------------------------------------------------------------------------",
   "name": "readium-cfi-js",
-  "version": "0.1.0",
-  "homepage": "https://github.com/readium/readium-cfi-js",
+  "version": "0.0.0",
+  "description": "Readium - CFI javascript library",
+  "keywords": [
+    "readium",
+    "epub",
+    "epub3",
+    "cfi"
+  ],
+  "author": {
+    "name": "Readium (Daniel Weck)",
+    "email": "daniel.weck@gmail.com",
+    "url": "http://github.com/readium"
+  },
+  "licenses": [
+    {
+      "type": "BSD-3-Clause",
+      "url": "http://opensource.org/licenses/BSD-3-Clause"
+    }
+  ],
+  "homepage": "http://github.com/readium/readium-cfi-js",
+  "bugs": {
+    "url": "http://github.com/readium/readium-cfi-js/issues",
+    "email": "daniel.weck@gmail.com"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/readium/readium-cfi-js.git"
+    "url": "git://github.com/readium/readium-cfi-js.git"
+  },
+  "files": [
+    "build-output/",
+    "license.txt",
+    "README.md"
+  ],
+  "dependencies": {
+    "parallelshell": "latest",
+    "http-server": "latest",
+    "opener": "latest"
   },
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-karma": "^0.9.0",
-    "grunt-peg": "^1.5.0",
-    "grunt-template": "^0.2.3",
-    "karma": "^0.12.24",
-    "karma-chrome-launcher": "^0.1.5",
-    "karma-jasmine": "^0.2.2",
-    "karma-sauce-launcher": "^0.2.10"
+    "requirejs": "latest",
+    "pegjs": "latest",
+    "karma": "latest",
+    "karma-chrome-launcher": "latest",
+    "karma-jasmine": "latest",
+    "karma-sauce-launcher": "latest",
+    "cson": "latest",
+    "jshint": "latest",
+    "glob": "latest",
+    "rimraf": "latest",
+    "mkdirp": "latest",
+    "watch": "latest",
+    "live-reload": "latest"
+  },
+  "scripts": {
+    "env": "env",
+    "echo": "echo \"\"",
+    "cson2json": "node node_modules/cson/bin/cson2json package.cson && node node_modules/cson/bin/cson2json package.cson > package.json",
+    "prepare": "",
+    "prepare:dependencies": "npm install && npm update",
+    "clean": "node --version && npm --version && rimraf build-output/*",
+    "prebuild": "npm run clean",
+    "build": "npm run build:scripts",
+    "lint": "node build-tools/jshint_glob.js js/**.js",
+    "build:scripts": "node ./node_modules/pegjs/bin/pegjs --export-var EPUBcfi.Parser cfi_grammar/epubcfi.pegjs build-output/epubcfi.js && node node_modules/requirejs/bin/r.js -o build-config/RequireJS_config_single-bundle.js"
   }
-}     
+}
