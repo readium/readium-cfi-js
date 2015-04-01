@@ -206,11 +206,11 @@ scripts:
         &&
         node node_modules/requirejs/bin/r.js
              -o
-             build-config/RequireJS_config_single-bundle.js
+             build-config/RequireJS_config_multiple-bundles.js
         &&
         node node_modules/requirejs/bin/r.js
              -o
-             build-config/RequireJS_config_multiple-bundles.js
+             build-config/RequireJS_config_single-bundle.js
     '
 
 #=====================
