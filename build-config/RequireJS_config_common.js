@@ -29,6 +29,10 @@ require.config({
     
     paths:
     {
+        "epubCfi":
+            process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
+            + '../build-config/epubCfi',
+        
         "readium-cfi-js":
             process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
             + '../build-config/readium-cfi-js',

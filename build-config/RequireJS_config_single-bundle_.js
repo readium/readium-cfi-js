@@ -41,7 +41,7 @@ require.config({
 
     name: "readium-cfi-js_all",
     
-    include: ["readium-cfi-js"],
+    include: ["epubCfi"],
     
     out: "../build-output/_single-bundle/readium-cfi-js_all.js",
     

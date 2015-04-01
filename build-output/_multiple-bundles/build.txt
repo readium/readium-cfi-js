@@ -7,3 +7,4 @@ cfi_instructions.js
 cfi_interpreter.js
 cfi_generator.js
 readium-cfi-js.js
+epubCfi.js
