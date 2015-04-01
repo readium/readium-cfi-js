@@ -41,28 +41,6 @@ require.config({
             process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
             + '../gen/cfi_parser_gen',
         
-        // 'cfi-generator':
-        //     process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
-        //     + 'cfi_generator',
-            
-        // 'cfi-instructions':
-        //     process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
-        //     + 'cfi_instructions',
-            
-        // 'cfi-interpreter':
-        //     process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
-        //     + 'cfi_interpreter',
-            
-        // 'cfi-runtime-errors':
-        //     process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
-        //     + 'cfi_runtime_errors',
-        
-        // // Generated from PegJS! (at build time, prior to this RequireJS build)
-        // 'cfi-parser':
-        //     process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
-        //     + 'cfi_parser',
-        
-        
         // ------ NPM MODULEs
         
         RequireJS:
@@ -80,7 +58,6 @@ require.config({
     {
         'cfi_parser_gen':
         {
-            //deps: ['jquery'],
             exports: 'EPUBcfiParser'
         }
     }
