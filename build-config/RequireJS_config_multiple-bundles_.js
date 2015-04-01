@@ -12,16 +12,13 @@
 //  prior written permission.
 
 require.config({
+    baseUrl: process._readium.baseUrl__readium_cfi_js,
+    
     optimize: "none",
     generateSourceMaps: true,
     preserveLicenseComments: true,
     
-    // Path is relative to this config file
-    dir: process._readium.buildOutputPath + "build-output/_multiple-bundles",
-    
-    // Paths are relative to the above dir
-    packages: [
-    ],
+    dir: "../build-output/_multiple-bundles",
     
     modules:
     [
