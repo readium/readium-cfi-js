@@ -25,28 +25,45 @@ require.config({
     
     inlineText: true,
     
-    // Path is relative to this config file
-    baseUrl: "../js",
+    baseUrl: process._readium.baseUrl__readium_cfi_js,
     
-    // Paths are relative to the above baseUrl
     paths:
     {
-        "readium-cfi-js": '../build-config/readium-cfi-js',
+        "readium-cfi-js":
+            process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
+            + '../build-config/readium-cfi-js',
         
-        'cfi-generator': 'cfi_generator',
-        'cfi-instructions': 'cfi_instructions',
-        'cfi-interpreter': 'cfi_interpreter',
-        'cfi-runtime-errors': 'cfi_runtime_errors',
+        'cfi-generator':
+            process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
+            + 'cfi_generator',
+            
+        'cfi-instructions':
+            process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
+            + 'cfi_instructions',
+            
+        'cfi-interpreter':
+            process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
+            + 'cfi_interpreter',
+            
+        'cfi-runtime-errors':
+            process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
+            + 'cfi_runtime_errors',
         
         // Generated from PegJS! (at build time, prior to this RequireJS build)
-        'cfi-parser': 'cfi_parser',
+        'cfi-parser':
+            process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
+            + 'cfi_parser',
         
         
         // ------ NPM MODULEs
         
-        RequireJS: '../node_modules/requirejs/require',
+        RequireJS:
+            process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
+            + '../node_modules/requirejs/require',
         
-        jquery: '../node_modules/jquery/dist/jquery'
+        jquery:
+            process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
+            + '../node_modules/jquery/dist/jquery'
     },
     
     wrapShim: false,

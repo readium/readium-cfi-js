@@ -12,6 +12,8 @@
 //  prior written permission.
 
 require.config({
+    baseUrl: process._readium.baseUrl__readium_cfi_js,
+    
     stubModules: [],
     
     optimize: "none",
@@ -37,20 +39,20 @@ require.config({
     // },
     */
 
-    name: process._readium.targetName + "_all",
+    name: "readium-cfi-js_all",
     
     include: ["readium-cfi-js"],
     
-    // Path is relative to this config file
-    out: process._readium.buildOutputPath + "build-output/_single-bundle/" + process._readium.targetName + "_all.js",
+    out: "../build-output/_single-bundle/readium-cfi-js_all.js",
     
     insertRequire: ["readium-cfi-js"],
     
-    // Paths are relative to the baseUrl (defined in the common config file)
     packages: [
         {
-            name: process._readium.targetName + "_all",
-            location: '../node_modules/almond',
+            name: "readium-cfi-js_all",
+            location:
+            process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
+            + '../node_modules/almond',
             main: 'almond'
         }
     ]
