@@ -100,15 +100,15 @@ var init = function(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors
 
 
 if (typeof define == 'function' && typeof define.amd == 'object') {
-    console.log("RequireJS ... readium-cfi-js");
+    console.log("RequireJS ... cfi_API");
     
-    define(['cfi_parser', 'cfi_interpreter', 'cfi_instructions', 'cfi_runtime_errors', 'cfi_generator'],
+    define(['./cfi_parser', './cfi_interpreter', './cfi_instructions', './cfi_runtime_errors', './cfi_generator'],
     function (cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator) {
         
         return init(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator);
     });
 } else {
-    console.log("!RequireJS ... readium-cfi-js");
+    console.log("!RequireJS ... cfi_API");
     
     if (!global["EPUBcfi"]) {
         throw new Error("EPUBcfi not initialised on global object?! (window or this context)");

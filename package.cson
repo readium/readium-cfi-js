@@ -202,7 +202,7 @@ scripts:
 
 #=====================
     'build:scripts': '
-        node ./node_modules/pegjs/bin/pegjs --export-var EPUBcfiParser cfi_parser.pegjs js/cfi_parser.js
+        node ./node_modules/pegjs/bin/pegjs --export-var EPUBcfiParser cfi_parser.pegjs gen/cfi_parser_gen.js
         &&
         node node_modules/requirejs/bin/r.js
              -o
