@@ -11,6 +11,6 @@
 //  used to endorse or promote products derived from this software without specific 
 //  prior written permission.
 
-define(["cfi_parser_gen"], function (cfi_parser_gen) {
-return cfi_parser_gen;
+define(['cfi-js'], function (cfi) {
+return cfi;
 });

@@ -49,6 +49,19 @@ require.config({
     
     packages: [
         {
+            name: "cfi-js",
+            location:
+            process._readium.path__readium_cfi_js + "/build-config/"
+            
+            //+ process._readium.baseUrl__readium_cfi_js
+            + "../js"
+            
+            + "/"
+            + '',
+            main: 'cfi_API'
+        },
+        
+        {
             name: "readium-cfi-js_all",
             location:
             process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"

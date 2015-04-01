@@ -29,13 +29,17 @@ require.config({
     
     paths:
     {
-        // "epubCfi":
-        //     process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
-        //     + '../build-config/epubCfi',
+        "readium-cfi-js":
+            process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
+            + '../build-config/readium-cfi-js',
         
-        // "readium-cfi-js":
-        //     process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
-        //     + '../build-config/readium-cfi-js',
+        "epubCfi":
+            process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
+            + '../build-config/epubCfi',
+        
+        "cfi_parser_gen":
+            process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
+            + '../gen/cfi_parser_gen',
         
         // 'cfi-generator':
         //     process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
@@ -70,21 +74,11 @@ require.config({
             + '../node_modules/jquery/dist/jquery'
     },
     
-    packages: [
-        {
-            name: "cfi-js-lib",
-            location:
-            process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
-            + '',
-            main: 'epubCfi'
-        }
-    ],
-    
     wrapShim: false,
 
     shim:
     {
-        'cfi_parser':
+        'cfi_parser_gen':
         {
             //deps: ['jquery'],
             exports: 'EPUBcfiParser'
