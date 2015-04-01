@@ -1875,7 +1875,7 @@ EPUBcfiParser = (function() {
   };
 })();
 
-define("cfi-parser", (function (global) {
+define("cfi_parser", (function (global) {
     return function () {
         var ret, fn;
         return ret || global.EPUBcfiParser;
@@ -11186,7 +11186,7 @@ CFIAssertionError: function (expectedAssertion, targetElementAssertion, message)
 if (typeof define == 'function' && typeof define.amd == 'object') {
     console.log("RequireJS ... cfi_errors");
     
-    define('cfi-runtime-errors',[],
+    define('cfi_runtime_errors',[],
     function () {
         return obj;
     });
@@ -11573,7 +11573,7 @@ return obj;
 if (typeof define == 'function' && typeof define.amd == 'object') {
     console.log("RequireJS ... cfi_instructions");
     
-    define('cfi-instructions',['jquery', 'cfi-runtime-errors'],
+    define('cfi_instructions',['jquery', 'cfi_runtime_errors'],
     function ($, cfiRuntimeErrors) {
         return init($, cfiRuntimeErrors);
     });
@@ -11998,7 +11998,7 @@ return obj;
 if (typeof define == 'function' && typeof define.amd == 'object') {
     console.log("RequireJS ... cfi_interpreter");
     
-    define('cfi-interpreter',['jquery', 'cfi-parser', 'cfi-instructions', 'cfi-runtime-errors'],
+    define('cfi_interpreter',['jquery', 'cfi_parser', 'cfi_instructions', 'cfi_runtime_errors'],
     function ($, cfiParser, cfiInstructions, cfiRuntimeErrors) {
         return init($, cfiParser, cfiInstructions, cfiRuntimeErrors);
     });
@@ -12473,7 +12473,7 @@ return obj;
 if (typeof define == 'function' && typeof define.amd == 'object') {
     console.log("RequireJS ... cfi_generator");
     
-    define('cfi-generator',['jquery', 'cfi-instructions', 'cfi-runtime-errors'],
+    define('cfi_generator',['jquery', 'cfi_instructions', 'cfi_runtime_errors'],
     function ($, cfiInstructions, cfiRuntimeErrors) {
         return init($, cfiInstructions, cfiRuntimeErrors);
     });
@@ -12600,7 +12600,7 @@ var init = function(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors
 if (typeof define == 'function' && typeof define.amd == 'object') {
     console.log("RequireJS ... readium-cfi-js");
     
-    define('readium-cfi-js',['cfi-parser', 'cfi-interpreter', 'cfi-instructions', 'cfi-runtime-errors', 'cfi-generator'],
+    define('readium-cfi-js',['cfi_parser', 'cfi_interpreter', 'cfi_instructions', 'cfi_runtime_errors', 'cfi_generator'],
     function (cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator) {
         
         return init(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator);
@@ -12627,7 +12627,6 @@ if (typeof define == 'function' && typeof define.amd == 'object') {
 })(typeof window !== "undefined" ? window : this);
 
 
-console.log("readium-cfi-js ...");
 //  Copyright (c) 2014 Readium Foundation and/or its licensees. All rights reserved.
 //  
 //  Redistribution and use in source and binary forms, with or without modification, 

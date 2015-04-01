@@ -102,7 +102,7 @@ var init = function(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors
 if (typeof define == 'function' && typeof define.amd == 'object') {
     console.log("RequireJS ... readium-cfi-js");
     
-    define(['cfi-parser', 'cfi-interpreter', 'cfi-instructions', 'cfi-runtime-errors', 'cfi-generator'],
+    define(['cfi_parser', 'cfi_interpreter', 'cfi_instructions', 'cfi_runtime_errors', 'cfi_generator'],
     function (cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator) {
         
         return init(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator);
@@ -128,5 +128,3 @@ if (typeof define == 'function' && typeof define.amd == 'object') {
 
 })(typeof window !== "undefined" ? window : this);
 
-
-console.log("readium-cfi-js ...");

@@ -449,7 +449,7 @@ return obj;
 if (typeof define == 'function' && typeof define.amd == 'object') {
     console.log("RequireJS ... cfi_generator");
     
-    define(['jquery', 'cfi-instructions', 'cfi-runtime-errors'],
+    define(['jquery', 'cfi_instructions', 'cfi_runtime_errors'],
     function ($, cfiInstructions, cfiRuntimeErrors) {
         return init($, cfiInstructions, cfiRuntimeErrors);
     });

@@ -366,7 +366,7 @@ return obj;
 if (typeof define == 'function' && typeof define.amd == 'object') {
     console.log("RequireJS ... cfi_instructions");
     
-    define(['jquery', 'cfi-runtime-errors'],
+    define(['jquery', 'cfi_runtime_errors'],
     function ($, cfiRuntimeErrors) {
         return init($, cfiRuntimeErrors);
     });
