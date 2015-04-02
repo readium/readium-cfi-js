@@ -32,7 +32,7 @@ if (typeof define == 'function' && typeof define.amd == 'object') {
     require(["readium-cfi-js"], function () {
         
     // to access individual feature APIs, via dependency injection (not the global window-attached objects)
-    require(['jquery', 'cfi-js/cfi_parser', 'cfi-js/cfi_interpreter', 'cfi-js/cfi_instructions', 'cfi-js/cfi_runtime_errors', 'cfi-js/cfi_generator'],
+    require(['jquery', 'cfi_parser', 'cfi_interpreter', 'cfi_instructions', 'cfi_runtime_errors', 'cfi_generator'],
     function ($, cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator) {
         
         check(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator);

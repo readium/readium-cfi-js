@@ -11,29 +11,6 @@
 //  used to endorse or promote products derived from this software without specific 
 //  prior written permission.
 
-require.config({
-    baseUrl: process._readium.baseUrl__readium_cfi_js,
-    
-    optimize: "none",
-    generateSourceMaps: true,
-    preserveLicenseComments: true,
-    
-    // relative to this config file (not baseUrl)
-    dir: "../build-output/_multiple-bundles",
-    
-    modules:
-    [
-        {
-            name: "readium-cfi-js",
-            include: ['epubCfi'],
-            exclude: ['jquery'],
-            insertRequire: ["readium-cfi-js"]
-        }
-    ],
-    
-    paths:
-    {
-        RequireJS:
-            process._readium.path__readium_cfi_js + '/node_modules/requirejs/require'
-    }
+define(['cfi_API'], function (cfi) {
+return cfi;
 });

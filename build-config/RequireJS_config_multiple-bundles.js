@@ -14,14 +14,11 @@
 (
 function(thiz){
     
-    //console.log(thiz);
-    console.log(process.cwd());
-    
-    process._readium = {};
-    
-    process._readium.baseUrl__readium_cfi_js = "../gen";
-    
-    process._readium.path__readium_cfi_js = "..";
+    var filePath = process.cwd() + "/build-config/RequireJS_config_bootstrap.js";
+    var fs = nodeRequire("fs");
+    var fileContents = fs.readFileSync(filePath, {encoding: 'utf-8'});    
+    var func = eval("("+fileContents+")");
+    func(thiz);
     
     return true;
 }(this)

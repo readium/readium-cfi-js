@@ -43,30 +43,14 @@ require.config({
     
     include: ["epubCfi"],
     
+    // relative to this config file (not baseUrl)
     out: "../build-output/_single-bundle/readium-cfi-js_all.js",
     
     insertRequire: ["readium-cfi-js"],
     
-    packages: [
-        {
-            name: "cfi-js",
-            location:
-            process._readium.path__readium_cfi_js + "/build-config/"
-            
-            //+ process._readium.baseUrl__readium_cfi_js
-            + "../js"
-            
-            + "/"
-            + '',
-            main: 'cfi_API'
-        },
-        
-        {
-            name: "readium-cfi-js_all",
-            location:
-            process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
-            + '../node_modules/almond',
-            main: 'almond'
-        }
-    ]
+    paths:
+    {
+        "readium-cfi-js_all":
+            process._readium.path__readium_cfi_js + '/node_modules/almond/almond'
+    }
 });
