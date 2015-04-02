@@ -13,6 +13,8 @@
 
 require.config({
     
+    baseUrl: process._RJS_baseUrl(0),
+    
     paths:
     {
         jquery:

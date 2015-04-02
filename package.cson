@@ -213,9 +213,11 @@ scripts:
 #=====================
     'build:scripts': '
         
-        npm run build:scripts:multiple
+        npm run
+            build:scripts:multiple
         &&
-        npm run build:scripts:single
+        npm run
+            build:scripts:single
     '
     
 #=====================
