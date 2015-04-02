@@ -13,42 +13,12 @@
 
 require.config({
     
-    normalizeDirDefines: 'all',
-    
-    onBuildRead: function (moduleName, path, contents) {
-        console.log("onBuildRead: " + moduleName + " -- " + path);
-        
-        return contents;
-    },
-    
-    onBuildWrite: function (moduleName, path, contents) {
-        console.log("onBuildWrite: " + moduleName + " -- " + path);
-        
-        return contents;
-    },
-    
-    //xhtml: true, //document.createElementNS()
-    
-    /* http://requirejs.org/docs/api.html#config-waitSeconds */
-    waitSeconds: 0,
-    
-    removeCombined: true,
-    
-    //findNestedDependencies: true,
-            
-    wrap: false,
-    
-    inlineText: true,
-    
-    baseUrl: process._readium.baseUrl__readium_cfi_js,
-    
     paths:
     {
         jquery:
-            process._readium.path__readium_cfi_js + '/node_modules/jquery/dist/jquery'
+            process._RJS_Path_RelBaseUrl__readium_cfi_js_RootDir
+            + '/node_modules/jquery/dist/jquery'
     },
-    
-    wrapShim: false,
 
     shim:
     {

@@ -5,7 +5,7 @@ var check = function(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeError
         
         function checkAPI(obj, globalName) {
                 
-            if (obj === window.EPUBcfi[globalName]) {
+            if (obj && obj === window.EPUBcfi[globalName]) {
                 console.log("OKAY => EPUBcfi." + globalName);
             } else {
                 console.log("ERROR! => EPUBcfi." + globalName);
