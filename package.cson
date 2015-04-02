@@ -69,6 +69,8 @@ files: [
     
     "build-output/"
     
+    "build-output-usage-example/"
+    
     "license.txt"
     
     "README.md"
