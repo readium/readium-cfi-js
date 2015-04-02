@@ -13,6 +13,8 @@
 
 require.config({
     
+    baseUrl: process._RJS_baseUrl(0),
+    
     // relative to this config file (not baseUrl)
     dir: "../build-output/_multiple-bundles",
     

@@ -21,17 +21,6 @@ function(thiz){
     //console.log(process.env);
 
 
-
-    // relative to process.cwd()
-    process._RJS_Path_RelCwd__CopiedSourcesDir = "/build-output/_SOURCES";
-    
-    // relative to this config file
-    process._RJS_baseUrl = ".." + process._RJS_Path_RelCwd__CopiedSourcesDir;
-    
-    // relative to the above baseUrl (resolved absolute path is equivalent to process.cwd())
-    process._RJS_Path_RelBaseUrl__readium_cfi_js_RootDir = "../..";
-    
-    
     
 
     var args = process.argv.slice(3);
@@ -66,6 +55,33 @@ function(thiz){
     sources = sources.split(',');
     console.log(sources);
 
+
+
+
+
+    // relative to process.cwd()
+    process._RJS_Path_RelCwd__CopiedSourcesDir = "/build-output/_SOURCES";
+    
+    // relative to this config file, points into the above sources folder
+    process._RJS_baseUrl = function(level) {
+        
+        var confDir = process._RJS_Path_RelCwd__ConfigDir;
+        var n = confDir.split('/').length - 1 - level;
+        var back = "..";
+        for (var i = 0; i < n; i++) {
+            back = back + "/..";
+        }
+        console.log(level);
+        console.log(n);
+        console.log(back);
+        return back + process._RJS_Path_RelCwd__CopiedSourcesDir;
+    };
+    
+    // relative to the above baseUrl (resolved absolute path is equivalent to process.cwd())
+    process._RJS_Path_RelBaseUrl__readium_cfi_js_RootDir = "../..";
+    
+    
+
     
     var dest = '';
     
@@ -97,8 +113,6 @@ function(thiz){
 }(this)
 ?
 {
-    baseUrl: process._RJS_baseUrl,
-    
     mainConfigFile: process._RJS_mainConfigFile,
     
     optimize: "none",
