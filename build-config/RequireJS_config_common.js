@@ -17,9 +17,11 @@ require.config({
     
     paths:
     {
+        "readium-cfi-js":
+            '../../build-config/readium-cfi-js',
+        
         jquery:
-            process._RJS_Path_RelBaseUrl__readium_cfi_js_RootDir
-            + '/node_modules/jquery/dist/jquery'
+            '../../node_modules/jquery/dist/jquery'
     },
 
     shim:
