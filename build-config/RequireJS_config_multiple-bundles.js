@@ -31,7 +31,6 @@ require.config({
     paths:
     {
         RequireJS:
-            process._RJS_Path_RelBaseUrl__readium_cfi_js_RootDir
-            + '/node_modules/requirejs/require'
+            process._RJS_rootDir(0) + '/node_modules/requirejs/require'
     }
 });

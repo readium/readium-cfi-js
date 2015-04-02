@@ -33,6 +33,8 @@ function(thiz){
     console.log(configDir);
     process._RJS_Path_RelCwd__ConfigDir = configDir;
     
+    process._RJS_Path_RelCwd__ConfigDir_nSlashes
+        = process._RJS_Path_RelCwd__ConfigDir.split('/').length - 1;
     
      // single or multiple bundle target
     var configBundleType = args[1];
@@ -60,25 +62,39 @@ function(thiz){
 
 
     // relative to process.cwd()
-    process._RJS_Path_RelCwd__CopiedSourcesDir = "/build-output/_SOURCES";
+    var copiedSourcesDir = "/build-output/_SOURCES";
     
-    // relative to this config file, points into the above sources folder
+    // relative to this config file, points into the above sources folder,
+    // which is located at the topmost level (where the build process is invoked from)
     process._RJS_baseUrl = function(level) {
+        var n = process._RJS_Path_RelCwd__ConfigDir_nSlashes - level;
         
-        var confDir = process._RJS_Path_RelCwd__ConfigDir;
-        var n = confDir.split('/').length - 1 - level;
         var back = "..";
         for (var i = 0; i < n; i++) {
             back = back + "/..";
         }
-        console.log(level);
-        console.log(n);
-        console.log(back);
-        return back + process._RJS_Path_RelCwd__CopiedSourcesDir;
+        // console.log(level);
+        // console.log(n);
+        // console.log(back);
+        return back + copiedSourcesDir;
     };
     
-    // relative to the above baseUrl (resolved absolute path is equivalent to process.cwd())
-    process._RJS_Path_RelBaseUrl__readium_cfi_js_RootDir = "../..";
+    // relative to the above baseUrl,
+    // which is located at the topmost level (where the build process is invoked from)
+    process._RJS_rootDir = function(level) {
+        var n = process._RJS_Path_RelCwd__ConfigDir_nSlashes - level;
+        
+        var folderPath = process._RJS_Path_RelCwd__ConfigDir.split('/');
+        
+        var forward = "";
+        for (var i = 0; i < n; i++) {
+            forward = forward + '/' + folderPath[i];
+        }
+        // console.log(level);
+        // console.log(n);
+        // console.log(forward);
+        return "../.." + forward;
+    };
     
     
 
@@ -93,12 +109,13 @@ function(thiz){
     var regExpFilter= /\w/;
     var onlyCopyNew = false;
 
-    var destDir = process.cwd() + process._RJS_Path_RelCwd__CopiedSourcesDir + (dest ? dest : '');
+    var destDir = process.cwd() + copiedSourcesDir + (dest ? dest : '');
     console.log("========> copySources");
     console.log(destDir);
     
     for (var i = 0; i < sources.length; i++) {
         var source = sources[i];
+        console.log(source);
         
         var srcDir = process.cwd() + source;
 
