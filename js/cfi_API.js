@@ -15,6 +15,26 @@
 
 var init = function(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator) {
     
+    if (typeof cfiParser === "undefined") {
+        throw new Error("UNDEFINED?! cfiParser");
+    }
+    
+    if (typeof cfiInterpreter === "undefined") {
+        throw new Error("UNDEFINED?! cfiInterpreter");
+    }
+    
+    if (typeof cfiInstructions === "undefined") {
+        throw new Error("UNDEFINED?! cfiInstructions");
+    }
+    
+    if (typeof cfiRuntimeErrors === "undefined") {
+        throw new Error("UNDEFINED?! cfiRuntimeErrors");
+    }
+    
+    if (typeof cfiGenerator === "undefined") {
+        throw new Error("UNDEFINED?! cfiGenerator");
+    }
+    
     var obj = {
     
         getContentDocHref : function (CFI, packageDocument) {

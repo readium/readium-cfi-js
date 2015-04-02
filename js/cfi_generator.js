@@ -15,6 +15,14 @@
 
 var init = function($, cfiInstructions, cfiRuntimeErrors) {
     
+    if (typeof cfiInstructions === "undefined") {
+        throw new Error("UNDEFINED?! cfiInstructions");
+    }
+    
+    if (typeof cfiRuntimeErrors === "undefined") {
+        throw new Error("UNDEFINED?! cfiRuntimeErrors");
+    }
+    
 var obj = {
 
     // ------------------------------------------------------------------------------------ //

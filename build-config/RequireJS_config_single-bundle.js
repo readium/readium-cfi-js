@@ -11,47 +11,21 @@
 //  used to endorse or promote products derived from this software without specific 
 //  prior written permission.
 
-(
-function(thiz){
+require.config({
     
-    var filePath = process.cwd() + "/build-config/RequireJS_config_bootstrap.js";
-    var fs = nodeRequire("fs");
-    var fileContents = fs.readFileSync(filePath, {encoding: 'utf-8'});    
-    var func = eval("("+fileContents+")");
-    func(thiz);
+    name: "readium-cfi-js_all",
     
-    return true;
-}(this)
-?
-{
-    baseUrl: process._readium.baseUrl__readium_cfi_js,
+    include: ["epubCfi"],
     
-    mainConfigFile: [
-    "RequireJS_config_single-bundle_.js",
-    "RequireJS_config_common.js"
-    ],
+    // relative to this config file (not baseUrl)
+    out: "../build-output/_single-bundle/readium-cfi-js_all.js",
     
-    // MUST be in root config file because of access to context-dependent 'config'
-    onModuleBundleComplete: function(data) {
-        
-        //console.log(process.cwd());
-        var filePath = process.cwd() + "/build-config/RequireJS_config_single-bundle_onModuleBundleComplete.js";
-        
-        var fs = nodeRequire("fs");
-        fs.readFile(
-            filePath,
-            {encoding: 'utf-8'},
-            function(err, fileContents) {
-                if (!err) {
-                    var func = eval("("+fileContents+")");
-                    return func(data);
-                } else {
-                    console.log(err);
-                }
-            }
-        );
+    insertRequire: ["readium-cfi-js"],
+    
+    paths:
+    {
+        "readium-cfi-js_all":
+            process._RJS_Path_RelBaseUrl__readium_cfi_js_RootDir
+            + '/node_modules/almond/almond'
     }
-}
-:
-function(){console.log("NOOP");return {};}()
-)
+});

@@ -1,6 +1,10 @@
 <html>
 <head>
 <script src="http://localhost:9091"> </script> 
+
+<script type="text/javascript" src="../build-output/_single-bundle/readium-cfi-js_all.js"> </script>
+
+<script type="text/javascript" src="./index.js"> </script>
 </head>
 <body>
   <!-- The scripts need to be at the end of body, so that some test running frameworks
@@ -43,8 +47,6 @@
 <script type="text/javascript" src="../node_modules/karma-jasmine/lib/boot.js"></script>
 <script type="text/javascript" src="../node_modules/karma-jasmine/lib/adapter.js"></script>
 
-<script type="text/javascript" src="../build-output/_single-bundle/readium-cfi-js_all.js"></script>
-
 <script type="text/javascript" src="../tests/spec/helpers/jasmine-jquery.js"></script>
 <script type="text/javascript" src="index_tests_jasmine-jquery.js"></script>
 
@@ -56,7 +58,9 @@
 <script type="text/javascript" src="../tests/spec/karma-loaded.js"></script>
 
   <script type="text/javascript">
+  setTimeout(function() {
     window.__karma__.loaded();
+  }, 1000);
   </script>
   
 </body>

@@ -15,6 +15,18 @@
 
 var init = function($, cfiParser, cfiInstructions, cfiRuntimeErrors) {
     
+    if (typeof cfiParser === "undefined") {
+        throw new Error("UNDEFINED?! cfiParser");
+    }
+    
+    if (typeof cfiInstructions === "undefined") {
+        throw new Error("UNDEFINED?! cfiInstructions");
+    }
+    
+    if (typeof cfiRuntimeErrors === "undefined") {
+        throw new Error("UNDEFINED?! cfiRuntimeErrors");
+    }
+    
 var obj = {
 
 // Description: This is an interpreter that inteprets an Abstract Syntax Tree (AST) for a CFI. The result of executing the interpreter
