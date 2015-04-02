@@ -148,11 +148,9 @@ scripts:
 
 #=====================
     'prepare': '
-        
+        npm run
+            prepare:dependencies
     '
-#        &&
-#        npm run
-#            prepare:dependencies
             
 #=====================
     'prepare:dependencies': '
@@ -201,13 +199,39 @@ scripts:
 #    '
 
 #=====================
+    'prebuild:scripts': '
+    
+        npm run build:scripts:peg
+    '
+    
+#=====================
+    'postbuild:scripts': '
+    
+        rimraf build-output/_SOURCES
+    '
+
+#=====================
     'build:scripts': '
-        node ./node_modules/pegjs/bin/pegjs --export-var EPUBcfiParser cfi_parser.pegjs gen/cfi_parser_gen.js
+        
+        npm run build:scripts:multiple
         &&
+        npm run build:scripts:single
+    '
+    
+#=====================
+    'build:scripts:peg': '
+        node ./node_modules/pegjs/bin/pegjs --export-var EPUBcfiParser cfi_parser.pegjs gen/cfi_parser_gen.js
+    '
+
+#=====================
+    'build:scripts:multiple': '
         node node_modules/requirejs/bin/r.js
              -o
              build-config/RequireJS_config_multiple-bundles.js
-        &&
+    '
+
+#=====================
+    'build:scripts:single': '
         node node_modules/requirejs/bin/r.js
              -o
              build-config/RequireJS_config_single-bundle.js

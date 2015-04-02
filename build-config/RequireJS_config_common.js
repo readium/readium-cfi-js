@@ -12,6 +12,21 @@
 //  prior written permission.
 
 require.config({
+    
+    normalizeDirDefines: 'all',
+    
+    onBuildRead: function (moduleName, path, contents) {
+        console.log("onBuildRead: " + moduleName + " -- " + path);
+        
+        return contents;
+    },
+    
+    onBuildWrite: function (moduleName, path, contents) {
+        console.log("onBuildWrite: " + moduleName + " -- " + path);
+        
+        return contents;
+    },
+    
     //xhtml: true, //document.createElementNS()
     
     /* http://requirejs.org/docs/api.html#config-waitSeconds */
@@ -29,27 +44,8 @@ require.config({
     
     paths:
     {
-        "readium-cfi-js":
-            process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
-            + '../build-config/readium-cfi-js',
-        
-        "epubCfi":
-            process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
-            + '../build-config/epubCfi',
-        
-        "cfi_parser_gen":
-            process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
-            + '../gen/cfi_parser_gen',
-        
-        // ------ NPM MODULEs
-        
-        RequireJS:
-            process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
-            + '../node_modules/requirejs/require',
-        
         jquery:
-            process._readium.path__readium_cfi_js + "/build-config/" + process._readium.baseUrl__readium_cfi_js + "/"
-            + '../node_modules/jquery/dist/jquery'
+            process._readium.path__readium_cfi_js + '/node_modules/jquery/dist/jquery'
     },
     
     wrapShim: false,

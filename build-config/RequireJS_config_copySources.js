@@ -11,6 +11,25 @@
 //  used to endorse or promote products derived from this software without specific 
 //  prior written permission.
 
-define(['cfi-js'], function (cfi) {
-return cfi;
-});
+function(sources, dest) {
+    console.log("========> copySources");
+    console.log(sources);
+
+    var req = requirejs({
+        context: 'build'
+    });
+    var nodeFile = req('node/file');
+    
+    var regExpFilter= /\w/;
+    var onlyCopyNew = false;
+
+    var destDir = process.cwd() + process._readium.path__SOURCES + (dest ? dest : '');
+
+    for (var i = 0; i < sources.length; i++) {
+        var source = sources[i];
+        
+        var srcDir = process.cwd() + source;
+
+        nodeFile.copyDir(srcDir, destDir, regExpFilter, onlyCopyNew);
+    }
+}
