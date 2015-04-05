@@ -5,7 +5,7 @@
   "._": "as this would overwrite / update the JSON, not the master CSON!",
   "*/": "----------------------------------------------------------------------------",
   "name": "readium-cfi-js",
-  "version": "0.0.0",
+  "version": "0.17.0",
   "description": "Readium - CFI javascript library",
   "keywords": [
     "readium",
@@ -35,6 +35,7 @@
   },
   "files": [
     "build-output/",
+    "build-output-usage-example/",
     "license.txt",
     "README.md"
   ],
