@@ -12,6 +12,8 @@ for (var repoName in repoNamePaths) {
         branch: "??",
         version: "??",
         chromeVersion: "??",
+        timestamp: "??",
+        release: "??",
         path: repoNamePaths[repoName]
     };
 }
@@ -143,7 +145,11 @@ var nextRepo = function(i) {
                             console.log("Branch: " + branch);
                             
                             repoVersions[repos[i].name].branch = branch;
-
+                            
+                            repoVersions[repos[i].name].release = branch ? branch.indexOf('release/') == 0 : false,
+                            
+                            repoVersions[repos[i].name].timestamp = Date.now();
+                            
                             if (repoVersions[repos[i].name].sha !== sha) {
                                 console.log("Different SHA?! " + sha);
                             }
