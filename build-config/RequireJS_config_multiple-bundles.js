@@ -28,6 +28,8 @@ require.config({
         }
     ],
     
+    stubModules: [],
+    
     paths:
     {
         RequireJS:
