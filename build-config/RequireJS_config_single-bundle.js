@@ -24,6 +24,8 @@ require.config({
     
     insertRequire: ["readium-cfi-js"],
     
+    stubModules: ['text'],
+    
     paths:
     {
         "readium-cfi-js_all":

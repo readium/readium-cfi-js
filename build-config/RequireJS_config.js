@@ -156,7 +156,6 @@ function(thiz){
     */
 
     inlineText: true,
-    stubModules: [],
     
     //xhtml: true, //document.createElementNS()
     
