@@ -36,26 +36,73 @@ function(thiz){
     process._RJS_Path_RelCwd__ConfigDir_nSlashes
         = process._RJS_Path_RelCwd__ConfigDir.split('/').length - 1;
     
-     // single or multiple bundle target
-    var configBundleType = args[1];
-    configBundleType = configBundleType.substr("--rjs_bundle=".length);
-    console.log(configBundleType);
-    process._RJS_isSingleBundle = (configBundleType === "single" ? true : false);
+    var mainConfigFile = [];
+    
+    for (var k = 1; k < args.length; k++) {
+        var parameter = args[k];
+        
+        var token = "--rjs_bundle=";
+        if (parameter.indexOf(token) == 0) {
+                    
+             // single or multiple bundle target
+            var configBundleType = parameter;
+            configBundleType = configBundleType.substr(token.length);
+            console.log(configBundleType);
+            process._RJS_isSingleBundle = (configBundleType === "single" ? true : false);
+        }
+        
+        token = "--rjs_mainConfigFile=";
+        if (parameter.indexOf(token) == 0) {
+                            
+            // relative to this config file, array of mainConfigFile(s)
+            mainConfigFile = parameter;
+            mainConfigFile = mainConfigFile.substr(token.length);
+            mainConfigFile = mainConfigFile.split(',');
+            console.log(mainConfigFile);
+            process._RJS_mainConfigFile = mainConfigFile;
+        }
+        
+        token = "--rjs_configCustomTarget=";
+        if (parameter.indexOf(token) == 0) {
+
+            var configCustomTarget = parameter;
+            configCustomTarget = configCustomTarget.substr(token.length);
+            console.log(configCustomTarget);
+        }
+        
+        token = "--rjs_sources=";
+        if (parameter.indexOf(token) == 0) {
+
+            // relative to process.cwd(), array of source folders
+            var sources = parameter;
+            sources = sources.substr(token.length);
+            sources = sources.split(',');
+            console.log(sources);
+        }
+    }
     
     
-    // relative to this config file, array of mainConfigFile(s)
-    var mainConfigFile = args[2];
-    mainConfigFile = mainConfigFile.substr("--rjs_mainConfigFile=".length);
-    mainConfigFile = mainConfigFile.split(',');
-    console.log(mainConfigFile);
-    process._RJS_mainConfigFile = mainConfigFile;
-
-
-    // relative to process.cwd(), array of source folders
-    var sources = args[3];
-    sources = sources.substr("--rjs_sources=".length);
-    sources = sources.split(',');
-    console.log(sources);
+    
+    if (!mainConfigFile.length) {
+        
+        
+        var N = process._RJS_Path_RelCwd__ConfigDir_nSlashes + 1;
+        for (var i = 0; i < N; i++) {
+            var pathPrefix = "";
+        
+            for (var j = 0; j < i; j++) {
+                pathPrefix = pathPrefix + "../";
+            }
+            pathPrefix = pathPrefix + "../build-config/";
+        
+            mainConfigFile.push(pathPrefix + "RequireJS_config_" + (process._RJS_isSingleBundle ? "single-bundle" : "multiple-bundles") + (configCustomTarget ? configCustomTarget : "") + ".js");
+            
+            mainConfigFile.push(pathPrefix + "RequireJS_config_common.js");
+        }
+        
+        console.log(mainConfigFile);
+        process._RJS_mainConfigFile = mainConfigFile;
+    }
 
 
 
