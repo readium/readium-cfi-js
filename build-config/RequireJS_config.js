@@ -95,7 +95,7 @@ function(thiz){
             }
             pathPrefix = pathPrefix + "../build-config/";
         
-            mainConfigFile.push(pathPrefix + "RequireJS_config_" + (process._RJS_isSingleBundle ? "single-bundle" : "multiple-bundles") + (configCustomTarget ? configCustomTarget : "") + ".js");
+            mainConfigFile.push(pathPrefix + "RequireJS_config_" + (process._RJS_isSingleBundle ? "single-bundle" : "multiple-bundles") + ((i == N-1) && configCustomTarget ? configCustomTarget : "") + ".js");
             
             mainConfigFile.push(pathPrefix + "RequireJS_config_common.js");
         }
