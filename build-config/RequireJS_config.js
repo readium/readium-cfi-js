@@ -36,7 +36,8 @@ function(thiz){
     process._RJS_Path_RelCwd__ConfigDir_nSlashes
         = process._RJS_Path_RelCwd__ConfigDir.split('/').length - 1;
     
-    var mainConfigFile = [];
+    
+    var configCustomTarget = undefined;
     
     for (var k = 1; k < args.length; k++) {
         var parameter = args[k];
@@ -51,66 +52,88 @@ function(thiz){
             process._RJS_isSingleBundle = (configBundleType === "single" ? true : false);
         }
         
-        token = "--rjs_mainConfigFile=";
-        if (parameter.indexOf(token) == 0) {
-                            
-            // relative to this config file, array of mainConfigFile(s)
-            mainConfigFile = parameter;
-            mainConfigFile = mainConfigFile.substr(token.length);
-            mainConfigFile = mainConfigFile.split(',');
-            console.log(mainConfigFile);
-            process._RJS_mainConfigFile = mainConfigFile;
-        }
-        
         token = "--rjs_configCustomTarget=";
         if (parameter.indexOf(token) == 0) {
 
-            var configCustomTarget = parameter;
+            configCustomTarget = parameter;
             configCustomTarget = configCustomTarget.substr(token.length);
             console.log(configCustomTarget);
         }
         
-        token = "--rjs_sources=";
-        if (parameter.indexOf(token) == 0) {
+        // token = "--rjs_mainConfigFile=";
+        // if (parameter.indexOf(token) == 0) {
+                            
+            // // relative to this config file, array of mainConfigFile(s)
+            // mainConfigFile = parameter;
+            // mainConfigFile = mainConfigFile.substr(token.length);
+            // mainConfigFile = mainConfigFile.split(',');
+            // console.log(mainConfigFile);
+            // process._RJS_mainConfigFile = mainConfigFile;
+        // }
+        
+        // token = "--rjs_sources=";
+        // if (parameter.indexOf(token) == 0) {
 
-            // relative to process.cwd(), array of source folders
-            var sources = parameter;
-            sources = sources.substr(token.length);
-            sources = sources.split(',');
-            console.log(sources);
-        }
+            // // relative to process.cwd(), array of source folders
+            // sources = parameter;
+            // sources = sources.substr(token.length);
+            // sources = sources.split(',');
+            // console.log(sources);
+        // }
     }
     
-    
-    
-    if (!mainConfigFile.length) {
-        
-        
-        var N = process._RJS_Path_RelCwd__ConfigDir_nSlashes + 1;
-        for (var i = 0; i < N; i++) {
-            var pathPrefix = "";
-        
-            for (var j = 0; j < i; j++) {
-                pathPrefix = pathPrefix + "../";
-            }
-            pathPrefix = pathPrefix + "../build-config/";
-        
-            mainConfigFile.push(pathPrefix + "RequireJS_config_" + (process._RJS_isSingleBundle ? "single-bundle" : "multiple-bundles") + ((i == N-1) && configCustomTarget ? configCustomTarget : "") + ".js");
-            
-            mainConfigFile.push(pathPrefix + "RequireJS_config_common.js");
-        }
-        
-        console.log(mainConfigFile);
-        process._RJS_mainConfigFile = mainConfigFile;
-    }
-
-
-
-
-
     // relative to process.cwd()
     var copiedSourcesDir = "/build-output/_SOURCES";
     
+    var fs = nodeRequire("fs");
+    
+    var req = requirejs({
+        context: 'build'
+    });
+    var nodeFile = req('node/file');
+    
+    var regExpFilter= /\w/;
+    var onlyCopyNew = false;
+
+    var destDir = process.cwd() + copiedSourcesDir;
+    console.log("===> Destination source folder: " + destDir);
+    
+    var mainConfigFile = [];
+    
+    var N = process._RJS_Path_RelCwd__ConfigDir_nSlashes + 1;
+    for (var i = 0; i < N; i++) {
+        var pathPrefix = "";
+    
+        for (var j = 0; j < i; j++) {
+            pathPrefix = pathPrefix + "../";
+        }
+        pathPrefix = pathPrefix + "../build-config/";
+    
+        mainConfigFile.push(pathPrefix + "RequireJS_config_" + (process._RJS_isSingleBundle ? "single-bundle" : "multiple-bundles") + ((i == N-1) && configCustomTarget ? configCustomTarget : "") + ".js");
+        
+        mainConfigFile.push(pathPrefix + "RequireJS_config_common.js");
+        
+        var sourcesJsonPath = process.cwd() + "/" + process._RJS_Path_RelCwd__ConfigDir + "/" + pathPrefix + "RequireJS_sources.json";
+        console.log(sourcesJsonPath);
+        
+        var sourcesJson = fs.readFileSync(
+            sourcesJsonPath,
+            {encoding: 'utf-8'});
+        var sources = JSON.parse(sourcesJson).sourceDirsToCopy;
+        for (var k = 0; k < sources.length; k++) {
+            var srcDir = sources[k];
+            srcDir = process.cwd() + "/" + process._RJS_Path_RelCwd__ConfigDir + "/" + pathPrefix + srcDir;
+            console.log("... Copying directory contents: " + srcDir);
+            
+            nodeFile.copyDir(srcDir, destDir, regExpFilter, onlyCopyNew);
+        }
+    }
+    
+    console.log(mainConfigFile);
+    process._RJS_mainConfigFile = mainConfigFile;
+
+
+
     // relative to this config file, points into the above sources folder,
     // which is located at the topmost level (where the build process is invoked from)
     process._RJS_baseUrl = function(level) {
@@ -145,31 +168,6 @@ function(thiz){
     
     
 
-    
-    var dest = '';
-    
-    var req = requirejs({
-        context: 'build'
-    });
-    var nodeFile = req('node/file');
-    
-    var regExpFilter= /\w/;
-    var onlyCopyNew = false;
-
-    var destDir = process.cwd() + copiedSourcesDir + (dest ? dest : '');
-    console.log("========> copySources");
-    console.log(destDir);
-    
-    for (var i = 0; i < sources.length; i++) {
-        var source = sources[i];
-        console.log(source);
-        
-        var srcDir = process.cwd() + source;
-
-        nodeFile.copyDir(srcDir, destDir, regExpFilter, onlyCopyNew);
-    }
-    
-    
     //process.exit(1);
     //throw new Error("HALT");
     

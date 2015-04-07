@@ -233,7 +233,6 @@ scripts:
              -o
              build-config/RequireJS_config.js
              --rjs_bundle=multiple
-             \"--rjs_sources=/gen,/js\"
     '
 
 #=====================
@@ -242,7 +241,6 @@ scripts:
              -o
              build-config/RequireJS_config.js
              --rjs_bundle=single
-             \"--rjs_sources=/gen,/js\"
     '
 
 #=====================
