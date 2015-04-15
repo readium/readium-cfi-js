@@ -132,7 +132,7 @@ EPUBcfi.CFIInstructions = {
 
 	retrieveItemRefHref : function ($itemRefElement, $packageDocument) {
 
-		return $("#" + $itemRefElement.attr("idref"), $packageDocument).attr("href");
+               return $("#" + $itemRefElement.attr("idref").replace('.', '\\.'), $packageDocument).attr("href");
 	},
 
 	indexOutOfRange : function (targetIndex, numChildElements) {
