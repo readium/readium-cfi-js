@@ -31,11 +31,14 @@
     var CFIAssertionError = EPUBcfi.CFIAssertionError;
     EPUBcfi = {
 
+        getBlacklist: function () {
+            return blacklist.getBlacklist();
+        },
         setBlacklist: function (obj) {
             return blacklist.setBlacklist(obj);
         },
-        getBlacklist: function () {
-            return blacklist.getBlacklist();
+        appendBlacklist: function (obj) {
+            return blacklist.appendBlacklist(obj);
         },
         getContentDocHref: function (CFI, packageDocument) {
             return interpreter.getContentDocHref(CFI, packageDocument);
