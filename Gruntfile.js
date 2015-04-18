@@ -21,12 +21,13 @@ module.exports = function(grunt) {
                       'cfi_interpreter' : fs.readFileSync('src/models/cfi_instructions.js', {encoding:'utf8'}),
                       'cfi_instructions' : fs.readFileSync('src/models/cfi_interpreter.js', {encoding:'utf8'}),
                       'cfi_generator' : fs.readFileSync('src/models/cfi_generator.js', {encoding:'utf8'}),
+                      'cfi_blacklist' : fs.readFileSync('src/models/cfi_blacklist.js', {encoding:'utf8'}),
                       'runtime_errors' : fs.readFileSync('src/models/runtime_errors.js', {encoding:'utf8'})
                   }
               },
               files: {
                   'dist/epub_cfi.js': ['src/templates/cfi_library_template.js.erb'],
-                  'spec/javascripts/vendor/epub_cfi.js': ['src/templates/cfi_library_test_template.js.erb'],
+                  'spec/javascripts/vendor/epub_cfi.js': ['src/templates/cfi_library_template.js.erb']
               }
           }
       },

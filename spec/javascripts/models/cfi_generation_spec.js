@@ -423,9 +423,7 @@ describe("CFI GENERATOR", function () {
                     $startElement[0], 
                     0,
                     $endElement[0],
-                    1,
-                    ["cfi-marker"]
-
+                    1
                 );
                 expect(generatedCFI).toEqual("/4/2[startParent],/1:0,/1:1");
                 
@@ -435,9 +433,7 @@ describe("CFI GENERATOR", function () {
                     $startElement[0], 
                     1,
                     $endElement[0],
-                    2,
-                    ["cfi-marker"]
-
+                    2
                 );
                 expect(generatedCFI).toEqual("/4/2[startParent],/1:1,/1:2");
                 
@@ -447,9 +443,7 @@ describe("CFI GENERATOR", function () {
                     $startElement[0], 
                     2,
                     $endElement[0],
-                    4,
-                    ["cfi-marker"]
-
+                    4
                 );
                 expect(generatedCFI).toEqual("/4/2[startParent],/1:2,/1:4");
             });
@@ -486,6 +480,8 @@ describe("CFI GENERATOR", function () {
 
             it("generates offsets with the same parent element and a blacklist element", function () {
 
+                EPUBcfi.setBlacklist({classBlacklist: ["cfi-marker"]});
+
                 var dom = 
                     "<html>"
                     +    "<div></div>"
@@ -508,15 +504,17 @@ describe("CFI GENERATOR", function () {
                     $startElement[0], 
                     0,
                     $endElement[0],
-                    3,
-                    ["cfi-marker"]
-
+                    3
                 );
 
                 expect(generatedCFI).toEqual("/4/2[startParent],/1:5,/1:8");
+
+                EPUBcfi.setBlacklist(null);
             });
 
             it("generates offsets with the same parent element and a blacklist element #2", function () {
+
+                EPUBcfi.setBlacklist({classBlacklist: ["cfi-marker"]});
 
                 var dom = 
                     "<html>"
@@ -540,15 +538,17 @@ describe("CFI GENERATOR", function () {
                     $startElement[0], 
                     0,
                     $endElement[0],
-                    2,
-                    ["cfi-marker"]
-
+                    2
                 );
 
                 expect(generatedCFI).toEqual("/4/2[startParent],/1:6,/1:8");
+
+                EPUBcfi.setBlacklist(null);
             });
 
             it("generates offsets with the same parent element and two blacklist elements", function () {
+
+                EPUBcfi.setBlacklist({classBlacklist: ["cfi-marker"]});
 
                 var dom = 
                     "<html>"
@@ -567,12 +567,12 @@ describe("CFI GENERATOR", function () {
                     $startElement[0], 
                     0,
                     $endElement[0],
-                    4,
-                    ["cfi-marker"]
-
+                    4
                 );
 
                 expect(generatedCFI).toEqual("/4/2[startParent],/1:14,/1:18");
+
+                EPUBcfi.setBlacklist(null);
             });
 
         });
@@ -605,6 +605,8 @@ describe("CFI GENERATOR", function () {
 
         it("can infer the presence of a single node from multiple adjacent nodes", function () {
 
+            EPUBcfi.setBlacklist({classBlacklist: ["cfi-marker"]});
+
             var dom = 
                 "<html>"
                 +    "<div></div>"
@@ -625,10 +627,12 @@ describe("CFI GENERATOR", function () {
                 + "</html>";
             var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
             var $startNode = $($('#startParent', $dom).contents()[5]);
-            var textTerminus = EPUBcfi.Generator.createCFITextNodeStep($startNode, 3, ["cfi-marker"]);
-            var generatedCFI = EPUBcfi.Generator.createCFIElementSteps($startNode.parent(), "html", ["cfi-marker"]) + textTerminus;
+            var textTerminus = EPUBcfi.Generator.createCFITextNodeStep($startNode, 3);
+            var generatedCFI = EPUBcfi.Generator.createCFIElementSteps($startNode.parent(), "html") + textTerminus;
 
             expect(generatedCFI).toEqual("!/4/2[startParent]/3:25"); // [ te,xtn]
+
+            EPUBcfi.setBlacklist(null);
         });
 
         it("can generate a package document CFI with the spine index", function () {
