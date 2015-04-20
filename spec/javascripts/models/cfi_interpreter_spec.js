@@ -1,6 +1,7 @@
 
 describe('CFI INTERPRETER OBJECT', function () {
 
+
     var CFI;
     var CFIAST;
     var $packageDocument;
@@ -37,6 +38,9 @@ describe('CFI INTERPRETER OBJECT', function () {
     });
 
     it('can inject into a node containing comments', function () {
+
+        EPUBcfi.Blacklist.setBlacklist({classBlacklist:["cfi-marker"]});
+
         var dom = 
             "<html>"
             +    "<div></div>"
@@ -57,16 +61,19 @@ describe('CFI INTERPRETER OBJECT', function () {
             CFI, 
             $dom, 
             "<span id='start' class='cfi-marker'></span>", 
-            "<span id='end' class='cfi-marker'></span>",
-            ["cfi-marker"]
+            "<span id='end' class='cfi-marker'></span>"
             );
 
         var result = $($($($dom.contents()).contents()[1]).contents()).contents()[3];
         expect(result.data).toEqual("text2");
 
+        EPUBcfi.Blacklist.setBlacklist(null);
     });
 
     it('can inject into a node containing processing instructions', function () {
+
+        EPUBcfi.Blacklist.setBlacklist({classBlacklist:["cfi-marker"]});
+
         var dom = 
             "<html>"
             +    "<div></div>"
@@ -87,16 +94,19 @@ describe('CFI INTERPRETER OBJECT', function () {
             CFI, 
             $dom, 
             "<span id='start' class='cfi-marker'></span>", 
-            "<span id='end' class='cfi-marker'></span>",
-            ["cfi-marker"]
+            "<span id='end' class='cfi-marker'></span>"
             );
 
         var result = $($($($dom.contents()).contents()[1]).contents()).contents()[3];
         expect(result.data).toEqual("text2");
 
+        EPUBcfi.Blacklist.setBlacklist(null);
     });
 
     it('can inject into a node containing processing instructions and comments', function () {
+
+        EPUBcfi.Blacklist.setBlacklist({classBlacklist:["cfi-marker"]});
+
         var dom = 
             "<html>"
             +    "<div></div>"
@@ -118,16 +128,20 @@ describe('CFI INTERPRETER OBJECT', function () {
             CFI, 
             $dom, 
             "<span id='start' class='cfi-marker'></span>", 
-            "<span id='end' class='cfi-marker'></span>",
-            ["cfi-marker"]
+            "<span id='end' class='cfi-marker'></span>"
             );
 
         var result = $($($($dom.contents()).contents()[1]).contents()).contents()[4];
 
         expect(result.data).toEqual("text2");
+
+        EPUBcfi.Blacklist.setBlacklist(null);
     });
 
     it('can inject into previously injected text node (dmitry)', function () {
+
+        EPUBcfi.Blacklist.setBlacklist({classBlacklist:["cfi-marker"]});
+
         var dom = 
             "<html>"
             +    "<div></div>"
@@ -151,34 +165,47 @@ describe('CFI INTERPRETER OBJECT', function () {
             CFI, 
             $dom, 
             "<span id='start' class='cfi-marker'></span>", 
-            "<span id='end' class='cfi-marker'></span>",
-            ["cfi-marker"]
+            "<span id='end' class='cfi-marker'></span>"
             );
 
 
         var result = $($($($dom.contents()).contents()[1]).contents()).contents()[6];
         expect(result.data).toEqual("6");
 
+        EPUBcfi.Blacklist.setBlacklist(null);
     });
 
     it ('can inject a marker properly (dmitry)', function() {
-        var $currNode = $('<div>0<div class="cfiMarker"></div>12345<div class="cfiMarker"></div>6789</div>');
-        var $targetTextNodeList = EPUBcfi.CFIInstructions.getNextNode(1, $currNode, ["cfiMarker"], []);
+
+        EPUBcfi.Blacklist.setBlacklist({classBlacklist:["cfi-marker"]});
+
+        var $currNode = $('<div>0<div class="cfi-marker"></div>12345<div class="cfi-marker"></div>6789</div>');
+        var $targetTextNodeList = EPUBcfi.CFIInstructions.getNextNode(1, $currNode);
 
         var injectedNode = EPUBcfi.CFIInstructions.injectCFIMarkerIntoText($targetTextNodeList, 6, "<span id='start' class='cfi-marker'></span>");
         expect(injectedNode.parent().contents()[5].nodeValue).toBe("6789");
+
+        EPUBcfi.Blacklist.setBlacklist(null);
     });
 
     it ('can inject a marker properly #2 (dmitry)', function() {
-        var $currNode = $('<div>012<div class="cfiMarker"></div>34<div class="cfiMarker"></div>56789</div>');
-        var $targetTextNodeList = EPUBcfi.CFIInstructions.getNextNode(1, $currNode, ["cfiMarker"], []);
+
+        EPUBcfi.Blacklist.setBlacklist({classBlacklist:["cfi-marker"]});
+
+        var $currNode = $('<div>012<div class="cfi-marker"></div>34<div class="cfi-marker"></div>56789</div>');
+        var $targetTextNodeList = EPUBcfi.CFIInstructions.getNextNode(1, $currNode);
 
         var injectedNode = EPUBcfi.CFIInstructions.injectCFIMarkerIntoText($targetTextNodeList, 6, "<span id='start' class='cfi-marker'></span>");
         expect(injectedNode.parent().contents()[4].nodeValue).toBe("5");
+
+        EPUBcfi.Blacklist.setBlacklist(null);
     });
 
 
     it('can inject into a node with a period in the id', function () {
+
+        EPUBcfi.Blacklist.setBlacklist({classBlacklist:["cfi-marker"]});
+
         var dom = 
             "<html>"
             +    "<div></div>"
@@ -202,18 +229,20 @@ describe('CFI INTERPRETER OBJECT', function () {
             CFI, 
             $dom, 
             "<span id='start' class='cfi-marker'></span>", 
-            "<span id='end' class='cfi-marker'></span>",
-            ["cfi-marker"]
+            "<span id='end' class='cfi-marker'></span>"
             );
 
         var result = $($($($dom.contents()).contents()[1]).contents()).contents()[5];
         expect(result.data).toEqual("67");
 
+        EPUBcfi.Blacklist.setBlacklist(null);
     });
 
 
-
     it('can inject into previously injected text node #2', function () {
+
+        EPUBcfi.Blacklist.setBlacklist({classBlacklist:["cfi-marker"]});
+
         var dom = 
             "<html>"
             +    "<div></div>"
@@ -237,15 +266,14 @@ describe('CFI INTERPRETER OBJECT', function () {
             CFI, 
             $dom, 
             "<span id='start' class='cfi-marker'></span>", 
-            "<span id='end' class='cfi-marker'></span>",
-            ["cfi-marker"]
+            "<span id='end' class='cfi-marker'></span>"
             );
 
         var result = $($($($dom.contents()).contents()[1]).contents()).contents()[5];
         expect(result.data).toEqual("67");
 
+        EPUBcfi.Blacklist.setBlacklist(null);
     });
-
 
 
     it('returns a text node CFI target', function () {
@@ -274,12 +302,16 @@ describe('CFI INTERPRETER OBJECT', function () {
 
     it('injects an element for a text terminus with a text location assertion', function () {
 
+        EPUBcfi.Blacklist.setBlacklist({classBlacklist:["cfi-marker"]});
+
         var $injectedElement = EPUBcfi.Interpreter.interpretTextTerminusNode(
             CFIAST.cfiString.localPath.termStep,
             $($("#c01p0002", $contentDocument)[0].firstChild),
             '<span class="cfi_marker"></span>');
 
         expect($injectedElement.parent().contents().length).toBe(3);
+
+        EPUBcfi.Blacklist.setBlacklist(null);
     });
 
     // Rationale: This test is really only testing the decodeURI() method, which does not require testing. This spec exists
@@ -298,7 +330,7 @@ describe('CFI INTERPRETER OBJECT', function () {
     });
 
     describe("range CFI interpretation", function () {
-        
+
         it("can determine that a CFI is a range CFI or not", function(){
             var rangeCFI = "epubcfi(/6/14!/4,/2/14/1:4,/2/16/1:7)",
                 nonRangeCFI = "epubcfi(/6/14!/4/2/14[c01p0006]/1:4)";
@@ -315,22 +347,27 @@ describe('CFI INTERPRETER OBJECT', function () {
 
         it('can inject into the same text node', function () {
 
+            EPUBcfi.Blacklist.setBlacklist({classBlacklist: ["injected-element"]});
+
             var CFI = "epubcfi(/6/14!/4,/2/14/1:4,/2/14/1:18)";
             var expectedResult = 'c01p0006';
             var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
                 CFI, 
                 contentDocument, 
                 "<span id='start' class='injected-element'></span>", 
-                "<span id='end' class='injected-element'></span>",
-                ["injected-element"]
+                "<span id='end' class='injected-element'></span>"
                 );
             expect(rangeInfo.startElement.id).toBe("start");
             expect(rangeInfo.endElement.id).toBe("end");
             expect(rangeInfo.startElement.parentElement.id).toBe(expectedResult);
             expect(rangeInfo.endElement.parentElement.id).toBe(expectedResult);
+
+            EPUBcfi.Blacklist.setBlacklist(null);
         });
 
         it('can inject into different text nodes', function () {
+
+            EPUBcfi.Blacklist.setBlacklist({classBlacklist: ["injected-element"]});
 
             var CFI = "epubcfi(/6/14!/4,/2/14/1:4,/2/16/1:7)";
             var targetElement1 = 'c01p0006';
@@ -339,13 +376,14 @@ describe('CFI INTERPRETER OBJECT', function () {
                 CFI, 
                 contentDocument, 
                 "<span id='start' class='injected-element'></span>", 
-                "<span id='end' class='injected-element'></span>",
-                ["injected-element"]
+                "<span id='end' class='injected-element'></span>"
                 );
             expect(rangeInfo.startElement.id).toBe("start");
             expect(rangeInfo.endElement.id).toBe("end");
             expect(rangeInfo.startElement.parentElement.id).toBe(targetElement1);
             expect(rangeInfo.endElement.parentElement.id).toBe(targetElement2);
+
+            EPUBcfi.Blacklist.setBlacklist(null);
         });
 
         it('can return target nodes when the target is the same text node', function () {
@@ -407,6 +445,7 @@ describe('CFI INTERPRETER OBJECT', function () {
             expect(rangeInfo.startOffset).toBeUndefined();
             expect(rangeInfo.endOffset).toBeUndefined();
         });
+        EPUBcfi.setBlacklist(null);
     });
 
     describe('The hack zone! Interpretation of partial CFIs', function () {
@@ -564,8 +603,5 @@ describe('ERROR HANDLING FOR ID AND TEXT ASSERTIONS', function () {
                 CFIAST.cfiString.localPath.steps[1],
                 undefined);
         });
-
-
-
     });
 });

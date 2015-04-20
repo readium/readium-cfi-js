@@ -2,14 +2,17 @@ describe("CFI INSTRUCTION OBJECT", function () {
 
 	it("finds the target element on an index step", function () {
 
+		EPUBcfi.setBlacklist({classBlacklist: ["cfiMarker"]});
+
 		var contentDocXHTML = jasmine.getFixtures().read('moby_dick_content_doc.xhtml');
 		var domParser = new window.DOMParser();
 		var contentDoc = domParser.parseFromString(contentDocXHTML, "text/xml");
 
-		var $nextNode = EPUBcfi.CFIInstructions.getNextNode(4, $(contentDoc.firstChild), ["cfiMarker"]);
+		var $nextNode = EPUBcfi.CFIInstructions.getNextNode(4, $(contentDoc.firstChild));
 		var nodeType = $nextNode.is("body");
 
 		expect(nodeType).toEqual(true);
+		EPUBcfi.setBlacklist(null);
 	});
 
 	// Finds the target element on an iframe indirection step
@@ -28,7 +31,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
 		iframe.contentDocument.write(iframeContentXHTML);
 		iframe.contentDocument.close();
 
-		var $nextNode = EPUBcfi.CFIInstructions.followIndirectionStep(4, $("iframe", document), [], []);
+		var $nextNode = EPUBcfi.CFIInstructions.followIndirectionStep(4, $("iframe", document));
 
 		expect($nextNode.attr("id")).toBe("body1");
 
@@ -50,9 +53,11 @@ describe("CFI INSTRUCTION OBJECT", function () {
 
 	it("injects text at the specified offset in the FIRST sub-node, when a target text node is specified as a list", function () {
 
+		EPUBcfi.setBlacklist({classBlacklist: ["cfiMarker"]});
+
 		// Get a list of text nodes
 		var $currNode = $('<div> asdfasd <div class="cfiMarker"></div> aslasjd <div></div> alsjflkds </div>');
-		var $targetTextNodeList = EPUBcfi.CFIInstructions.getNextNode(1, $currNode, ["cfiMarker"], []);
+		var $targetTextNodeList = EPUBcfi.CFIInstructions.getNextNode(1, $currNode);
 
 		var $injectedElement = EPUBcfi.CFIInstructions.textTermination($targetTextNodeList, 4, '<span class="epub_cfi"></span>');
 		var $currNodeChildren = $injectedElement.parent().contents();
@@ -60,14 +65,16 @@ describe("CFI INSTRUCTION OBJECT", function () {
 		expect($currNodeChildren[0].nodeValue).toBe(" asd");
 		expect($injectedElement.hasClass('epub_cfi')).toBe(true);
 		expect($currNodeChildren[2].nodeValue).toBe("fasd ");
+		EPUBcfi.setBlacklist(null);
 	});
 
     it("injects text at the specified offset in the SECOND sub-node, when a target text node is specified as a list", function () {
 
+		EPUBcfi.setBlacklist({classBlacklist: ["cfiMarker"]});
+
         // Get a list of text nodes
         var $currNode = $('<div> asdfasd <div class="cfiMarker"></div> aslasjd <div></div> alsjflkds </div>');
-        var $targetTextNodeList = EPUBcfi.CFIInstructions.getNextNode(1, $currNode, ["cfiMarker"], []);
-
+        var $targetTextNodeList = EPUBcfi.CFIInstructions.getNextNode(1, $currNode);
 
         var $injectedElement = EPUBcfi.CFIInstructions.textTermination($targetTextNodeList, 12, '<span class="epub_cfi"></span>');
         var $currNodeChildren = $injectedElement.parent().contents();
@@ -75,19 +82,23 @@ describe("CFI INSTRUCTION OBJECT", function () {
         expect($currNodeChildren[2].nodeValue).toBe(" as");
         expect($injectedElement.hasClass('epub_cfi')).toBe(true);
         expect($currNodeChildren[4].nodeValue).toBe("lasjd ");
+		EPUBcfi.setBlacklist(null);
     });
 
 	it('excludes elements that have a class that indicates they are "cfi markers" and returns a list of text nodes', function () {
+
+		EPUBcfi.setBlacklist({classBlacklist: ["cfiMarker"]});
 
 		var domParser = new window.DOMParser();
 		var xhtml = '<body><div>asdfsd <div class="cfiMarker"></div> ddfd</div><div></div></body>';
 		var doc = domParser.parseFromString(xhtml, 'text/xml');
 		var $currentNode = $(doc.firstChild.firstChild);
 
-		var $result = EPUBcfi.CFIInstructions.getNextNode(1, $currentNode, ["cfiMarker"], []);
+		var $result = EPUBcfi.CFIInstructions.getNextNode(1, $currentNode);
 		expect($result.length).toEqual(2);
 		expect($result[0].nodeValue).toEqual("asdfsd ");
 		expect($result[1].nodeValue).toEqual(" ddfd");
+		EPUBcfi.setBlacklist(null);
 	});
 	
 	it('returns the correct text node if the first text node is empty', function () {
@@ -97,7 +108,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
 		var doc = domParser.parseFromString(xhtml, 'text/xml');
 		var $currentNode = $(doc.firstChild);
 
-		var $result = EPUBcfi.CFIInstructions.getNextNode(3, $currentNode, ["cfiMarker"], []);
+		var $result = EPUBcfi.CFIInstructions.getNextNode(3, $currentNode);
 		expect($result.length).toEqual(1);
 		expect($result[0].nodeValue).toEqual("text2");
 	});
@@ -109,7 +120,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
 		var doc = domParser.parseFromString(xhtml, 'text/xml');
 		var $currentNode = $(doc.firstChild);
 
-		var $result = EPUBcfi.CFIInstructions.getNextNode(3, $currentNode, ["cfiMarker"], []);
+		var $result = EPUBcfi.CFIInstructions.getNextNode(3, $currentNode);
 		expect($result.length).toEqual(1);
 		expect($result[0].nodeValue).toEqual("text3");
 	});
@@ -121,7 +132,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
 		var doc = domParser.parseFromString(xhtml, 'text/xml');
 		var $currentNode = $(doc.firstChild);
 
-		var $result = EPUBcfi.CFIInstructions.getNextNode(3, $currentNode, ["cfiMarker"], []);
+		var $result = EPUBcfi.CFIInstructions.getNextNode(3, $currentNode);
 		expect($result.length).toEqual(3);
 		expect($result[0].nodeValue).toEqual("text2");
 		expect($result[1].nodeValue).toEqual("comment");
@@ -135,7 +146,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
 		var doc = domParser.parseFromString(xhtml, 'text/xml');
 		var $currentNode = $(doc.firstChild);
 
-		var $result = EPUBcfi.CFIInstructions.getNextNode(3, $currentNode, ["cfiMarker"], []);
+		var $result = EPUBcfi.CFIInstructions.getNextNode(3, $currentNode);
 		expect($result.length).toEqual(3);
 		expect($result[0].nodeValue).toEqual("text2");
 		expect($result[1].nodeValue).toEqual("type=\"text/css\" href=\"style.css\"");
@@ -149,7 +160,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
 		var doc = domParser.parseFromString(xhtml, 'text/xml');
 		var $currentNode = $(doc.firstChild);
 
-		var $result = EPUBcfi.CFIInstructions.getNextNode(1, $currentNode, ["cfiMarker"], []);
+		var $result = EPUBcfi.CFIInstructions.getNextNode(1, $currentNode);
 		expect($result.length).toEqual(2);
 		expect($result[0].nodeValue).toEqual("type=\"text/css\" href=\"style.css\"");
 		expect($result[1].nodeValue).toEqual("text");
@@ -162,7 +173,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
 		var doc = domParser.parseFromString(xhtml, 'text/xml');
 		var $currentNode = $(doc.firstChild);
 
-		var $result = EPUBcfi.CFIInstructions.getNextNode(1, $currentNode, ["cfiMarker"], []);
+		var $result = EPUBcfi.CFIInstructions.getNextNode(1, $currentNode);
 		expect($result.length).toEqual(1);
 		expect($result[0].nodeValue).toEqual("text1");
 	});
@@ -174,7 +185,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
 		var doc = domParser.parseFromString(xhtml, 'text/xml');
 		var $currentNode = $(doc.firstChild);
 
-		var $result = EPUBcfi.CFIInstructions.getNextNode(3, $currentNode, ["cfiMarker"], []);
+		var $result = EPUBcfi.CFIInstructions.getNextNode(3, $currentNode);
 		expect($result.length).toEqual(1);
 		expect($result[0].nodeValue).toEqual("text2");
 	});
@@ -186,7 +197,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
 		var doc = domParser.parseFromString(xhtml, 'text/xml');
 		var $currentNode = $(doc.firstChild);
 
-		var $result = EPUBcfi.CFIInstructions.getNextNode(5, $currentNode, ["cfiMarker"], []);
+		var $result = EPUBcfi.CFIInstructions.getNextNode(5, $currentNode);
 		expect($result.length).toEqual(1);
 		expect($result[0].nodeValue).toEqual("text3");
 	});
@@ -201,7 +212,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
 			+ "<div class='blacklistClass2'></div>"
 			);
 
-		$result = EPUBcfi.CFIInstructions.applyBlacklist($elements, ["blacklistClass1", "blacklistClass2"], []);
+		$result = EPUBcfi.CFIInstructions.applyBlacklist($elements, {classBlacklist: ["blacklistClass1", "blacklistClass2"]});
 
 		expect($result[0].id).toEqual("survivor-1");
 		expect($result[1].id).toEqual("survivor-2");
@@ -220,7 +231,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
 			+ "<div class='blacklistClass2'></div>"
 			);
 
-		$result = EPUBcfi.CFIInstructions.applyBlacklist($elements, ["blacklistClass1", "blacklistClass2"], []);
+		$result = EPUBcfi.CFIInstructions.applyBlacklist($elements, {classBlacklist: ["blacklistClass1", "blacklistClass2"]});
 
 		expect($result[0].id).toEqual("survivor-1");
 		expect($result[1].id).toEqual("survivor-2");
@@ -237,7 +248,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
 			+ "<div id='survivor-3'></div>"
 			);
 
-		$result = EPUBcfi.CFIInstructions.applyBlacklist($elements, [], ["mathjax", "blacklistElement"]);
+		$result = EPUBcfi.CFIInstructions.applyBlacklist($elements, {elementBlacklist: ["mathjax", "blacklistElement"]});
 
 		expect($result[0].id).toEqual("survivor-1");
 		expect($result[1].id).toEqual("survivor-2");
@@ -256,7 +267,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
 			+ "<div class='blacklistClass2'></div>"
 			);
 
-		$result = EPUBcfi.CFIInstructions.applyBlacklist($elements, ["blacklistClass1", "blacklistClass2"], []);
+		$result = EPUBcfi.CFIInstructions.applyBlacklist($elements, {classBlacklist: ["blacklistClass1", "blacklistClass2"]});
 
 		expect($result[0].nodeType).toEqual(3);
 		expect($result[1].id).toEqual("survivor-1");
@@ -277,7 +288,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
 			+ "<div id='survivor-3'></div>"
 			);
 
-		$result = EPUBcfi.CFIInstructions.applyBlacklist($elements, [], ["mathjax", "blacklistElement"]);
+		$result = EPUBcfi.CFIInstructions.applyBlacklist($elements, {elementBlacklist: ["mathjax", "blacklistElement"]});
 
 		expect($result[0].id).toEqual("survivor-1");
 		expect($result[1].nodeType).toEqual(3);
@@ -298,7 +309,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
 			+ "<div id='survivor-3'></div>"
 			);
 
-		$result = EPUBcfi.CFIInstructions.applyBlacklist($elements, [], [], ["mathjax", "blacklist-1"]);
+		$result = EPUBcfi.CFIInstructions.applyBlacklist($elements, {idBlacklist: ["mathjax", "blacklist-1"]});
 
 		expect($result[0].id).toEqual("survivor-1");
 		expect($result[1].nodeType).toEqual(3);
@@ -319,7 +330,7 @@ describe('CFI INSTRUCTION ERROR HANDLING', function () {
 
 		// A step of 16 is greater than the number of child elements of the content document
 		expect(function () {
-			EPUBcfi.CFIInstructions.getNextNode(16, $(contentDoc.firstChild))}, ["cfiMarker"], [])
+			EPUBcfi.CFIInstructions.getNextNode(16, $(contentDoc.firstChild))})
 		.toThrow(
 			EPUBcfi.OutOfRangeError(7, 1, ""));
 	});
@@ -341,7 +352,7 @@ describe('CFI INSTRUCTION ERROR HANDLING', function () {
 
 		// A step of 16 is greater than the number of child elements of the content document
 		expect(function () {
-			EPUBcfi.CFIInstructions.followIndirectionStep(6, $('iframe', document))}, [], [])
+			EPUBcfi.CFIInstructions.followIndirectionStep(6, $('iframe', document))})
 		.toThrow(
 			EPUBcfi.OutOfRangeError(2, 1, ""));
 
@@ -368,7 +379,7 @@ describe('CFI INSTRUCTION ERROR HANDLING', function () {
 		});
 
 		expect(function () {
-			EPUBcfi.CFIInstructions.followIndirectionStep(16, undefined, $(packageDoc))}, [], [])
+			EPUBcfi.CFIInstructions.followIndirectionStep(16, undefined, $(packageDoc))})
 		.toThrow(
 			EPUBcfi.NodeTypeError(undefined, "expected an iframe element"));
 	});

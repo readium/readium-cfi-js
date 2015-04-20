@@ -1,7 +1,17 @@
-(function(global) {
+(function (global, factory) {
+    global.EPUBcfi = factory();
+    if (typeof define === "function" && define.amd) {
+        define(function () {
+            return global.EPUBcfi;
+        });
+    } else if (typeof module === "object" && module.exports) {
+        module.exports = global.EPUBcfi;
+    }
+}(this, function () {
 
     var EPUBcfi = {};
 
+    <%= cfi_blacklist %>
     <%= cfi_parser %>
     <%= cfi_interpreter %>
     <%= cfi_instructions %>
@@ -11,90 +21,89 @@
     var interpreter = EPUBcfi.Interpreter;
     var generator = EPUBcfi.Generator;
     var instructions = EPUBcfi.CFIInstructions;
-
-
-    if (global.EPUBcfi) {
-
-        throw new Error('The EPUB cfi library has already been defined');
-    } else {
-
-        global.EPUBcfi = EPUBcfi;
-    }
+    var blacklist = EPUBcfi.Blacklist;
 
     // The public interface
-    var CFIInstructions = EPUBcfi.CFIInstructions;
     var Parser = EPUBcfi.Parser;
-    var OError = EPUBcfi.OutOfRangeError;
-    var Interp = EPUBcfi.Interpreter;
-    
     var NodeTypeError = EPUBcfi.NodeTypeError;
     var OutOfRangeError = EPUBcfi.OutOfRangeError;
     var TerminusError = EPUBcfi.TerminusError;
     var CFIAssertionError = EPUBcfi.CFIAssertionError;
-    
-    global.EPUBcfi = EPUBcfi =  {
-        getContentDocHref : function (CFI, packageDocument) {
+    EPUBcfi = {
+
+        getBlacklist: function () {
+            return blacklist.getBlacklist();
+        },
+        setBlacklist: function (obj) {
+            return blacklist.setBlacklist(obj);
+        },
+        appendBlacklist: function (obj) {
+            return blacklist.appendBlacklist(obj);
+        },
+        getContentDocHref: function (CFI, packageDocument) {
             return interpreter.getContentDocHref(CFI, packageDocument);
         },
-        injectElement : function (CFI, contentDocument, elementToInject, classBlacklist, elementBlacklist, idBlacklist) {
-            return interpreter.injectElement(CFI, contentDocument, elementToInject, classBlacklist, elementBlacklist, idBlacklist);
+        injectElement: function (CFI, contentDocument, elementToInject) {
+            return interpreter.injectElement(CFI, contentDocument, elementToInject);
         },
-        getTargetElement : function (CFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist) {
-            return interpreter.getTargetElement(CFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist);
+        getTargetElement: function (CFI, contentDocument) {
+            return interpreter.getTargetElement(CFI, contentDocument);
         },
-        getTargetElementWithPartialCFI : function (contentDocumentCFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist) {
-            return interpreter.getTargetElementWithPartialCFI(contentDocumentCFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist);
+        getTargetElementWithPartialCFI: function (contentDocumentCFI, contentDocument) {
+            return interpreter.getTargetElementWithPartialCFI(contentDocumentCFI, contentDocument);
         },
-        getTextTerminusInfoWithPartialCFI : function (contentDocumentCFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist) {
-            return interpreter.getTextTerminusInfoWithPartialCFI(contentDocumentCFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist);
+        getTextTerminusInfoWithPartialCFI: function (contentDocumentCFI, contentDocument) {
+            return interpreter.getTextTerminusInfoWithPartialCFI(contentDocumentCFI, contentDocument);
         },
-        generateCharacterOffsetCFIComponent : function (startTextNode, characterOffset, classBlacklist, elementBlacklist, idBlacklist) {
-            return generator.generateCharacterOffsetCFIComponent(startTextNode, characterOffset, classBlacklist, elementBlacklist, idBlacklist);
+        generateCharacterOffsetCFIComponent: function (startTextNode, characterOffset) {
+            return generator.generateCharacterOffsetCFIComponent(startTextNode, characterOffset);
         },
-        generateElementCFIComponent : function (startElement, classBlacklist, elementBlacklist, idBlacklist) {
-            return generator.generateElementCFIComponent(startElement, classBlacklist, elementBlacklist, idBlacklist);
+        generateElementCFIComponent: function (startElement) {
+            return generator.generateElementCFIComponent(startElement);
         },
-        generatePackageDocumentCFIComponent : function (contentDocumentName, packageDocument, classBlacklist, elementBlacklist, idBlacklist) {
-            return generator.generatePackageDocumentCFIComponent(contentDocumentName, packageDocument, classBlacklist, elementBlacklist, idBlacklist);
+        generatePackageDocumentCFIComponent: function (contentDocumentName, packageDocument) {
+            return generator.generatePackageDocumentCFIComponent(contentDocumentName, packageDocument);
         },
-        generatePackageDocumentCFIComponentWithSpineIndex : function (spineIndex, packageDocument, classBlacklist, elementBlacklist, idBlacklist) {
-            return generator.generatePackageDocumentCFIComponentWithSpineIndex(spineIndex, packageDocument, classBlacklist, elementBlacklist, idBlacklist);
+        generatePackageDocumentCFIComponentWithSpineIndex: function (spineIndex, packageDocument) {
+            return generator.generatePackageDocumentCFIComponentWithSpineIndex(spineIndex, packageDocument);
         },
-        generateCompleteCFI : function (packageDocumentCFIComponent, contentDocumentCFIComponent) {
+        generateCompleteCFI: function (packageDocumentCFIComponent, contentDocumentCFIComponent) {
             return generator.generateCompleteCFI(packageDocumentCFIComponent, contentDocumentCFIComponent);
         },
-        injectElementAtOffset : function ($textNodeList, textOffset, elementToInject) {
+        injectElementAtOffset: function ($textNodeList, textOffset, elementToInject) {
             return instructions.injectCFIMarkerIntoText($textNodeList, textOffset, elementToInject);
         },
-        injectRangeElements : function (rangeCFI, contentDocument, startElementToInject, endElementToInject, classBlacklist, elementBlacklist, idBlacklist) {
-            return interpreter.injectRangeElements(rangeCFI, contentDocument, startElementToInject, endElementToInject, classBlacklist, elementBlacklist, idBlacklist);
+        injectRangeElements: function (rangeCFI, contentDocument, startElementToInject, endElementToInject) {
+            return interpreter.injectRangeElements(rangeCFI, contentDocument, startElementToInject, endElementToInject);
         },
-        getRangeTargetElements : function (rangeCFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist) {
-            return interpreter.getRangeTargetElements(rangeCFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist);
+        getRangeTargetElements: function (rangeCFI, contentDocument) {
+            return interpreter.getRangeTargetElements(rangeCFI, contentDocument);
         },
-        generateCharOffsetRangeComponent : function (rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist) {
-            return generator.generateCharOffsetRangeComponent(rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist);
+        generateCharOffsetRangeComponent: function (rangeStartElement, startOffset, rangeEndElement, endOffset) {
+            return generator.generateCharOffsetRangeComponent(rangeStartElement, startOffset, rangeEndElement, endOffset);
         },
-        generateElementRangeComponent : function (rangeStartElement, rangeEndElement, classBlacklist, elementBlacklist, idBlacklist) {
-            return generator.generateElementRangeComponent(rangeStartElement, rangeEndElement, classBlacklist, elementBlacklist, idBlacklist);
+        generateElementRangeComponent: function (rangeStartElement, rangeEndElement) {
+            return generator.generateElementRangeComponent(rangeStartElement, rangeEndElement);
         },
-        generateRangeComponent : function (rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist) {
-            return generator.generateRangeComponent(rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist);
+        generateRangeComponent: function (rangeStartElement, startOffset, rangeEndElement, endOffset) {
+            return generator.generateRangeComponent(rangeStartElement, startOffset, rangeEndElement, endOffset);
         },
-        isRangeCfi : function (cfi) {
-          return interpreter.isRangeCfi(cfi);
+        isRangeCfi: function (cfi) {
+            return interpreter.isRangeCfi(cfi);
         }
     };
 
-    EPUBcfi.CFIInstructions = CFIInstructions;
-    EPUBcfi.Parser = Parser;
-    EPUBcfi.OutOfRangeError = OError;
-    EPUBcfi.Interpreter = Interp;
+    EPUBcfi.Interpreter = interpreter;
     EPUBcfi.Generator = generator;
-    
+    EPUBcfi.CFIInstructions = instructions;
+    EPUBcfi.Blacklist = blacklist;
+
+    EPUBcfi.Parser = Parser;
     EPUBcfi.NodeTypeError = NodeTypeError;
     EPUBcfi.OutOfRangeError = OutOfRangeError;
     EPUBcfi.TerminusError = TerminusError;
     EPUBcfi.CFIAssertionError = CFIAssertionError;
-    
-}) (typeof window === 'undefined' ? this : window);
+
+    return EPUBcfi;
+
+}));
