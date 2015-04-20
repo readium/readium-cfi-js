@@ -386,6 +386,15 @@ EPUBcfi.Generator = {
         var idAssertion;
         var elementStep; 
 
+
+
+        // per https://github.com/readium/readium-cfi-js/issues/28
+        // if the currentNode is the same as top level element, we're looking at a text node 
+        // that's a direct child of "topLevelElement" so we don't need to include it in the element step.
+        if ($currNode[0] === topLevelElement) {
+            return "";
+        }
+
         // Find position of current node in parent list
         $blacklistExcluded = EPUBcfi.CFIInstructions.applyBlacklist($currNode.parent().children(), classBlacklist, elementBlacklist, idBlacklist);
         $.each($blacklistExcluded, 
