@@ -1898,7 +1898,7 @@ return cfi_parser_gen;
 });
 
 /*!
- * jQuery JavaScript Library v2.1.3
+ * jQuery JavaScript Library v2.1.4
  * http://jquery.com/
  *
  * Includes Sizzle.js
@@ -1908,7 +1908,7 @@ return cfi_parser_gen;
  * Released under the MIT license
  * http://jquery.org/license
  *
- * Date: 2014-12-18T15:11Z
+ * Date: 2015-04-28T16:01Z
  */
 
 (function( global, factory ) {
@@ -1966,7 +1966,7 @@ var
 	// Use the correct document accordingly with window argument (sandbox)
 	document = window.document,
 
-	version = "2.1.3",
+	version = "2.1.4",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -2430,7 +2430,12 @@ jQuery.each("Boolean Number String Function Array Date RegExp Object Error".spli
 });
 
 function isArraylike( obj ) {
-	var length = obj.length,
+
+	// Support: iOS 8.2 (not reproducible in simulator)
+	// `in` check used to prevent JIT error (gh-2145)
+	// hasOwn isn't used here due to false negatives
+	// regarding Nodelist length in IE
+	var length = "length" in obj && obj.length,
 		type = jQuery.type( obj );
 
 	if ( type === "function" || jQuery.isWindow( obj ) ) {
@@ -12085,6 +12090,8 @@ var obj = {
 
         var docRange;
         var commonAncestor;
+        var $rangeStartParent;
+        var $rangeEndParent;
         var range1OffsetStep;
         var range1CFI;
         var range2OffsetStep;
@@ -12111,11 +12118,23 @@ var obj = {
 
             // Generate terminating offset and range 1
             range1OffsetStep = this.createCFITextNodeStep($(rangeStartElement), startOffset, classBlacklist, elementBlacklist, idBlacklist);
-            range1CFI = this.createCFIElementSteps($(rangeStartElement).parent(), commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range1OffsetStep;
+            $rangeStartParent = $(rangeStartElement).parent();
+            if ($rangeStartParent[0] === commonAncestor) {
+              // rangeStartElement is a text child node of the commonAncestor, so it's CFI sub-path is only the text node step:
+              range1CFI = range1OffsetStep;
+            } else {
+              range1CFI = this.createCFIElementSteps($rangeStartParent, commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range1OffsetStep;
+            }
 
             // Generate terminating offset and range 2
             range2OffsetStep = this.createCFITextNodeStep($(rangeEndElement), endOffset, classBlacklist, elementBlacklist, idBlacklist);
-            range2CFI = this.createCFIElementSteps($(rangeEndElement).parent(), commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range2OffsetStep;
+            $rangeEndParent = $(rangeEndElement).parent();
+            if ($rangeEndParent[0] === commonAncestor) {
+              // rangeEndElement is a text child node of the commonAncestor, so it's CFI sub-path is only the text node step:
+              range2CFI = range2OffsetStep;
+            } else {
+              range2CFI = this.createCFIElementSteps($rangeEndParent, commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range2OffsetStep;
+            }
 
             // Generate shared component
             commonCFIComponent = this.createCFIElementSteps($(commonAncestor), "html", classBlacklist, elementBlacklist, idBlacklist);
@@ -12447,6 +12466,15 @@ var obj = {
         var CFIPosition;
         var idAssertion;
         var elementStep; 
+
+
+
+        // per https://github.com/readium/readium-cfi-js/issues/28
+        // if the currentNode is the same as top level element, we're looking at a text node 
+        // that's a direct child of "topLevelElement" so we don't need to include it in the element step.
+        if ($currNode[0] === topLevelElement) {
+            return "";
+        }
 
         // Find position of current node in parent list
         $blacklistExcluded = cfiInstructions.applyBlacklist($currNode.parent().children(), classBlacklist, elementBlacklist, idBlacklist);
