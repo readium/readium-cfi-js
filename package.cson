@@ -66,13 +66,13 @@ repository:
 
 #####################################################################
 files: [
-    
+
     "build-output/"
-    
+
     "build-output-usage-example/"
-    
+
     "license.txt"
-    
+
     "README.md"
 ]
 
@@ -86,11 +86,11 @@ files: [
 dependencies:
 
     parallelshell: 'latest'
-    
+
     'http-server': 'latest'
 #    'httpserver': 'latest'
 #    'node-http-server': 'latest'
-    
+
     opener: 'latest'
 
 #####################################################################
@@ -99,18 +99,18 @@ devDependencies:
     requirejs: "latest"
 
     almond: "latest"
-    
+
     jquery: "latest"
 
     "pegjs": "latest"
-    
+
     "karma": "latest"
     "karma-chrome-launcher": "latest"
     "karma-jasmine": "latest"
     "karma-sauce-launcher": "latest"
-    
-    
-    
+
+
+
     cson: "latest"
 
     jshint: "latest"
@@ -122,7 +122,7 @@ devDependencies:
     mkdirp: 'latest'
 
     watch: 'latest'
-    
+
     'live-reload': 'latest'
 
 #####################################################################
@@ -130,19 +130,19 @@ scripts:
 
 #=====================
     env: '
-    
+
         env
     '
-    
+
 #=====================
     echo: '
-    
+
         echo ""
     '
 
 #=====================
     cson2json: '
-    
+
         node node_modules/cson/bin/cson2json package.cson
         &&
         node node_modules/cson/bin/cson2json package.cson > package.json
@@ -153,15 +153,15 @@ scripts:
         npm run
             prepare:dependencies
     '
-            
+
 #=====================
     'prepare:dependencies': '
-        
+
         npm install
         &&
         npm update
     '
-    
+
 #=====================
     clean: '
         node --version
@@ -174,20 +174,20 @@ scripts:
 
 #=====================
     'prebuild': '
-    
+
         npm run clean
     '
-    
+
 #=====================
     build: '
-    
+
         npm run
             build:scripts
     '
 
 #=====================
     lint: '
-    
+
         node
             build-tools/jshint_glob.js
             js/**.js
@@ -195,33 +195,33 @@ scripts:
 
 #=====================
 #    'prebuild:scripts': '
-#    
+#
 #        npm run
 #            lint
 #    '
 
 #=====================
     'prebuild:scripts': '
-    
+
         npm run build:scripts:peg
-    '
-    
-#=====================
-    'postbuild:scripts': '
-    
-        rimraf build-output/_SOURCES
     '
 
 #=====================
+#    'postbuild:scripts': '
+#
+#        rimraf build-output/_SOURCES
+#    '
+
+#=====================
     'build:scripts': '
-        
+
         npm run
             build:scripts:multiple
         &&
         npm run
             build:scripts:single
     '
-    
+
 #=====================
     'build:scripts:peg': '
         node ./node_modules/pegjs/bin/pegjs --export-var EPUBcfiParser cfi_parser.pegjs gen/cfi_parser_gen.js
@@ -272,7 +272,7 @@ scripts:
             \"npm run watch:build\"
             \"npm run watch:test\"
     '
-    
+
 #=====================
     'watch:test': '
         node node_modules/karma/bin/karma start tests/karma.conf.js
@@ -302,24 +302,24 @@ scripts:
     #    -w build-output-usage-example/
     #    --ext \".\"
     #    --exec \"npm run build
-    #            && node build-tools/webbrowser.js 
+    #            && node build-tools/webbrowser.js
     #            && npm run webbrowser
     #            && rimraf open_webbrowser.js\"
-    
+
 #=====================
     'http': '
-    
+
         http-server -p 9090 ./
     '
 
 #=====================
     'live-reload': '
-    
+
         live-reload --port 9091 --delay 1000 build-output/
     '
 
 #=====================
     'webbrowser': '
-    
+
         opener http://localhost:9090/build-output-usage-example/
     '

@@ -83,24 +83,24 @@ function(thiz){
         // }
     }
 
-    if (!process._RJS_isSingleBundle)
-    {
-        // relative to process.cwd()
-        var copiedSourcesDir = "/build-output/_SOURCES";
-
-        var fs = nodeRequire("fs");
-
-        var req = requirejs({
-            context: 'build'
-        });
-        var nodeFile = req('node/file');
-
-        var regExpFilter= /\w/;
-        var onlyCopyNew = false;
-
-        var destDir = process.cwd() + copiedSourcesDir;
-        console.log("===> Destination source folder: " + destDir);
-    }
+    // if (!process._RJS_isSingleBundle)
+    // {
+    //     // relative to process.cwd()
+    //     var copiedSourcesDir = "/build-output/_SOURCES";
+    //
+    //     var fs = nodeRequire("fs");
+    //
+    //     var req = requirejs({
+    //         context: 'build'
+    //     });
+    //     var nodeFile = req('node/file');
+    //
+    //     var regExpFilter= /\w/;
+    //     var onlyCopyNew = false;
+    //
+    //     var destDir = process.cwd() + copiedSourcesDir;
+    //     console.log("===> Destination source folder: " + destDir);
+    // }
 
     var mainConfigFile = [];
 
@@ -117,23 +117,23 @@ function(thiz){
 
         mainConfigFile.push(pathPrefix + "RequireJS_config_common.js");
 
-        if (!process._RJS_isSingleBundle)
-        {
-            var sourcesJsonPath = process.cwd() + "/" + process._RJS_Path_RelCwd__ConfigDir + "/" + pathPrefix + "RequireJS_sources.json";
-            console.log(sourcesJsonPath);
-
-            var sourcesJson = fs.readFileSync(
-                sourcesJsonPath,
-                {encoding: 'utf-8'});
-            var sources = JSON.parse(sourcesJson).sourceDirsToCopy;
-            for (var k = 0; k < sources.length; k++) {
-                var srcDir = sources[k];
-                srcDir = process.cwd() + "/" + process._RJS_Path_RelCwd__ConfigDir + "/" + pathPrefix + srcDir;
-                console.log("... Copying directory contents: " + srcDir);
-
-                nodeFile.copyDir(srcDir, destDir, regExpFilter, onlyCopyNew);
-            }
-        }
+        // if (!process._RJS_isSingleBundle)
+        // {
+        //     var sourcesJsonPath = process.cwd() + "/" + process._RJS_Path_RelCwd__ConfigDir + "/" + pathPrefix + "RequireJS_sources.json";
+        //     console.log(sourcesJsonPath);
+        //
+        //     var sourcesJson = fs.readFileSync(
+        //         sourcesJsonPath,
+        //         {encoding: 'utf-8'});
+        //     var sources = JSON.parse(sourcesJson).sourceDirsToCopy;
+        //     for (var k = 0; k < sources.length; k++) {
+        //         var srcDir = sources[k];
+        //         srcDir = process.cwd() + "/" + process._RJS_Path_RelCwd__ConfigDir + "/" + pathPrefix + srcDir;
+        //         console.log("... Copying directory contents: " + srcDir);
+        //
+        //         nodeFile.copyDir(srcDir, destDir, regExpFilter, onlyCopyNew);
+        //     }
+        // }
     }
 
     console.log(mainConfigFile);
@@ -154,7 +154,7 @@ function(thiz){
         // console.log(n);
         // console.log(back);
 
-        return process._RJS_isSingleBundle ? back : (back + copiedSourcesDir);
+        return process._RJS_isSingleBundle ? back : (back + "/build-output/XXX"); //copiedSourcesDir
     };
 
     // relative to the above baseUrl,
@@ -214,7 +214,7 @@ function(thiz){
     //xhtml: true, //document.createElementNS()
 
     /* http://requirejs.org/docs/api.html#config-waitSeconds */
-    waitSeconds: 0,
+    waitSeconds: 1,
 
     removeCombined: true,
 
