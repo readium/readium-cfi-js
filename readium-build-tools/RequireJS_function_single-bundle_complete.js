@@ -41,7 +41,6 @@ function(data) {
 
         for (var moduleName in config.modules[i].layer.modulesWithNames) {
             bundleConfig[config.modules[i].name].push(moduleName);
-            console.log(">> " + moduleName);
         }
         for (var moduleName in config.modules[i].layer.needsDefine) {
 
@@ -58,7 +57,6 @@ function(data) {
             if (!found)
             {
                 bundleConfig[config.modules[i].name].push(moduleName);
-                console.log(">> " + moduleName);
             }
         }
 
@@ -81,9 +79,20 @@ function(data) {
                 if (!found)
                 {
                     bundleConfig[config.modules[i].name].push(included);
-                    console.log(">> " + included);
                 }
             }
+        }
+
+        bundleConfig[config.modules[i].name].sort(
+            function(a, b)
+            {
+                return a == b ? 0 : a < b ? -1 : 1;
+            }
+        );
+        for (var j = 0; j < bundleConfig[config.modules[i].name].length; j++)
+        {
+            var moduleName = bundleConfig[config.modules[i].name][j];
+            console.log("## " + moduleName);
         }
 
         fs.writeFile(
