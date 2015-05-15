@@ -9208,3 +9208,8 @@ if ( typeof noGlobal === strundefined ) {
 return jQuery;
 
 }));
+
+
+define("readium-external-libs", function(){});
+
+//# sourceMappingURL=readium-external-libs.js.map

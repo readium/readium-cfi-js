@@ -14,7 +14,9 @@
 (
 function(thiz){
 
+    console.log("========>");
     console.log("========> RJS bootstrap ...");
+    console.log("========>");
 
     //console.log(thiz);
     console.log(process.cwd());
@@ -104,6 +106,7 @@ function(thiz){
 
     var mainConfigFile = [];
 
+
     var N = process._RJS_Path_RelCwd__ConfigDir_nSlashes + 1;
     for (var i = 0; i < N; i++) {
         var pathPrefix = "";
@@ -112,6 +115,11 @@ function(thiz){
             pathPrefix = pathPrefix + "../";
         }
         pathPrefix = pathPrefix + "../build-config/";
+
+        if (i == N-1 && !process._RJS_isSingleBundle)
+        {
+            mainConfigFile.push(pathPrefix + "RequireJS_config_multiple-bundles_external-libs.js");
+        }
 
         mainConfigFile.push(pathPrefix + "RequireJS_config_" + (process._RJS_isSingleBundle ? "single-bundle" : "multiple-bundles") + ((i == N-1) && configCustomTarget ? configCustomTarget : "") + ".js");
 
