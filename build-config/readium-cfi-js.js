@@ -11,6 +11,6 @@
 //  used to endorse or promote products derived from this software without specific 
 //  prior written permission.
 
-define(['cfi_API'], function (cfi) {
+define(['readium_cfi_js/cfi_API'], function (cfi) {
 return cfi;
 });
