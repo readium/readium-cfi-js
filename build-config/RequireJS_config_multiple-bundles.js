@@ -24,7 +24,6 @@ require.config({
     [
         {
             name: "readium-cfi-js",
-            include: ['readium_cfi_js/epubCfi'],
             exclude: ['jquery'],
             insertRequire: ["readium-cfi-js"]
         }
