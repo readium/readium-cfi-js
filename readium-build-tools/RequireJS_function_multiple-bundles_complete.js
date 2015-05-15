@@ -89,7 +89,18 @@ function(data) {
                 continue;
 
             bundleConfig[config.modules[i].name].push(moduleName);
-            console.log(">> " + moduleName);
+        }
+
+        bundleConfig[config.modules[i].name].sort(
+            function(a, b)
+            {
+                return a == b ? 0 : a < b ? -1 : 1;
+            }
+        );
+        for (var j = 0; j < bundleConfig[config.modules[i].name].length; j++)
+        {
+            var moduleName = bundleConfig[config.modules[i].name][j];
+            console.log("## " + moduleName);
         }
 
         fs.writeFile(
