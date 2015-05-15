@@ -17,12 +17,12 @@ require.config({
 
     name: "readium-cfi-js_all",
 
-    include: ["readium-cfi-js"],
+    include: ["readium_cfi_js/cfi_API"],
 
     // relative to this config file (not baseUrl)
     out: "../build-output/_single-bundle/readium-cfi-js_all.js",
 
-    insertRequire: ["readium-cfi-js"],
+    insertRequire: ["readium_cfi_js/cfi_API"],
 
     stubModules: ['text'],
 
