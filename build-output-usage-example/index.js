@@ -30,7 +30,7 @@ if (typeof define == 'function' && typeof define.amd == 'object') {
     console.log("RequireJS ... index.js");
 
     // For attaching the global window objects
-    require(["readium-cfi-js"], function () {
+    require(["readium_cfi_js/cfi_API"], function () {
 
     // to access individual feature APIs, via dependency injection (not the global window-attached objects)
     require(['jquery', 'readium_cfi_js/cfi_parser', 'readium_cfi_js/cfi_interpreter', 'readium_cfi_js/cfi_instructions', 'readium_cfi_js/cfi_runtime_errors', 'readium_cfi_js/cfi_generator'],

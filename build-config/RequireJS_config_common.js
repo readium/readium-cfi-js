@@ -27,10 +27,7 @@ require.config({
 
     paths:
     {
-        "readium-cfi-js":
-            process._RJS_rootDir(0) + '/build-config/readium-cfi-js',
-
-        cfi_parser_gen:
+        "readium_cfi_js/cfi_parser":
             process._RJS_rootDir(0) + '/gen/cfi_parser_gen',
 
         jquery:
@@ -39,7 +36,7 @@ require.config({
 
     shim:
     {
-        'cfi_parser_gen':
+        "readium_cfi_js/cfi_parser":
         {
             exports: 'EPUBcfiParser'
         }

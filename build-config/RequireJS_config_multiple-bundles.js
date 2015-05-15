@@ -24,8 +24,10 @@ require.config({
     [
         {
             name: "readium-cfi-js",
+            create: true,
             exclude: ['jquery'],
-            insertRequire: ["readium-cfi-js"]
+            include: ["readium_cfi_js/cfi_API"],
+            insertRequire: ["readium_cfi_js/cfi_API"]
         }
     ],
 
