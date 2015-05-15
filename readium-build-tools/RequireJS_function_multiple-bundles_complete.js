@@ -54,11 +54,35 @@ function(data) {
             }
         }
 
+        if (config.modules[i].include)
+        {
+            for (var j = 0; j < config.modules[i].include.length; j++)
+            {
+                var included = config.modules[i].include[j];
+
+                var found = false;
+                for (var k = 0; k < data.includedModuleNames.length; k++)
+                {
+                    var alreadyIncluded = data.includedModuleNames[k];
+                    if (alreadyIncluded == included)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    data.includedModuleNames.push(included);
+                }
+            }
+        }
+
         var bundleConfig = {};
         bundleConfig[config.modules[i].name] = [];
 
         //for (var moduleName in config.modules[i].layer.modulesWithNames) {
-        for (var j = 0; j < data.includedModuleNames.length; j++) {
+        for (var j = 0; j < data.includedModuleNames.length; j++)
+        {
             var moduleName = data.includedModuleNames[j];
 
             if (moduleName === config.modules[i].name)
