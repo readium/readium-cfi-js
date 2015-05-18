@@ -5,7 +5,7 @@
   "._": "as this would overwrite / update the JSON, not the master CSON!",
   "*/": "----------------------------------------------------------------------------",
   "name": "readium-cfi-js",
-  "version": "0.19.0-alpha",
+  "version": "0.20.0-alpha",
   "description": "Readium - CFI javascript library",
   "keywords": [
     "readium",
@@ -41,8 +41,8 @@
   ],
   "dependencies": {
     "parallelshell": "latest",
-    "http-server": "latest",
-    "opener": "latest"
+    "opener": "latest",
+    "http-server": "danielweck/http-server"
   },
   "devDependencies": {
     "requirejs": "latest",
@@ -54,20 +54,18 @@
     "karma-jasmine": "latest",
     "karma-sauce-launcher": "latest",
     "cson": "latest",
-    "jshint": "latest",
-    "glob": "latest",
     "rimraf": "latest",
+    "cpy": "latest",
     "mkdirp": "latest",
     "watch": "latest",
-    "live-reload": "latest"
+    "jshint": "latest",
+    "glob": "latest"
   },
   "scripts": {
-    "env": "env",
-    "echo": "echo \"\"",
     "cson2json": "node node_modules/cson/bin/cson2json package.cson && node node_modules/cson/bin/cson2json package.cson > package.json",
     "prepare": "npm run prepare:dependencies",
     "prepare:dependencies": "npm install && npm update",
-    "clean": "node --version && npm --version && rimraf build-output/* && rimraf gen/*",
+    "clean": "node --version && npm --version && node node_modules/rimraf/bin.js build-output/* && node node_modules/rimraf/bin.js gen/*",
     "prebuild": "npm run clean",
     "build": "npm run build:scripts",
     "lint": "node readium-build-tools/jshint_glob.js js/**.js",
@@ -76,13 +74,12 @@
     "build:scripts:peg": "node ./node_modules/pegjs/bin/pegjs --export-var EPUBcfiParser cfi_parser.pegjs gen/cfi_parser_gen.js",
     "build:scripts:multiple": "node node_modules/requirejs/bin/r.js -o readium-build-tools/RequireJS_config.js --rjs_bundle=multiple",
     "build:scripts:single": "node node_modules/requirejs/bin/r.js -o readium-build-tools/RequireJS_config.js --rjs_bundle=single",
-    "example:watch": "echo > open_webbrowser.js && parallelshell \"npm run live-reload\" \"npm run watch\" \"npm run http\"",
+    "example:watch": "echo > open_webbrowser.js && parallelshell \"npm run watch\" \"npm run http\"",
     "example": "parallelshell \"npm run http\" \"npm run webbrowser\"",
-    "test": "node node_modules/karma/bin/karma start tests/karma.conf.js",
+    "test": "node node_modules/karma/bin/karma start tests/karma.conf.js --singleRun",
     "test:travis": "node node_modules/karma/bin/karma start tests/karma.travis.conf.js",
-    "watch": "watch \"npm run test && npm run build && node readium-build-tools/webbrowser.js && npm run webbrowser && rimraf open_webbrowser.js\" build-output-usage-example/ js/ gen/",
-    "http": "http-server -p 9090 ./",
-    "live-reload": "live-reload --port 9091 --delay 1000 build-output/",
+    "watch": "node node_modules/watch/cli.js \"npm run build && npm run test && node readium-build-tools/webbrowser.js && npm run webbrowser && node node_modules/rimraf/bin.js open_webbrowser.js\" build-output-usage-example/ js/ tests/",
+    "http": "http-server -p 9090 --cors ./",
     "webbrowser": "opener http://127.0.0.1:9090/build-output-usage-example/"
   }
 }

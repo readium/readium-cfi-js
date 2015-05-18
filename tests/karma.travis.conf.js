@@ -12,7 +12,7 @@ module.exports = function(config) {
   config.set({
 
     sauceLabs: {
-        testName: 'ReadiumCFI Unit Tests'
+        testName: 'readium-cfi-js Unit Tests'
     },
     customLaunchers: customLaunchers,
 
@@ -29,13 +29,13 @@ module.exports = function(config) {
     files: [
       '../build-output/_single-bundle/readium-cfi-js_all.js',
       {pattern: '../build-output/_single-bundle/readium-cfi-js_all.js.map', included: false, served: true},
-      
+
       {pattern: 'spec/fixtures/*.*', included: false, served: true},
-      
+
       'spec/helpers/*.js',
-      
+
       'spec/models/*.js',
-      
+
       'spec/karma-loaded.js'
     ],
 
