@@ -33,7 +33,7 @@
 
 name: "readium-cfi-js"
 
-version: "0.19.0-alpha"
+version: "0.20.0-alpha"
 
 description: "Readium - CFI javascript library"
 
@@ -80,65 +80,62 @@ files: [
 # See http://requirejs.org/docs/commonjs.html
 # See http://requirejs.org/docs/node.html
 #
-#main: "build-output/readium-cfi-js.js"
+#main: "build-output/_multiple-bundles/readium-cfi-js.js"
 
 #####################################################################
 dependencies:
 
-    parallelshell: 'latest'
+    "parallelshell": 'latest'
 
-    'http-server': 'latest'
-#    'httpserver': 'latest'
-#    'node-http-server': 'latest'
+    "opener": 'latest'
 
-    opener: 'latest'
+    #"http-server": 'latest'
+    "http-server": 'danielweck/http-server'
+    # SEE: https://github.com/indexzero/http-server/issues/154
+
 
 #####################################################################
+# These dependencies can be fetched by using the "--dev" option
+# in "npm install --dev readium-cfi-js".
 devDependencies:
 
-    requirejs: "latest"
+    "requirejs": 'latest'
 
-    almond: "latest"
+    "almond": 'latest'
 
-    jquery: "latest"
-
-    "pegjs": "latest"
-
-    "karma": "latest"
-    "karma-chrome-launcher": "latest"
-    "karma-jasmine": "latest"
-    "karma-sauce-launcher": "latest"
+    "jquery": 'latest'
 
 
+    "pegjs": 'latest'
 
-    cson: "latest"
+    "karma": 'latest'
+    "karma-chrome-launcher": 'latest'
+    "karma-jasmine": 'latest'
+    "karma-sauce-launcher": 'latest'
 
-    jshint: "latest"
 
-    glob: 'latest'
+# Below dependencies are only used for building tasks (above are runtime deps):
 
-    rimraf: 'latest'
 
-    mkdirp: 'latest'
+    "cson": 'latest'
 
-    watch: 'latest'
+    "rimraf": 'latest'
 
-    'live-reload': 'latest'
+    "cpy": 'latest'
+
+    "mkdirp": 'latest'
+
+    "watch": 'latest'
+
+    #"live-reload": 'latest'
+
+    # see readium-build-tools
+    # jshint_glob.js
+    "jshint": 'latest'
+    "glob": 'latest'
 
 #####################################################################
 scripts:
-
-#=====================
-    env: '
-
-        env
-    '
-
-#=====================
-    echo: '
-
-        echo ""
-    '
 
 #=====================
     cson2json: '
@@ -168,10 +165,10 @@ scripts:
         &&
         npm --version
         &&
-        rimraf
+        node node_modules/rimraf/bin.js
             build-output/*
         &&
-        rimraf
+        node node_modules/rimraf/bin.js
             gen/*
     '
 
@@ -197,23 +194,10 @@ scripts:
     '
 
 #=====================
-#    'prebuild:scripts': '
-#
-#        npm run
-#            lint
-#    '
-
-#=====================
     'prebuild:scripts': '
 
         npm run build:scripts:peg
     '
-
-#=====================
-#    'postbuild:scripts': '
-#
-#        rimraf build-output/_SOURCES
-#    '
 
 #=====================
     'build:scripts': '
@@ -252,10 +236,10 @@ scripts:
         echo > open_webbrowser.js
         &&
         parallelshell
-            \"npm run live-reload\"
             \"npm run watch\"
             \"npm run http\"
     '
+#    \"npm run live-reload\"
 
 #=====================
 #### BLOCKING! (CTRL-C) [http]
@@ -267,7 +251,7 @@ scripts:
 
 #=====================
     'test': '
-       node node_modules/karma/bin/karma start tests/karma.conf.js
+       node node_modules/karma/bin/karma start tests/karma.conf.js --singleRun
     '
 
 #=====================
@@ -278,33 +262,36 @@ scripts:
 #=====================
 #### BLOCKING! (CTRL-C) [watch or nodemon]
     'watch': '
-        watch
-            \"npm run test
-                && npm run build
+        node node_modules/watch/cli.js
+            \"npm run build
+                && npm run test
                 && node readium-build-tools/webbrowser.js
                 && npm run webbrowser
-                && rimraf open_webbrowser.js\"
-            build-output-usage-example/ js/ gen/
+                && node node_modules/rimraf/bin.js
+                      open_webbrowser.js\"
+            build-output-usage-example/ js/ tests/
     '
+    # unfortunately, cannot watch single file cfi_parser.pegjs :(
+
     #    nodemon -q
     #    -w build-output-usage-example/
     #    --ext \".\"
     #    --exec \"npm run build
     #            && node readium-build-tools/webbrowser.js
     #            && npm run webbrowser
-    #            && rimraf open_webbrowser.js\"
+    #            && node node_modules/rimraf/bin.js
+    #                  open_webbrowser.js\"
 
 #=====================
     'http': '
-
-        http-server -p 9090 ./
+        http-server -p 9090 --cors ./
     '
 
 #=====================
-    'live-reload': '
-
-        live-reload --port 9091 --delay 1000 build-output/
-    '
+#    'live-reload': '
+#
+#        live-reload --port 9091 --delay 1000 build-output/
+#    '
 
 #=====================
     'webbrowser': '

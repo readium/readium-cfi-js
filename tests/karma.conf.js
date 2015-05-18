@@ -15,13 +15,13 @@ module.exports = function(config) {
     files: [
       '../build-output/_single-bundle/readium-cfi-js_all.js',
       {pattern: '../build-output/_single-bundle/readium-cfi-js_all.js.map', included: false, served: true},
-      
+
       {pattern: 'spec/fixtures/*.*', included: false, served: true},
-      
+
       'spec/helpers/*.js',
-      
+
       'spec/models/*.js',
-      
+
       'spec/karma-loaded.js'
     ],
 
@@ -57,7 +57,7 @@ module.exports = function(config) {
 
 
     // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: true,
+    autoWatch: false,
 
 
     // start these browsers
