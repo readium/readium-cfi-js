@@ -122,6 +122,7 @@ devDependencies:
     "rimraf": 'latest'
 
     "cpy": 'latest'
+    "ncp": 'latest'
 
     "mkdirp": 'latest'
 
