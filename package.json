@@ -67,7 +67,7 @@
     "cson2json": "node node_modules/cson/bin/cson2json package.cson && node node_modules/cson/bin/cson2json package.cson > package.json",
     "prepare": "npm run prepare:dependencies",
     "prepare:dependencies": "npm install && npm update",
-    "clean": "node --version && npm --version && rimraf build-output/*",
+    "clean": "node --version && npm --version && rimraf build-output/* && rimraf gen/*",
     "prebuild": "npm run clean",
     "build": "npm run build:scripts",
     "lint": "node readium-build-tools/jshint_glob.js js/**.js",
@@ -76,15 +76,13 @@
     "build:scripts:peg": "node ./node_modules/pegjs/bin/pegjs --export-var EPUBcfiParser cfi_parser.pegjs gen/cfi_parser_gen.js",
     "build:scripts:multiple": "node node_modules/requirejs/bin/r.js -o readium-build-tools/RequireJS_config.js --rjs_bundle=multiple",
     "build:scripts:single": "node node_modules/requirejs/bin/r.js -o readium-build-tools/RequireJS_config.js --rjs_bundle=single",
-    "example:dev": "npm run clean && echo > open_webbrowser.js && parallelshell \"npm run live-reload\" \"npm run watch\" \"npm run http\"",
+    "example:watch": "echo > open_webbrowser.js && parallelshell \"npm run live-reload\" \"npm run watch\" \"npm run http\"",
     "example": "parallelshell \"npm run http\" \"npm run webbrowser\"",
-    "watch": "parallelshell \"npm run watch:build\" \"npm run watch:test\"",
-    "watch:test": "node node_modules/karma/bin/karma start tests/karma.conf.js",
     "test": "node node_modules/karma/bin/karma start tests/karma.conf.js",
     "test:travis": "node node_modules/karma/bin/karma start tests/karma.travis.conf.js",
-    "watch:build": "watch \"npm run build && node readium-build-tools/webbrowser.js && npm run webbrowser && rimraf open_webbrowser.js\" build-output-usage-example/",
+    "watch": "watch \"npm run test && npm run build && node readium-build-tools/webbrowser.js && npm run webbrowser && rimraf open_webbrowser.js\" build-output-usage-example/ js/ gen/",
     "http": "http-server -p 9090 ./",
     "live-reload": "live-reload --port 9091 --delay 1000 build-output/",
-    "webbrowser": "opener http://localhost:9090/build-output-usage-example/"
+    "webbrowser": "opener http://127.0.0.1:9090/build-output-usage-example/"
   }
 }
