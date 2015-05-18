@@ -19,6 +19,8 @@ See license.txt ( https://github.com/readium/readium-cfi-js/blob/develop/license
 
 ## Development
 
+Click this image link to see a flowchart for this project's build tasks: https://raw.githubusercontent.com/readium/readium-cfi-js/develop/readium-cfi-js_build_tasks.png
+
 **Initial setup:**
 
 * `npm run prepare` (to perform required preliminary tasks, like patching code before building)
@@ -32,7 +34,7 @@ Note that the above command executes the following:
 
 * Hack away! (mostly the source code in the `js` and `plugins` folders)
 * `npm run build` (to update the RequireJS bundles in the build output folder)
-* `npm run example:dev` (to launch an http server with live-reload, automatically opens a web browser instance to the HTML files in the `build-output-usage-example` folder)
+* `npm run example:watch` (to launch an http server with live-reload, automatically opens a web browser instance to the HTML files in the `build-output-usage-example` folder)
 * `npm run example` (same as above, but without watching for file changes (no automatic rebuild))
 
 Optionally:
@@ -165,4 +167,3 @@ For more complex build processes, Grunt / Gulp can be used, but these build syst
 
 Downside: DO NOT invoke `npm init` or `npm install --save` `--save-dev` `--save-optional`,
 as this would overwrite / update the JSON, not the master CSON!
-
