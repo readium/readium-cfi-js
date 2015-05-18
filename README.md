@@ -19,7 +19,8 @@ See license.txt ( https://github.com/readium/readium-cfi-js/blob/develop/license
 
 ## Development
 
-Click this image link to see a flowchart for this project's build tasks: https://raw.githubusercontent.com/readium/readium-cfi-js/develop/readium-cfi-js_build_tasks.png
+Follow [this image link](readium-cfi-js_build_tasks.png) to see a flowchart for this project's build tasks (click on the "raw" button for the full size diagram).
+
 
 **Initial setup:**
 
