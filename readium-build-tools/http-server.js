@@ -1004,6 +1004,16 @@ console.log(IP);
 
 var args = process.argv.slice(2);
 
+var PORT = 7777;
+
+for (var i = 0; i < args.length; i++) {
+    if (args[i] === "-p") {
+        if (++i < args.length) PORT = args[i];
+        console.log(PORT);
+        break;
+    }
+}
+
 args.unshift(IP);
 args.unshift("-a");
 
@@ -1024,5 +1034,18 @@ child.stdout.on('data', function(data) {
     console.log(data.toString());
 });
 child.stderr.on('data', function(data) {
+    console.log(data.toString());
+});
+
+
+var child2 = child_process.execFile('node', ['node_modules/opener/opener.js', 'http://'+IP+':'+PORT+'/'], function(error, stdout, stderr){
+	if (error) console.log(error);
+  if (stdout) console.log(stdout);
+  if (stderr) console.log(stderr);
+});
+child2.stdout.on('data', function(data) {
+    console.log(data.toString());
+});
+child2.stderr.on('data', function(data) {
     console.log(data.toString());
 });
