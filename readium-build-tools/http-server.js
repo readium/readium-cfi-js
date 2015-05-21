@@ -1,11 +1,3 @@
-var server = require('node-http-server');
-
-console.log(server);
-
-
-
-
-
 
 // https://github.com/gildas-lormeau/zip.js/blob/master/WebContent/mime-types.js
 var table = {
@@ -973,26 +965,64 @@ var table = {
         }
         return mimeTypes;
     })();
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-var config = server.configTemplate();
-//config.contentType.epub  = 'application/epub+zip';
-config.contentType = mimeTypes;
-config.port             = 9090;
-config.verbose          = true;
-config.root             = process.cwd();
 
-console.log(config);
+//
+// var server = require('node-http-server');
+// console.log(server);
+//
+// var config = server.configTemplate();
+// //config.contentType.epub  = 'application/epub+zip';
+// config.contentType = mimeTypes;
+// config.port             = 9090;
+// config.verbose          = true;
+// config.root             = process.cwd();
+//
+// console.log(config);
+// server.deploy(config);
 
-server.deploy(config);
+var networkInterfaces = require('os').networkInterfaces()
+
+var localIP = function ()
+{
+  for(var k in networkInterfaces)
+  {
+    var networkInterface = networkInterfaces[k];
+    for(var j in networkInterface)
+    {
+      if(networkInterface[j].family === 'IPv4' && !networkInterface[j].internal)
+      {
+        return networkInterface[j].address;
+      }
+    }
+  }
+
+  return undefined;
+}
+
+var IP = localIP();
+console.log(IP);
+
+var args = process.argv.slice(2);
+
+args.unshift(IP);
+args.unshift("-a");
+
+console.log("http-server.js arguments: ");
+console.log(args);
+
+var path = require('path');
+var child_process = require('child_process');
+
+args.unshift(path.join(process.cwd(), 'node_modules', 'http-server', 'bin', 'http-server'));
+
+var child = child_process.execFile('node', args, function(error, stdout, stderr){
+	if (error) console.log(error);
+  if (stdout) console.log(stdout);
+  if (stderr) console.log(stderr);
+});
+child.stdout.on('data', function(data) {
+    console.log(data.toString());
+});
+child.stderr.on('data', function(data) {
+    console.log(data.toString());
+});
