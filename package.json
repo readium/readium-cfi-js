@@ -35,7 +35,7 @@
   },
   "files": [
     "build-output/",
-    "build-output-usage-example/",
+    "dev/",
     "license.txt",
     "README.md"
   ],
@@ -75,12 +75,12 @@
     "build:scripts:peg": "node ./node_modules/pegjs/bin/pegjs --export-var EPUBcfiParser cfi_parser.pegjs gen/cfi_parser_gen.js",
     "build:scripts:multiple": "node node_modules/requirejs/bin/r.js -o readium-build-tools/RequireJS_config.js --rjs_bundle=multiple",
     "build:scripts:single": "node node_modules/requirejs/bin/r.js -o readium-build-tools/RequireJS_config.js --rjs_bundle=single",
-    "example:watch": "echo > open_webbrowser.js && parallelshell \"npm run watch\" \"npm run http\"",
-    "example": "parallelshell \"npm run http\" \"npm run webbrowser\"",
+    "http:watch": "echo > open_webbrowser.js && parallelshell \"npm run watch\" \"npm run httpServe\"",
+    "http": "parallelshell \"npm run httpServe\" \"npm run webBrowser\"",
     "test": "node node_modules/karma/bin/karma start tests/karma.conf.js --singleRun",
     "test:travis": "node node_modules/karma/bin/karma start tests/karma.travis.conf.js",
-    "watch": "node node_modules/watch/cli.js \"npm run build && npm run test && node readium-build-tools/webbrowser.js && npm run webbrowser && node node_modules/rimraf/bin.js open_webbrowser.js\" build-output-usage-example/ js/ tests/",
-    "http": "http-server -p 9090 --cors ./",
-    "webbrowser": "opener http://127.0.0.1:9090/build-output-usage-example/"
+    "watch": "node node_modules/watch/cli.js \"npm run build && npm run test && node readium-build-tools/webbrowser.js && npm run webBrowser && node node_modules/rimraf/bin.js open_webbrowser.js\" dev/ js/ tests/",
+    "httpServe": "http-server -p 9090 --cors ./",
+    "webBrowser": "opener http://127.0.0.1:9090/dev/"
   }
 }
