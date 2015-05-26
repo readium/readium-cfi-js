@@ -38,10 +38,6 @@ Note that the above command executes the following:
 * `npm run http:watch` (to launch an http server with live-reload, automatically opens a web browser instance to the HTML files in the `dev` folder)
 * `npm run http` (same as above, but without watching for file changes (no automatic rebuild))
 
-Optionally:
-
-* `npm install -g grunt-cli` (to enable Grunt globally) Note that at this point in time, the "readium-cfi-js" build process is Grunt-free, entirely driven from NPM scripts defined in `package.cson` (Why CSON? Read below)
-
 
 ## NPM (Node Package Manager)
 
