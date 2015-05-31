@@ -15,7 +15,7 @@ var path = require('path');
 var http = require('http');
 var https = require('https');
 
-var ACCESSTOKEN = "143de8df8ad56cc54852261ade816de335bf5081";
+var ACCESSTOKEN = "83cd61ecd6bc65561430f12e99231addbd5e54eb";
 var USERAGENT = "Readium-GitHub";
 
 var httpGet = function(info, callback) {
@@ -131,6 +131,12 @@ var scanDeps = function(deps) {
             var gitData = JSON.parse(res);
             if (!gitData) return;
 
+            if (!gitData.source && !gitData.parent) {
+                if (gitData.message)
+                    console.log(res);
+                return;
+            }
+
             //console.log("++++++++");
             //console.log(info.url);
             //console.log(res);
@@ -148,8 +154,10 @@ var scanDeps = function(deps) {
 };
 
 var repoPath = process.cwd();
+var repoPackageFile = path.join(repoPath, 'package.json');
 
-var repoPackageFileContents = fs.readFileSync(path.join(repoPath, 'package.json'), 'utf-8');
+var repoPackageFileContents = fs.readFileSync(repoPackageFile, 'utf-8');
+
 var repoPackage = JSON.parse(repoPackageFileContents);
 
 scanDeps(repoPackage.dependencies);
