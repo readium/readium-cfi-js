@@ -15,7 +15,10 @@ var path = require('path');
 var http = require('http');
 var https = require('https');
 
+//https://github.com/blog/1509-personal-api-tokens
+//https://github.com/settings/tokens
 var ACCESSTOKEN = "83cd61ecd6bc65561430f12e99231addbd5e54eb";
+
 var USERAGENT = "Readium-GitHub";
 
 var httpGet = function(info, callback) {
