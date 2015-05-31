@@ -17,7 +17,7 @@ var https = require('https');
 
 //https://github.com/blog/1509-personal-api-tokens
 //https://github.com/settings/tokens
-var ACCESSTOKEN = "83cd61ecd6bc65561430f12e99231addbd5e54eb";
+var ACCESSTOKEN = "dcda05826a3049ee1ec7aa3cd3e474d1561b3583";
 
 var USERAGENT = "Readium-GitHub";
 
