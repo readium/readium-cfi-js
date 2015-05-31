@@ -66,7 +66,7 @@
   "scripts": {
     "cson2json": "node node_modules/cson/bin/cson2json package.cson && node node_modules/cson/bin/cson2json package.cson > package.json",
     "prepare": "npm run prepare:dependencies",
-    "prepare:dependencies": "npm install && npm update",
+    "prepare:dependencies": "npm install && npm update && node readium-build-tools/gitHubForksUpdater.js",
     "clean": "node --version && npm --version && node node_modules/rimraf/bin.js build-output/* && node node_modules/rimraf/bin.js gen/*",
     "prebuild": "npm run clean",
     "build": "npm run build:scripts",
