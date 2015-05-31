@@ -160,6 +160,9 @@ scripts:
         npm install
         &&
         npm update
+        &&
+        node
+            readium-build-tools/gitHubForksUpdater.js
     '
 
 #=====================
