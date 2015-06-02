@@ -210,28 +210,22 @@ function(thiz){
 {
     mainConfigFile: process._RJS_mainConfigFile,
 
-    optimize: "none",
-    generateSourceMaps: true,
-    preserveLicenseComments: true,
+    //
+    // optimize: "none",
+    // generateSourceMaps: true,
+    // preserveLicenseComments: true,
 
-    /*
-    optimize: "uglify2",
-    generateSourceMaps: true,
-    preserveLicenseComments: false,
+        generateSourceMaps: true,
+        preserveLicenseComments: false,
 
-    // uglify2: {
-    //   mangle: true,
-    //   except: [
-    //         'zzzzz'
-    //   ],
-    //   output: {
-    //     beautify: true,
-    //   },
-    //   beautify: {
-    //     semicolons: false
-    //   }
-    // },
-    */
+        optimize: "uglify2",
+
+        uglify2: {
+          mangle: true,
+          compress: true,
+          'screw-ie8': true
+        },
+
 
     inlineText: true,
 

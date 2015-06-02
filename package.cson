@@ -162,6 +162,9 @@ scripts:
         npm update
         &&
         node
+            readium-build-tools/patchRequireJS.js
+        &&
+        node
             readium-build-tools/gitHubForksUpdater.js
     '
 
@@ -226,6 +229,13 @@ scripts:
              -o
              readium-build-tools/RequireJS_config.js
              --rjs_bundle=multiple
+    '
+
+#=====================
+    'postbuild:scripts:multiple': '
+        
+        node node_modules/rimraf/bin.js
+            build-output/_multiple-bundles/RequireJS.js.src.js
     '
 
 #=====================

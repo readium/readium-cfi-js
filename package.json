@@ -66,7 +66,7 @@
   "scripts": {
     "cson2json": "node node_modules/cson/bin/cson2json package.cson && node node_modules/cson/bin/cson2json package.cson > package.json",
     "prepare": "npm run prepare:dependencies",
-    "prepare:dependencies": "npm install && npm update && node readium-build-tools/gitHubForksUpdater.js",
+    "prepare:dependencies": "npm install && npm update && node readium-build-tools/patchRequireJS.js && node readium-build-tools/gitHubForksUpdater.js",
     "clean": "node --version && npm --version && node node_modules/rimraf/bin.js build-output/* && node node_modules/rimraf/bin.js gen/*",
     "prebuild": "npm run clean",
     "build": "npm run build:scripts",
@@ -75,6 +75,7 @@
     "build:scripts": "npm run build:scripts:multiple && npm run build:scripts:single",
     "build:scripts:peg": "node ./node_modules/pegjs/bin/pegjs --export-var EPUBcfiParser cfi_parser.pegjs gen/cfi_parser_gen.js",
     "build:scripts:multiple": "node node_modules/requirejs/bin/r.js -o readium-build-tools/RequireJS_config.js --rjs_bundle=multiple",
+    "postbuild:scripts:multiple": "node node_modules/rimraf/bin.js build-output/_multiple-bundles/RequireJS.js.src.js",
     "build:scripts:single": "node node_modules/requirejs/bin/r.js -o readium-build-tools/RequireJS_config.js --rjs_bundle=single",
     "http:watch": "echo > open_webbrowser.js && parallelshell \"npm run watch\" \"npm run httpServe\"",
     "http": "parallelshell \"npm run httpServe\" \"npm run webBrowser\"",
