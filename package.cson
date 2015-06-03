@@ -271,12 +271,12 @@ scripts:
 
 #=====================
     'test': '
-       node node_modules/karma/bin/karma start tests/karma.conf.js --singleRun
+       node node_modules/karma/bin/karma start tests/karma.conf.js --singleRun --no-auto-watch
     '
 
 #=====================
     'test:travis': '
-       node node_modules/karma/bin/karma start tests/karma.travis.conf.js
+       node node_modules/karma/bin/karma start tests/karma.travis.conf.js --singleRun --no-auto-watch
     '
 
 #=====================
