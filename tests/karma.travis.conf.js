@@ -35,6 +35,8 @@ module.exports = function(config) {
   config.set({
 
     sauceLabs: {
+        startConnect: true,
+
         testName: 'readium-cfi-js Unit Tests',
         // username: 'readium',
         // accessKey: 'a36ebc10-e514-4da6-924c-307aec513550',
@@ -113,4 +115,23 @@ module.exports = function(config) {
     // if true, Karma captures browsers, runs the tests and exits
     singleRun: true
   });
+
+  if (process.env.TRAVIS && process.env.USE_SAUCE) {
+
+      config.sauceLabs.startConnect = false;
+
+      var label = "TRAVIS #" + process.env.TRAVIS_BUILD_NUMBER + " (" + process.env.TRAVIS_BUILD_ID + ")";
+
+      //config.captureTimeout = 0;
+
+      //config.logLevel = config.LOG_DEBUG;
+
+      // config.transports = [
+      //     "websocket", "xhr-polling"
+      // ];
+
+      config.sauceLabs.build = label;
+
+      config.sauceLabs.tunnelIdentifier = process.env.TRAVIS_JOB_NUMBER;
+  }
 };
