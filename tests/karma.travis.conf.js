@@ -1,6 +1,5 @@
 module.exports = function(config) {
 
-  //https://saucelabs.com/rest/v1/readium/activity
   if (!process.env['SAUCE_USERNAME']) process.env.SAUCE_USERNAME = 'readium';
   if (!process.env['SAUCE_ACCESS_KEY']) process.env.SAUCE_ACCESS_KEY = 'a36ebc10-e514-4da6-924c-307aec513550';
 
@@ -13,8 +12,7 @@ module.exports = function(config) {
     },
     sl_firefox: {
       base: 'SauceLabs',
-      browserName: 'firefox',
-      version: '38'
+      browserName: 'firefox'
     }
   }
 
@@ -22,11 +20,11 @@ module.exports = function(config) {
 
     sauceLabs: {
         testName: 'readium-cfi-js Unit Tests',
-        username: 'readium',
-        accessKey: 'a36ebc10-e514-4da6-924c-307aec513550',
+        // username: 'readium',
+        // accessKey: 'a36ebc10-e514-4da6-924c-307aec513550',
         connectOptions: {
-          username: 'readium',
-          accessKey: 'a36ebc10-e514-4da6-924c-307aec513550'
+          // username: 'readium',
+          // accessKey: 'a36ebc10-e514-4da6-924c-307aec513550'
         }
     },
     customLaunchers: customLaunchers,
