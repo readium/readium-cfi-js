@@ -3,18 +3,34 @@ module.exports = function(config) {
   if (!process.env['SAUCE_USERNAME']) process.env.SAUCE_USERNAME = 'readium';
   if (!process.env['SAUCE_ACCESS_KEY']) process.env.SAUCE_ACCESS_KEY = 'a36ebc10-e514-4da6-924c-307aec513550';
 
-  var customLaunchers = {
-    sl_chrome: {
-      base: 'SauceLabs',
-      browserName: 'chrome',
-      platform: 'Windows 7',
-      version: '42'
-    },
-    sl_firefox: {
-      base: 'SauceLabs',
-      browserName: 'firefox'
+
+  console.log('process.env.npm_package_config_MODE:');
+  console.log(process.env.npm_package_config_MODE);
+  if (process.env.npm_package_config_MODE)
+  		process.env['MODE'] = process.env.npm_package_config_MODE;
+  if (!process.env['MODE']) process.env.MODE = 'firefox';
+
+
+//  https://saucelabs.com/tests/43b2ea92ed604ca19fe182cb2f515df7
+
+
+  var customLaunchers =
+    process.env.MODE == 'firefox' ?
+    {
+      sl_firefox: {
+        base: 'SauceLabs',
+        browserName: 'firefox'
+      }
+    } :
+    {
+      sl_chrome: {
+        base: 'SauceLabs',
+        browserName: 'chrome',
+        platform: 'Windows 7',
+        version: '42'
+      }
     }
-  }
+  ;
 
   config.set({
 
