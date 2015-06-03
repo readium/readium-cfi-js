@@ -111,8 +111,12 @@ devDependencies:
     "pegjs": 'latest'
 
     "karma": 'latest'
+
     "karma-chrome-launcher": 'latest'
+    "karma-firefox-launcher": 'latest'
+
     "karma-jasmine": 'latest'
+
     "karma-sauce-launcher": 'latest'
 
 
@@ -233,7 +237,7 @@ scripts:
 
 #=====================
     'postbuild:scripts:multiple': '
-        
+
         node node_modules/rimraf/bin.js
             build-output/_multiple-bundles/RequireJS.js.src.js
     '

@@ -21,19 +21,42 @@ describe("CFI INSTRUCTION OBJECT", function () {
 		//   appears to have to be loaded in a window to create an iframe, with content, as an element of that document. The original
 		//   intention was to create a document object and then append an iframe; I was unable to find a way to do this, hence appending
 		//   the iframe to the current document (jasmine).
-		var iframe = $('<iframe src="' + window.location.href + '"/>')[0];
+		//var iframe = $('<iframe src="' + window.location.href + '"/>')[0];
+
+		//
+		// iframe.contentDocument.open("text/xml", "replace");
+		// iframe.contentDocument.write(iframeContentXHTML);
+		// iframe.contentDocument.close();
+
+
+		var iframe = $('<iframe/>')[0];
+
 		document.body.appendChild(iframe);
 
-		iframe.contentDocument.open("text/xml", "replace");
-		iframe.contentDocument.write(iframeContentXHTML);
-		iframe.contentDocument.close();
+    var uriBlob = window.URL.createObjectURL(
+        new Blob([iframeContentXHTML], {'type': "application/xhtml+xml"})
+    );
 
-		var $nextNode = EPUBcfi.CFIInstructions.followIndirectionStep(4, $("iframe", document), [], []);
+		iframe.onload = function () {
 
-		expect($nextNode.attr("id")).toBe("body1");
+					var frame = $("iframe", document);
+					if (frame[0] !== iframe) {
+							console.log("! FRAMEs?");
+					}
+					//console.log(frame[0]);
 
-		// Remove the injected iframe
-		$(iframe).remove();
+					var $nextNode = EPUBcfi.CFIInstructions.followIndirectionStep(4, frame, [], []);
+					//console.log($nextNode[0]);
+
+
+					expect($nextNode.attr("id")).toBe("body1");
+
+					// Remove the injected iframe
+					$(iframe).remove();
+		};
+
+    iframe.setAttribute("src", uriBlob);
+
 	});
 
 	it("injects text at the specified offset", function () {
@@ -43,7 +66,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
 		var contentDoc = domParser.parseFromString(contentDocXHTML, "text/xml");
 
 		var $injectedElement = EPUBcfi.CFIInstructions.textTermination($($("#c01p0002", $(contentDoc))[0].firstChild), 4, '<span id="injected" class="epub_cfi"></span>');
-		
+
 		expect($injectedElement.attr("id")).toBe("injected");
 		expect($injectedElement.parent().attr("id")).toBe("c01p0002");
 	});
@@ -56,7 +79,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
 
 		var $injectedElement = EPUBcfi.CFIInstructions.textTermination($targetTextNodeList, 4, '<span class="epub_cfi"></span>');
 		var $currNodeChildren = $injectedElement.parent().contents();
-		
+
 		expect($currNodeChildren[0].nodeValue).toBe(" asd");
 		expect($injectedElement.hasClass('epub_cfi')).toBe(true);
 		expect($currNodeChildren[2].nodeValue).toBe("fasd ");
@@ -89,7 +112,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
 		expect($result[0].nodeValue).toEqual("asdfsd ");
 		expect($result[1].nodeValue).toEqual(" ddfd");
 	});
-	
+
 	it('returns the correct text node if the first text node is empty', function () {
 
 		var domParser = new window.DOMParser();
@@ -373,7 +396,7 @@ describe('CFI INSTRUCTION ERROR HANDLING', function () {
 			EPUBcfi.NodeTypeError(undefined, "expected an iframe element"));
 	});
 
-	// Throws terminus errors for invalid text offsets 
+	// Throws terminus errors for invalid text offsets
 	it('throws a terminus error if an invalid text offset is provided', function () {
 
 		var $currentNode = $('<p>  </p>');
