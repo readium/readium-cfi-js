@@ -52,6 +52,7 @@
     "pegjs": "latest",
     "karma": "latest",
     "karma-chrome-launcher": "latest",
+    "karma-firefox-launcher": "latest",
     "karma-jasmine": "latest",
     "karma-sauce-launcher": "latest",
     "cson": "latest",
