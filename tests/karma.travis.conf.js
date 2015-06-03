@@ -14,7 +14,6 @@ module.exports = function(config) {
     sl_firefox: {
       base: 'SauceLabs',
       browserName: 'firefox',
-      platform: 'Windows 7',
       version: '38'
     }
   }
