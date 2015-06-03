@@ -280,6 +280,18 @@ scripts:
     '
 
 #=====================
+    'test:sauce:firefox': '
+       npm run test:travis --readium-cfi-js:MODE=firefox
+    '
+
+#=====================
+    'test:sauce:chrome': '
+       npm run test:travis --readium-cfi-js:MODE=chrome
+    '
+
+
+
+#=====================
 #### BLOCKING! (CTRL-C) [watch or nodemon]
     'watch': '
         node node_modules/watch/cli.js
