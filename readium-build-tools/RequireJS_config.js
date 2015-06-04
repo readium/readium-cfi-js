@@ -168,11 +168,14 @@ function(thiz){
         {
             mainConfigFile.push(pathPrefix + "RequireJS_config_multiple-bundles_external-libs.js");
         }
+
         var configPluginsPath = path.join(process.cwd(), rootDir(i), "build-config/RequireJS_config_plugins.js");
         try {
             fs.accessSync(configPluginsPath);
             mainConfigFile.push(pathPrefix + "RequireJS_config_plugins.js");
-            console.log("Included plugins config.")
+            console.log("Plugins config: ");
+            console.log(configPluginsPath);
+            console.log(pathPrefix + "RequireJS_config_plugins.js");
         } catch (e) {
             // ignored
         }
