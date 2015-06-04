@@ -22,7 +22,8 @@ function(thiz){
     console.log(process.cwd());
     //console.log(process.env);
 
-
+    var fs = nodeRequire("fs");
+    var path = nodeRequire("path");
 
 
     var args = process.argv.slice(3);
@@ -113,6 +114,44 @@ function(thiz){
     //     console.log("===> Destination source folder: " + destDir);
     // }
 
+    // relative to this config file, points into the above sources folder,
+    // which is located at the topmost level (where the build process is invoked from)
+    process._RJS_baseUrl = function(level) {
+        var n = process._RJS_Path_RelCwd__ConfigDir_nSlashes - level;
+
+        var back = "..";
+        for (var i = 0; i < n; i++) {
+            back = back + "/..";
+        }
+        // console.log(level);
+        // console.log(n);
+        // console.log(back);
+
+        return process._RJS_isSingleBundle ? back : (back + "/build-output/XXX"); //copiedSourcesDir
+    };
+
+    function rootDir(level) {
+      var n = process._RJS_Path_RelCwd__ConfigDir_nSlashes - level;
+
+      var folderPath = process._RJS_Path_RelCwd__ConfigDir.split('/');
+
+      var forward = "";
+      for (var i = 0; i < n; i++) {
+          forward = forward + '/' + folderPath[i];
+      }
+      // console.log(level);
+      // console.log(n);
+      // console.log(forward);
+
+      return forward;
+    }
+
+    // relative to the above baseUrl,
+    // which is located at the topmost level (where the build process is invoked from)
+    process._RJS_rootDir = function(level) {
+        return (process._RJS_isSingleBundle ? "./" : "../..") + rootDir(level);
+    };
+
     var mainConfigFile = [];
 
 
@@ -128,6 +167,14 @@ function(thiz){
         if (i == N-1 && !process._RJS_isSingleBundle)
         {
             mainConfigFile.push(pathPrefix + "RequireJS_config_multiple-bundles_external-libs.js");
+        }
+        var configPluginsPath = path.join(process.cwd(), rootDir(i), "build-config/RequireJS_config_plugins.js");
+        try {
+            fs.accessSync(configPluginsPath);
+            mainConfigFile.push(pathPrefix + "RequireJS_config_plugins.js");
+            console.log("Included plugins config.")
+        } catch (e) {
+            // ignored
         }
 
         mainConfigFile.push(pathPrefix + "RequireJS_config_common.js");
@@ -162,43 +209,6 @@ function(thiz){
 
     console.log(mainConfigFile);
     process._RJS_mainConfigFile = mainConfigFile;
-
-
-
-    // relative to this config file, points into the above sources folder,
-    // which is located at the topmost level (where the build process is invoked from)
-    process._RJS_baseUrl = function(level) {
-        var n = process._RJS_Path_RelCwd__ConfigDir_nSlashes - level;
-
-        var back = "..";
-        for (var i = 0; i < n; i++) {
-            back = back + "/..";
-        }
-        // console.log(level);
-        // console.log(n);
-        // console.log(back);
-
-        return process._RJS_isSingleBundle ? back : (back + "/build-output/XXX"); //copiedSourcesDir
-    };
-
-    // relative to the above baseUrl,
-    // which is located at the topmost level (where the build process is invoked from)
-    process._RJS_rootDir = function(level) {
-        var n = process._RJS_Path_RelCwd__ConfigDir_nSlashes - level;
-
-        var folderPath = process._RJS_Path_RelCwd__ConfigDir.split('/');
-
-        var forward = "";
-        for (var i = 0; i < n; i++) {
-            forward = forward + '/' + folderPath[i];
-        }
-        // console.log(level);
-        // console.log(n);
-        // console.log(forward);
-
-        return (process._RJS_isSingleBundle ? "./" : "../..") + forward;
-    };
-
 
 
     //process.exit(1);
