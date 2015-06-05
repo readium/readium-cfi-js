@@ -137,25 +137,25 @@ var nextRepo = function(i) {
                         }
                     }
 
+                    var setBranch = function(branch, sha) {
+
+                        console.log("Branch: " + branch);
+
+                        repoVersions[repos[i].name].branch = branch;
+
+                        repoVersions[repos[i].name].release = branch ? branch.indexOf('release/') == 0 : false,
+
+                        repoVersions[repos[i].name].timestamp = Date.now();
+
+                        if (repoVersions[repos[i].name].sha !== sha) {
+                            console.log("Different SHA?! " + sha);
+                        }
+
+                        nextRepo(++i);
+                    };
+
                     var headFileContents = headPath ? fs.readFileSync(headPath, 'utf-8') : "";
                     if (headFileContents.indexOf('ref: ') == 0) {
-
-                        var setBranch = function(branch, sha) {
-
-                            console.log("Branch: " + branch);
-
-                            repoVersions[repos[i].name].branch = branch;
-
-                            repoVersions[repos[i].name].release = branch ? branch.indexOf('release/') == 0 : false,
-
-                            repoVersions[repos[i].name].timestamp = Date.now();
-
-                            if (repoVersions[repos[i].name].sha !== sha) {
-                                console.log("Different SHA?! " + sha);
-                            }
-
-                            nextRepo(++i);
-                        };
 
                         repoGit.branch(function(err, head) {
 
@@ -192,12 +192,11 @@ var nextRepo = function(i) {
                         });
 
                     } else {
-                        branch = headFileContents.substring(0, headFileContents.length - 1).trim();
-                        console.log("Branch: " + branch);
+                        console.log(headFileContents);
+                        var branch = headFileContents.substring(0, headFileContents.length - 1).trim();
+                        console.log(branch);
 
-                        repoVersions[repos[i].name].branch = branch;
-
-                        nextRepo(++i);
+                        setBranch(branch, repoVersions[repos[i].name].sha);
                     }
                 }
             );
