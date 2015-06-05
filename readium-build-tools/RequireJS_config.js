@@ -164,20 +164,31 @@ function(thiz){
         }
         pathPrefix = pathPrefix + "../build-config/";
 
+        var configPluginsPath = path.join(process.cwd(), rootDir(i), "build-config/RequireJS_config_plugins.js");
+        var hasPluginsConfig = false;
+        try {
+            fs.accessSync(configPluginsPath);
+            hasPluginsConfig = true;
+        } catch (e) {
+            // ignored
+        }
+
         if (i == N-1 && !process._RJS_isSingleBundle)
         {
             mainConfigFile.push(pathPrefix + "RequireJS_config_multiple-bundles_external-libs.js");
         }
 
-        var configPluginsPath = path.join(process.cwd(), rootDir(i), "build-config/RequireJS_config_plugins.js");
-        try {
-            fs.accessSync(configPluginsPath);
-            mainConfigFile.push(pathPrefix + "RequireJS_config_plugins.js");
-            console.log("Plugins config: ");
+        if (hasPluginsConfig) {
+            var pluginsConfig = pathPrefix + "RequireJS_config_plugins.js";
+            mainConfigFile.push(pluginsConfig);
+            console.log("Plugins config:");
             console.log(configPluginsPath);
-            console.log(pathPrefix + "RequireJS_config_plugins.js");
-        } catch (e) {
-            // ignored
+            console.log(pluginsConfig);
+            
+            var pluginsBundleConfig = pathPrefix + "RequireJS_config_plugins_"+ (process._RJS_isSingleBundle ? "single-bundle" : "multiple-bundles") + ".js";
+            mainConfigFile.push(pluginsBundleConfig);
+            console.log("Plugins bundle config:");
+            console.log(pluginsBundleConfig);
         }
 
         mainConfigFile.push(pathPrefix + "RequireJS_config_common.js");
