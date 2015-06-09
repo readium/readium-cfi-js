@@ -1,6 +1,10 @@
 var fs = require('fs');
 var path = require('path');
 
+console.log("========>");
+console.log("========> Plugins bootstrap ...");
+console.log("========>");
+
 // TemplateEngine
 // Copyright (C) 2013 Krasimir Tsonev
 // http://krasimirtsonev.com/blog/article/Javascript-template-engine-in-just-20-line
@@ -28,7 +32,7 @@ var TemplateEngine = function(text, options) {
 var templates = {
     "RequireJS_config_plugins.js": '//Do not modify this file, it is automatically generated.\n' +
 
-        'if(process._RJS_isBrowser){var p=[],c=require.config;require.config=function(k){c.apply(require,arguments);var n=k.packages;'+
+        'if(process._RJS_isBrowser){var p=[],c=require.config;require.config=function(k){c.apply(require,arguments);var n=k.packages;' +
         'n&&(p=n),require.config=c,window.setTimeout(function(){require(p.map(function(n){return n.name}),function(){console.log("Plugins loaded.")})},0)}}\n' +
 
         'require.config({packages:[\n' +
@@ -74,11 +78,39 @@ var templates = {
         ']});\n'
 };
 
-var plugins = ["annotations", "example"];
+var pluginsDir = path.join(process.cwd(), 'plugins');
+
+var pluginsJsonPath = path.join(pluginsDir, 'plugins.json');
+var pluginsJson = fs.readFileSync(pluginsJsonPath, {encoding: "utf8"});
+pluginsJson = JSON.parse(pluginsJson);
+
+var includedPlugins = pluginsJson["include"];
+console.log("Included plugins: ", includedPlugins);
+
+var excludedPlugins = pluginsJson["exclude"];
+console.log("Excluded plugins: ", excludedPlugins);
+
+includedPlugins.forEach(function(pluginName) {
+    // Check for the existance of main.js inside a plugin's folder
+    // This will throw an error if the path does not exist or is unaccessable
+    try {
+        fs.accessSync(path.join(pluginsDir, pluginName, 'main.js'));
+    } catch (ex) {
+        console.error('Error: Does the plugin \'' + pluginName + '\' exist?');
+        throw ex;
+    }
+});
 
 var dir = path.join(process.cwd(), 'build-config');
 
+console.log("Generated plugin config files: ");
+
 Object.keys(templates).forEach(function(key) {
     var filePath = path.join(dir, key);
-    fs.writeFileSync(filePath, TemplateEngine(templates[key], {plugins: plugins}));
+    fs.writeFileSync(filePath, TemplateEngine(templates[key], {
+        plugins: includedPlugins
+    }));
+    console.log(filePath);
 });
+
+console.log("========> End of plugins bootstrap.");
