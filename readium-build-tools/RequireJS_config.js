@@ -32,7 +32,7 @@ function(thiz){
     // relative to process.cwd(), folder that contains this config file
     var configDir = args[0];
     var i = configDir.lastIndexOf("/");
-    configDir = configDir.substr(0, i);
+    configDir = configDir.substr(0, i).replace(/\.\//g, '');
     console.log(configDir);
     process._RJS_Path_RelCwd__ConfigDir = configDir;
 
@@ -184,7 +184,7 @@ function(thiz){
             console.log("Plugins config:");
             console.log(configPluginsPath);
             console.log(pluginsConfig);
-            
+
             var pluginsBundleConfig = pathPrefix + "RequireJS_config_plugins_"+ (process._RJS_isSingleBundle ? "single-bundle" : "multiple-bundles") + ".js";
             mainConfigFile.push(pluginsBundleConfig);
             console.log("Plugins bundle config:");
