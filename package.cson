@@ -148,7 +148,7 @@ scripts:
 #=====================
     cson2json: '
 
-        npm run cson2json package.cson > package.json
+        node ./node_modules/cson/bin/cson2json package.cson > package.json
         &&
         node readium-build-tools/optimizePackageJsonScripts.js
     '
