@@ -78,13 +78,13 @@
     "build:scripts:multiple": "node ./node_modules/requirejs/bin/r.js -o ./readium-build-tools/RequireJS_config.js --rjs_bundle=multiple",
     "postbuild:scripts:multiple": "node ./node_modules/rimraf/bin.js build-output/_multiple-bundles/RequireJS.js.src.js",
     "build:scripts:single": "node ./node_modules/requirejs/bin/r.js -o ./readium-build-tools/RequireJS_config.js --rjs_bundle=single",
-    "http:watch": "echo > open_webbrowser.js && parallelshell \"node ./node_modules/watch/cli.js\" \"npm run httpServe\"",
+    "http:watch": "echo > open_webbrowser.js && parallelshell \"node ./node_modules/watch/cli.jser\" \"npm run httpServe\"",
     "http": "parallelshell \"npm run httpServe\" \"npm run webBrowser\"",
     "test": "node ./node_modules/karma/bin/karma start tests/karma.conf.js --singleRun --no-auto-watch",
     "test:travis": "node ./node_modules/karma/bin/karma start tests/karma.travis.conf.js --singleRun --no-auto-watch",
     "test:travis:firefox": "npm run test:travis --readium-cfi-js:MODE=firefox",
     "test:travis:chrome": "npm run test:travis --readium-cfi-js:MODE=chrome",
-    "watch": "node ./node_modules/watch/cli.js \"npm run build && npm run test && node readium-build-tools/webbrowser.js && npm run webBrowser && node ./node_modules/rimraf/bin.js open_webbrowser.js\" dev/ js/ tests/",
+    "watcher": "node ./node_modules/watch/cli.js \"npm run build && npm run test && node readium-build-tools/webbrowser.js && npm run webBrowser && node ./node_modules/rimraf/bin.js open_webbrowser.js\" dev/ js/ tests/",
     "httpServe": "http-server -p 9090 --cors ./",
     "webBrowser": "opener http://127.0.0.1:9090/dev/"
   }
