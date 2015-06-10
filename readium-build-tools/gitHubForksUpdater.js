@@ -112,7 +112,7 @@ var scanDeps = function(deps) {
         if (alreadyScannedDeps[depSource]) continue;
         alreadyScannedDeps[depSource] = true;
 
-        //console.log(depSource);
+        console.log(depSource);
 
         var url = {
           hostname: 'api.github.com',
