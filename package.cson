@@ -141,19 +141,21 @@ devDependencies:
     "jshint": 'latest'
     "glob": 'latest'
 
+
 #####################################################################
 scripts:
 
 #=====================
     cson2json: '
 
-        node node_modules/cson/bin/cson2json package.cson
+        npm run cson2json package.cson > package.json
         &&
-        node node_modules/cson/bin/cson2json package.cson > package.json
+        node readium-build-tools/optimizePackageJsonScripts.js
     '
 
 #=====================
     'prepare': '
+
         npm run
             prepare:dependencies
     '
@@ -174,14 +176,15 @@ scripts:
 
 #=====================
     clean: '
+
         node --version
         &&
         npm --version
         &&
-        node node_modules/rimraf/bin.js
+        npm run rimraf
             build-output/*
         &&
-        node node_modules/rimraf/bin.js
+        npm run rimraf
             gen/*
     '
 
@@ -201,8 +204,7 @@ scripts:
 #=====================
     lint: '
 
-        node
-            readium-build-tools/jshint_glob.js
+        npm run jshint
             js/**.js
     '
 
@@ -224,35 +226,36 @@ scripts:
 
 #=====================
     'build:scripts:peg': '
-        node ./node_modules/pegjs/bin/pegjs --export-var EPUBcfiParser cfi_parser.pegjs gen/cfi_parser_gen.js
+
+        npm run pegjs
+            --export-var EPUBcfiParser cfi_parser.pegjs gen/cfi_parser_gen.js
     '
 
 #=====================
     'build:scripts:multiple': '
-        node node_modules/requirejs/bin/r.js
-             -o
-             readium-build-tools/RequireJS_config.js
+
+        npm run rjs
              --rjs_bundle=multiple
     '
 
 #=====================
     'postbuild:scripts:multiple': '
 
-        node node_modules/rimraf/bin.js
+        npm run rimraf
             build-output/_multiple-bundles/RequireJS.js.src.js
     '
 
 #=====================
     'build:scripts:single': '
-        node node_modules/requirejs/bin/r.js
-             -o
-             readium-build-tools/RequireJS_config.js
+
+        npm run rjs
              --rjs_bundle=single
     '
 
 #=====================
 #### BLOCKING! (CTRL-C) [watch][live-reload][http]
     'http:watch': '
+
         echo > open_webbrowser.js
         &&
         parallelshell
@@ -264,6 +267,7 @@ scripts:
 #=====================
 #### BLOCKING! (CTRL-C) [http]
     'http': '
+
         parallelshell
             \"npm run httpServe\"
             \"npm run webBrowser\"
@@ -271,21 +275,27 @@ scripts:
 
 #=====================
     'test': '
-       node node_modules/karma/bin/karma start tests/karma.conf.js --singleRun --no-auto-watch
+
+       npm run karma
+          start tests/karma.conf.js --singleRun --no-auto-watch
     '
 
 #=====================
     'test:travis': '
-       node node_modules/karma/bin/karma start tests/karma.travis.conf.js --singleRun --no-auto-watch
+
+       npm run karma
+          start tests/karma.travis.conf.js --singleRun --no-auto-watch
     '
 
 #=====================
-    'test:sauce:firefox': '
+    'test:travis:firefox': '
+
        npm run test:travis --readium-cfi-js:MODE=firefox
     '
 
 #=====================
-    'test:sauce:chrome': '
+    'test:travis:chrome': '
+
        npm run test:travis --readium-cfi-js:MODE=chrome
     '
 
@@ -294,12 +304,13 @@ scripts:
 #=====================
 #### BLOCKING! (CTRL-C) [watch or nodemon]
     'watch': '
-        node node_modules/watch/cli.js
+
+        npm run watch
             \"npm run build
                 && npm run test
                 && node readium-build-tools/webbrowser.js
                 && npm run webBrowser
-                && node node_modules/rimraf/bin.js
+                && npm run rimraf
                       open_webbrowser.js\"
             dev/ js/ tests/
     '
@@ -311,11 +322,12 @@ scripts:
     #    --exec \"npm run build
     #            && node readium-build-tools/webbrowser.js
     #            && npm run webbrowser
-    #            && node node_modules/rimraf/bin.js
+    #            && npm run rimraf
     #                  open_webbrowser.js\"
 
 #=====================
     'httpServe': '
+
         http-server -p 9090 --cors ./
     '
 
