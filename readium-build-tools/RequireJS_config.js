@@ -169,8 +169,6 @@ function(thiz){
             mainConfigFile.push(pathPrefix + "RequireJS_config_multiple-bundles_external-libs.js");
         }
 
-        mainConfigFile.push(pathPrefix + "RequireJS_config_common.js");
-
         if (!configOverrideTarget)
         {
             mainConfigFile.push(pathPrefix + "RequireJS_config_" + (process._RJS_isSingleBundle ? "single-bundle" : "multiple-bundles") + ((i == N-1) && configCustomTarget ? configCustomTarget : "") + ".js");
@@ -202,6 +200,8 @@ function(thiz){
         {
             mainConfigFile.push(pathPrefix + "RequireJS_config_" + (process._RJS_isSingleBundle ? "single-bundle" : "multiple-bundles") + configOverrideTarget + ".js");
         }
+
+        mainConfigFile.push(pathPrefix + "RequireJS_config_common.js");
 
         // if (!process._RJS_isSingleBundle)
         // {
