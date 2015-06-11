@@ -164,31 +164,9 @@ function(thiz){
         }
         pathPrefix = pathPrefix + "../build-config/";
 
-        var configPluginsPath = path.join(process.cwd(), rootDir(i), "build-config/RequireJS_config_plugins.js");
-        var hasPluginsConfig = false;
-        try {
-            fs.accessSync(configPluginsPath);
-            hasPluginsConfig = true;
-        } catch (e) {
-            // ignored
-        }
-
         if (i == N-1 && !process._RJS_isSingleBundle)
         {
             mainConfigFile.push(pathPrefix + "RequireJS_config_multiple-bundles_external-libs.js");
-        }
-
-        if (hasPluginsConfig) {
-            var pluginsConfig = pathPrefix + "RequireJS_config_plugins.js";
-            mainConfigFile.push(pluginsConfig);
-            console.log("Plugins config:");
-            console.log(configPluginsPath);
-            console.log(pluginsConfig);
-
-            var pluginsBundleConfig = pathPrefix + "RequireJS_config_plugins_"+ (process._RJS_isSingleBundle ? "single-bundle" : "multiple-bundles") + ".js";
-            mainConfigFile.push(pluginsBundleConfig);
-            console.log("Plugins bundle config:");
-            console.log(pluginsBundleConfig);
         }
 
         mainConfigFile.push(pathPrefix + "RequireJS_config_common.js");
@@ -196,6 +174,29 @@ function(thiz){
         if (!configOverrideTarget)
         {
             mainConfigFile.push(pathPrefix + "RequireJS_config_" + (process._RJS_isSingleBundle ? "single-bundle" : "multiple-bundles") + ((i == N-1) && configCustomTarget ? configCustomTarget : "") + ".js");
+
+            var configPluginsPath = path.join(process.cwd(), rootDir(i), "build-config", "RequireJS_config_plugins.js");
+            var hasPluginsConfig = false;
+            try {
+                fs.accessSync(configPluginsPath);
+                hasPluginsConfig = true;
+            } catch (e) {
+                // ignored
+            }
+
+            if (hasPluginsConfig) {
+
+                var pluginsConfig = pathPrefix + "RequireJS_config_plugins.js";
+                mainConfigFile.push(pluginsConfig);
+                console.log("Plugins config:");
+                console.log(configPluginsPath);
+                console.log(pluginsConfig);
+
+                var pluginsBundleConfig = pathPrefix + "RequireJS_config_plugins_"+ (process._RJS_isSingleBundle ? "single-bundle" : "multiple-bundles") + ".js";
+                mainConfigFile.push(pluginsBundleConfig);
+                console.log("Plugins bundle config:");
+                console.log(pluginsBundleConfig);
+            }
         }
         else if (i == N-1)
         {
@@ -234,21 +235,21 @@ function(thiz){
 {
     mainConfigFile: process._RJS_mainConfigFile,
 
-    //
-    // optimize: "none",
-    // generateSourceMaps: true,
-    // preserveLicenseComments: true,
 
-        generateSourceMaps: true,
-        preserveLicenseComments: false,
+    optimize: "none",
+    generateSourceMaps: true,
+    preserveLicenseComments: true,
 
-        optimize: "uglify2",
-
-        uglify2: {
-          mangle: true,
-          compress: true,
-          'screw-ie8': true
-        },
+        // generateSourceMaps: true,
+        // preserveLicenseComments: false,
+        //
+        // optimize: "uglify2",
+        //
+        // uglify2: {
+        //   mangle: true,
+        //   compress: true,
+        //   'screw-ie8': true
+        // },
 
 
     inlineText: true,
