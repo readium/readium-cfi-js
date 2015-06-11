@@ -44,6 +44,34 @@ function(thiz){
     var configOverrideTarget = undefined;
     process._RJS_isSingleBundle = false;
 
+    process._RJS_isUgly = true;
+
+    // For example, command line parameter after "npm run SCRIPT_NAME":
+    //--readium-js-viewer:RJS_UGLY=no
+    // or:
+    //--readium-shared-js:RJS_UGLY=false
+    // or:
+    //--readium-cfi-js:RJS_UGLY=FALSE
+    //
+    // ... or ENV shell variable, e.g. PowerShell:
+    //Set-Item Env:RJS_UGLY no
+    console.log('process.env.npm_package_config_RJS_UGLY:');
+    console.log(process.env.npm_package_config_RJS_UGLY);
+    console.log('process.env[RJS_UGLY]:');
+    console.log(process.env['RJS_UGLY']);
+    if (process.env.npm_package_config_RJS_UGLY)
+    		process.env['RJS_UGLY'] = process.env.npm_package_config_RJS_UGLY;
+
+    if (typeof process.env['RJS_UGLY'] !== "undefined") {
+        var ugly = process.env['RJS_UGLY'];
+        ugly = ugly.toLowerCase();
+        if (ugly === "false" || ugly === "no") {
+            process._RJS_isUgly = false;
+        } else {
+            process._RJS_isUgly = true;
+        }
+    }
+
     for (var k = 1; k < args.length; k++) {
         var parameter = args[k];
 
@@ -73,6 +101,20 @@ function(thiz){
             console.log(configOverrideTarget);
         }
 
+        token = "--rjs_isUgly=";
+        if (parameter.indexOf(token) == 0) {
+
+            process._RJS_isUgly = parameter;
+            process._RJS_isUgly = process._RJS_isUgly.substr(token.length);
+            process._RJS_isUgly = process._RJS_isUgly.toLowerCase();
+            if (process._RJS_isUgly === "false" || process._RJS_isUgly === "no") {
+                process._RJS_isUgly = false;
+            } else {
+                process._RJS_isUgly = true;
+            }
+            console.log("Uglify: " + process._RJS_isUgly);
+        }
+
         // token = "--rjs_mainConfigFile=";
         // if (parameter.indexOf(token) == 0) {
 
@@ -94,6 +136,7 @@ function(thiz){
             // console.log(sources);
         // }
     }
+
 
     // if (!process._RJS_isSingleBundle)
     // {
@@ -236,20 +279,15 @@ function(thiz){
     mainConfigFile: process._RJS_mainConfigFile,
 
 
-    optimize: "none",
+    optimize: process._RJS_isUgly ? "uglify2" : "none",
     generateSourceMaps: true,
-    preserveLicenseComments: true,
+    preserveLicenseComments: process._RJS_isUgly ? false : true,
 
-        // generateSourceMaps: true,
-        // preserveLicenseComments: false,
-        //
-        // optimize: "uglify2",
-        //
-        // uglify2: {
-        //   mangle: true,
-        //   compress: true,
-        //   'screw-ie8': true
-        // },
+    uglify2: process._RJS_isUgly ? {
+      mangle: true,
+      compress: true,
+      'screw-ie8': true
+    } : undefined,
 
 
     inlineText: true,
