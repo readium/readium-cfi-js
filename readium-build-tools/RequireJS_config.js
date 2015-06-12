@@ -55,6 +55,9 @@ function(thiz){
     //
     // ... or ENV shell variable, e.g. PowerShell:
     //Set-Item Env:RJS_UGLY no
+    // e.g. OSX terminal:
+    //RJS_UGLY=no npm run build
+    //(temporary, command process -specific ENV variable)
     console.log('process.env.npm_package_config_RJS_UGLY:');
     console.log(process.env.npm_package_config_RJS_UGLY);
     console.log('process.env[RJS_UGLY]:');
