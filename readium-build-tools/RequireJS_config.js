@@ -301,7 +301,7 @@ function(thiz){
     //xhtml: true, //document.createElementNS()
 
     /* http://requirejs.org/docs/api.html#config-waitSeconds */
-    waitSeconds: 1,
+    waitSeconds: 0,
 
     removeCombined: true,
 
