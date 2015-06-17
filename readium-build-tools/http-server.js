@@ -1027,8 +1027,8 @@ args.unshift(path.join(process.cwd(), 'node_modules', 'http-server', 'bin', 'htt
 
 var child = child_process.execFile('node', args, function(error, stdout, stderr){
 	if (error) console.log(error);
-  if (stdout) console.log(stdout);
-  if (stderr) console.log(stderr);
+  //if (stdout) console.log(stdout);
+  //if (stderr) console.log(stderr);
 });
 child.stdout.on('data', function(data) {
     console.log(data.toString());
@@ -1040,8 +1040,8 @@ child.stderr.on('data', function(data) {
 
 var child2 = child_process.execFile('node', ['node_modules/opener/opener.js', 'http://'+IP+':'+PORT+'/'], function(error, stdout, stderr){
 	if (error) console.log(error);
-  if (stdout) console.log(stdout);
-  if (stderr) console.log(stderr);
+  //if (stdout) console.log(stdout);
+  //if (stderr) console.log(stderr);
 });
 child2.stdout.on('data', function(data) {
     console.log(data.toString());
