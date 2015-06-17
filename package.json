@@ -55,7 +55,6 @@
     "karma-firefox-launcher": "latest",
     "karma-jasmine": "latest",
     "karma-sauce-launcher": "latest",
-    "concat-cli": "latest",
     "cson": "latest",
     "rimraf": "latest",
     "cpy": "latest",
