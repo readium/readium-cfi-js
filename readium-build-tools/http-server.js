@@ -1025,27 +1025,24 @@ var child_process = require('child_process');
 
 args.unshift(path.join(process.cwd(), 'node_modules', 'http-server', 'bin', 'http-server'));
 
-var child = child_process.execFile('node', args, function(error, stdout, stderr){
-	if (error) console.log(error);
-  //if (stdout) console.log(stdout);
-  //if (stderr) console.log(stderr);
-});
+var child = child_process.spawn('node', args);
 child.stdout.on('data', function(data) {
     console.log(data.toString());
 });
 child.stderr.on('data', function(data) {
     console.log(data.toString());
 });
-
-
-var child2 = child_process.execFile('node', ['node_modules/opener/opener.js', 'http://'+IP+':'+PORT+'/'], function(error, stdout, stderr){
-	if (error) console.log(error);
-  //if (stdout) console.log(stdout);
-  //if (stderr) console.log(stderr);
+child.on('close', function(code) {
+  console.log('HTTP child process exit code: ' + code);
 });
+
+var child2 = child_process.spawn('node', ['node_modules/opener/opener.js', 'http://'+IP+':'+PORT+'/']);
 child2.stdout.on('data', function(data) {
     console.log(data.toString());
 });
 child2.stderr.on('data', function(data) {
     console.log(data.toString());
+});
+child2.on('close', function(code) {
+  console.log('OPENER child process exit code: ' + code);
 });
