@@ -122,8 +122,6 @@ devDependencies:
 
 # Below dependencies are only used for building tasks (above are runtime deps):
 
-    "concat-cli": 'latest'
-
     "cson": 'latest'
 
     "rimraf": 'latest'
