@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var cson = require('cson');
 
 console.log("========>");
 console.log("========> Plugins bootstrap ...");
@@ -80,17 +81,42 @@ var templates = {
 
 var pluginsDir = path.join(process.cwd(), 'plugins');
 
-var pluginsJsonPath = path.join(pluginsDir, 'plugins.json');
-var pluginsJson = fs.readFileSync(pluginsJsonPath, {encoding: "utf8"});
-pluginsJson = JSON.parse(pluginsJson);
+var pluginsCsonPathDefault = path.join(pluginsDir, 'plugins.cson');
+var pluginsCsonDefault = fs.readFileSync(pluginsCsonPathDefault, {encoding: "utf8"});
+pluginsCsonDefault = cson.parse(pluginsCsonDefault);
 
-var includedPlugins = pluginsJson["include"];
-console.log("Included plugins: ", includedPlugins);
+var pluginsCsonPathUser = path.join(pluginsDir, 'plugins-override.cson');
+var pluginsCsonUser = null;
+try {
+    pluginsCsonUser = fs.readFileSync(pluginsCsonPathUser, {encoding: "utf8"});
+    pluginsCsonUser = cson.parse(pluginsCsonUser);
+} catch (ignored) {}
 
-var excludedPlugins = pluginsJson["exclude"];
-console.log("Excluded plugins: ", excludedPlugins);
+var defaultPlugins = [], includedPlugins = [], excludedPlugins = [];
 
-includedPlugins.forEach(function(pluginName) {
+defaultPlugins = pluginsCsonDefault["plugins"];
+console.log("Default plugins: ", defaultPlugins);
+
+if (pluginsCsonUser) {
+    includedPlugins = pluginsCsonUser.plugins["include"];
+    console.log("Included plugins: ", includedPlugins);
+
+    excludedPlugins = pluginsCsonUser.plugins["exclude"];
+    console.log("Excluded plugins: ", excludedPlugins);
+} else {
+    console.log("No plugin entries to override.");
+}
+
+//union defaultPlugins and includedPlugins, without excludedPlugins
+var pluginsToLoad = defaultPlugins
+    .concat(includedPlugins)
+    .filter(function (elem, i, arr) {
+        return excludedPlugins.indexOf(elem) === -1 && arr.indexOf(elem) === i;
+    });
+
+console.log("Plugins to load: ", pluginsToLoad);
+
+pluginsToLoad.forEach(function(pluginName) {
     // Check for the existance of main.js inside a plugin's folder
     // This will throw an error if the path does not exist or is unaccessable
     try {
@@ -108,7 +134,7 @@ console.log("Generated plugin config files: ");
 Object.keys(templates).forEach(function(key) {
     var filePath = path.join(dir, key);
     fs.writeFileSync(filePath, TemplateEngine(templates[key], {
-        plugins: includedPlugins
+        plugins: pluginsToLoad
     }));
     console.log(filePath);
 });
