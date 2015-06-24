@@ -85,12 +85,47 @@ var pluginsCsonPathDefault = path.join(pluginsDir, 'plugins.cson');
 var pluginsCsonDefault = fs.readFileSync(pluginsCsonPathDefault, {encoding: "utf8"});
 pluginsCsonDefault = cson.parse(pluginsCsonDefault);
 
+
+    var overridePlugins = true;
+
+    // For example, command line parameter after "npm run SCRIPT_NAME":
+    //--readium-js-viewer:RJS_PLUGINS_OVERRIDE=no
+    // or:
+    //--readium-shared-js:RJS_PLUGINS_OVERRIDE=false
+    // or:
+    //--readium-cfi-js:RJS_PLUGINS_OVERRIDE=FALSE
+    //
+    // ... or ENV shell variable, e.g. PowerShell:
+    //Set-Item Env:RJS_PLUGINS_OVERRIDE no
+    // e.g. OSX terminal:
+    //RJS_PLUGINS_OVERRIDE=no npm run build
+    //(temporary, process-specific ENV variable)
+    console.log('process.env.npm_package_config_RJS_PLUGINS_OVERRIDE:');
+    console.log(process.env.npm_package_config_RJS_PLUGINS_OVERRIDE);
+    console.log('process.env[RJS_PLUGINS_OVERRIDE]:');
+    console.log(process.env['RJS_PLUGINS_OVERRIDE']);
+    if ((typeof process.env['RJS_PLUGINS_OVERRIDE'] === "undefined") && process.env.npm_package_config_RJS_PLUGINS_OVERRIDE)
+    		process.env['RJS_PLUGINS_OVERRIDE'] = process.env.npm_package_config_RJS_PLUGINS_OVERRIDE;
+
+    if (typeof process.env['RJS_PLUGINS_OVERRIDE'] !== "undefined") {
+        var overridePlugins = process.env['RJS_PLUGINS_OVERRIDE'];
+        overridePlugins = overridePlugins.toLowerCase();
+        if (overridePlugins === "false" || overridePlugins === "no") {
+            overridePlugins = false;
+        } else {
+            overridePlugins = true;
+        }
+    }
+
+
 var pluginsCsonPathUser = path.join(pluginsDir, 'plugins-override.cson');
 var pluginsCsonUser = null;
-try {
-    pluginsCsonUser = fs.readFileSync(pluginsCsonPathUser, {encoding: "utf8"});
-    pluginsCsonUser = cson.parse(pluginsCsonUser);
-} catch (ignored) {}
+if (overridePlugins) {
+    try {
+        pluginsCsonUser = fs.readFileSync(pluginsCsonPathUser, {encoding: "utf8"});
+        pluginsCsonUser = cson.parse(pluginsCsonUser);
+    } catch (ignored) {}
+}
 
 var defaultPlugins = [], includedPlugins = [], excludedPlugins = [];
 
