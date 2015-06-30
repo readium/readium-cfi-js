@@ -195,7 +195,7 @@ Object.keys(pluginBuildConfigs).forEach(function(pluginName) {
         var requireConfigPaths = requireConfigObj.paths;
         Object.keys(requireConfigPaths).forEach(function(pathName) {
             var pathValue = requireConfigPaths[pathName];
-            requireConfigPaths[pathName] = path.join(pluginsDir, pluginName, pathValue);
+            requireConfigPaths[pathName] = path.join("%%pluginsDir%%", pluginName, pathValue);
         });
         Object.deepExtend(pluginRequireJsConfig, requireConfigObj);
     } catch (e) {
@@ -206,7 +206,9 @@ Object.keys(pluginBuildConfigs).forEach(function(pluginName) {
 
 var pluginRequireJsConfigJson = JSON.stringify(pluginRequireJsConfig, null, 2);
 // Trim away the enclosing {} of the JSON string
-pluginRequireJsConfigJson = pluginRequireJsConfigJson.substr(1, pluginRequireJsConfigJson.length - 2);
+pluginRequireJsConfigJson = pluginRequireJsConfigJson
+    .substr(1, pluginRequireJsConfigJson.length - 2)
+    .replace(/\"%%pluginsDir%%/g, "process._RJS_rootDir(1) + \"/plugins")
 
 var dir = path.join(process.cwd(), 'build-config');
 
