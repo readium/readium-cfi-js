@@ -30,6 +30,19 @@ var TemplateEngine = function(text, options) {
     return new Function(code.replace(/[\r\t\n]/g, '')).apply(options);
 }
 
+Object.deepExtend = function(destination, source) {
+    for (var property in source) {
+        if (source[property] && source[property].constructor &&
+            source[property].constructor === Object) {
+            destination[property] = destination[property] || {};
+            arguments.callee(destination[property], source[property]);
+        } else {
+            destination[property] = source[property];
+        }
+    }
+    return destination;
+};
+
 var templates = {
     "RequireJS_config_plugins.js": '//Do not modify this file, it is automatically generated.\n' +
 
@@ -46,7 +59,9 @@ var templates = {
         '},\n' +
         '<%}%>' +
 
-        ']});\n',
+        '],'+
+        '<%this.requireConfig%>'+
+        '});\n',
 
     "RequireJS_config_plugins_multiple-bundles.js": '//Do not modify this file, it is automatically generated.\n' +
         'require.config({modules:[\n' +
@@ -151,6 +166,8 @@ var pluginsToLoad = defaultPlugins
 
 console.log("Plugins to load: ", pluginsToLoad);
 
+var pluginBuildConfigs = {};
+
 pluginsToLoad.forEach(function(pluginName) {
     // Check for the existance of main.js inside a plugin's folder
     // This will throw an error if the path does not exist or is unaccessable
@@ -160,7 +177,36 @@ pluginsToLoad.forEach(function(pluginName) {
         console.error('Error: Does the plugin \'' + pluginName + '\' exist?');
         throw ex;
     }
+
+    // Parse build-config.json if it exists in the plugin dir
+    try {
+        var buildConfigCsonFile = path.join(pluginsDir, pluginName, 'build-config.cson');
+        fs.accessSync(buildConfigCsonFile);
+        var buildConfigCson = fs.readFileSync(buildConfigCsonFile, {encoding: "utf8"});
+        var buildConfig = cson.parse(buildConfigCson);
+        pluginBuildConfigs[pluginName] = buildConfig;
+    } catch (ignored) {}
 });
+
+var pluginRequireJsConfig = {};
+Object.keys(pluginBuildConfigs).forEach(function(pluginName) {
+    try {
+        var requireConfigObj = pluginBuildConfigs[pluginName].requireConfig;
+        var requireConfigPaths = requireConfigObj.paths;
+        Object.keys(requireConfigPaths).forEach(function(pathName) {
+            var pathValue = requireConfigPaths[pathName];
+            requireConfigPaths[pathName] = path.join(pluginsDir, pluginName, pathValue);
+        });
+        Object.deepExtend(pluginRequireJsConfig, requireConfigObj);
+    } catch (e) {
+        console.warn('Plugin `'+pluginName+'`: Failed to parse require js config.');
+        console.log(e);
+    }
+});
+
+var pluginRequireJsConfigJson = JSON.stringify(pluginRequireJsConfig, null, 2);
+// Trim away the enclosing {} of the JSON string
+pluginRequireJsConfigJson = pluginRequireJsConfigJson.substr(1, pluginRequireJsConfigJson.length - 2);
 
 var dir = path.join(process.cwd(), 'build-config');
 
@@ -169,7 +215,8 @@ console.log("Generated plugin config files: ");
 Object.keys(templates).forEach(function(key) {
     var filePath = path.join(dir, key);
     fs.writeFileSync(filePath, TemplateEngine(templates[key], {
-        plugins: pluginsToLoad
+        plugins: pluginsToLoad,
+        requireConfig: pluginRequireJsConfigJson
     }));
     console.log(filePath);
 });
