@@ -43,6 +43,73 @@ Object.deepExtend = function(destination, source) {
     return destination;
 };
 
+// Modified from: https://github.com/chakrit/node-uneval
+// node-uneval/index.js
+// ----
+// Approximation of uneval for node.js/v8.
+// Convert objects into code.
+// Don't use this unless you know all the things that could go wrong with this.
+var unevalLevel = 0;
+uneval = (function(undefined) {
+  var util = require('util');
+
+  return function uneval(obj, known) {
+    var root = (known === undefined), result;
+    known = known || [];
+
+    // some values fail eval() if not wrapped in a ( ) parenthesises
+    var wrapRoot = function(result) {
+      return root ? ("(" + result + ")") : result;
+    }
+
+    // special objects
+    if (obj === null)
+      return "null";
+    if (obj === undefined)
+      return "undefined";
+    if (obj !== obj) // isNaN does type coercion, so can't use that.
+      return "NaN";
+    if (obj === Infinity)
+      return "Infinity";
+    if (obj === -Infinity)
+      return "-Infinity";
+
+    // atoms
+    switch (typeof obj) {
+      case 'function':
+        return wrapRoot(obj.toString());
+      case 'string':
+      case 'number':
+      case 'boolean':
+        return util.inspect(obj);
+    }
+
+    // circular reference check for non-atoms
+    if (known.indexOf(obj) !== -1)
+      throw new Error("Circular references detected while uneval()-ing.");
+
+    known.push(obj);
+
+    // specialized types
+    if (obj instanceof Array)
+      return "[" + obj.map(function(o) { return uneval(o, known); }).join(",\n") + "]";
+
+    if (obj instanceof Date)
+      return wrapRoot("new Date('" + obj.toString() + "')");
+
+    // hashes
+    var key, pairs = [];
+
+    for (key in obj)
+      pairs.push(uneval(key, known) + ": " + uneval(obj[key], known));
+
+    return "{\n" + pairs.join(",\n") + "\n}";
+
+  };
+
+})();
+
+
 var templates = {
     "RequireJS_config_plugins.js": '//Do not modify this file, it is automatically generated.\n' +
 
@@ -178,12 +245,15 @@ pluginsToLoad.forEach(function(pluginName) {
         throw ex;
     }
 
-    // Parse build-config.json if it exists in the plugin dir
+    // Parse rjs-config.js if it exists in the plugin dir
     try {
-        var buildConfigCsonFile = path.join(pluginsDir, pluginName, 'build-config.cson');
-        fs.accessSync(buildConfigCsonFile);
-        var buildConfigCson = fs.readFileSync(buildConfigCsonFile, {encoding: "utf8"});
-        var buildConfig = cson.parse(buildConfigCson);
+        var buildConfigJsFile = path.join(pluginsDir, pluginName, 'rjs-config.js');
+        fs.accessSync(buildConfigJsFile);
+        var buildConfigJsText = fs.readFileSync(buildConfigJsFile, {encoding: "utf8"});
+        // remove require.config usage to turn the javascript text into a single expression
+        // that is: `require.config({paths: []})`` into ``({paths: []})``
+        var buildConfigEval = buildConfigJsText.replace('require.config', '');
+        var buildConfig = eval(buildConfigEval);
         pluginBuildConfigs[pluginName] = buildConfig;
     } catch (ignored) {}
 });
@@ -191,11 +261,11 @@ pluginsToLoad.forEach(function(pluginName) {
 var pluginRequireJsConfig = {};
 Object.keys(pluginBuildConfigs).forEach(function(pluginName) {
     try {
-        var requireConfigObj = pluginBuildConfigs[pluginName].requireConfig;
+        var requireConfigObj = pluginBuildConfigs[pluginName];
         var requireConfigPaths = requireConfigObj.paths;
         Object.keys(requireConfigPaths).forEach(function(pathName) {
             var pathValue = requireConfigPaths[pathName];
-            requireConfigPaths[pathName] = path.join("%%pluginsDir%%", pluginName, pathValue);
+            requireConfigPaths[pathName] = "%%rootDir%%/" + path.posix.join("plugins", pluginName, pathValue);
         });
         Object.deepExtend(pluginRequireJsConfig, requireConfigObj);
     } catch (e) {
@@ -204,11 +274,11 @@ Object.keys(pluginBuildConfigs).forEach(function(pluginName) {
     }
 });
 
-var pluginRequireJsConfigJson = JSON.stringify(pluginRequireJsConfig, null, 2);
+var pluginRequireJsConfigJson = uneval(pluginRequireJsConfig);
 // Trim away the enclosing {} of the JSON string
 pluginRequireJsConfigJson = pluginRequireJsConfigJson
     .substr(1, pluginRequireJsConfigJson.length - 2)
-    .replace(/\"%%pluginsDir%%/g, "process._RJS_rootDir(1) + \"/plugins")
+    .replace(/\'%%rootDir%%/g, "process._RJS_rootDir(1) + \'");
 
 var dir = path.join(process.cwd(), 'build-config');
 
