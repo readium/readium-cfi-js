@@ -11,5 +11,17 @@ console.log(rjsPath);
 
 var rjs = fs.readFileSync(rjsPath, {encoding: 'utf8'});
 fs.writeFileSync(rjsPath,
+  
   rjs.replace(' stream += "\\n//# sourceMappingURL=" + options.outSourceMap;', ' //stream += "\\n//# sourceMappingURL=" + options.outSourceMap;')
+  
+  .replace('sourceMapGenerator.setSourceContent(sourceMapPath, singleContents);', 'if ((typeof config.sourceMapIncludeSources === "undefined") || config.sourceMapIncludeSources) sourceMapGenerator.setSourceContent( sourceMapPath,singleContents );')
+  
+  .replace('resultMap = finalMap.toString();', 'resultMap=finalMap.toString() ; if ((typeof uconfig.sourceMapIncludeSources !== "undefined") && !uconfig.sourceMapIncludeSources) { resultMap = resultMap.replace(/,"sourcesContent":\\[[\\s\\S]*/, "}"); }')
+  /*
+  
+                                var parsedSourceMap = JSON.parse(resultMap);
+                                parsedSourceMap.sourcesContent = [];
+                                delete parsedSourceMap.sourcesContent;
+                                resultMap = JSON.stringify(parsedSourceMap);
+  */
 );

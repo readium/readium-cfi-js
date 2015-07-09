@@ -285,15 +285,29 @@ function(thiz){
     mainConfigFile: process._RJS_mainConfigFile,
 
 
-    optimize: process._RJS_isUgly ? "uglify2" : "none",
     generateSourceMaps: true,
+    sourceMapIncludeSources: true,
+    
     preserveLicenseComments: process._RJS_isUgly ? false : true,
 
+    optimize: process._RJS_isUgly ? "uglify2" : "none",
+    
     uglify2: process._RJS_isUgly ? {
       mangle: true,
       compress: true,
-      'screw-ie8': true
+      'screw-ie8': true,
+      
+      sourceMapIncludeSources: true
+      
     } : undefined,
+/*
+      output: {
+        beautify: true,
+      },
+      beautify: {
+        semicolons: false
+      }
+*/
 
 
     inlineText: true,
