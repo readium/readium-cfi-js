@@ -38,6 +38,9 @@ Note that the above command executes the following:
 * `npm run http:watch` (to launch an http server with live-reload, automatically opens a web browser instance to the HTML files in the `dev` folder)
 * `npm run http` (same as above, but without watching for file changes (no automatic rebuild))
 
+**Unit tests:**
+
+* `npm run test` (Karma launcher)
 
 ## NPM (Node Package Manager)
 
