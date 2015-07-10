@@ -1,163 +1,166 @@
-# The EPUB 3.0 CFI library
+# readium-cfi-js
 
-This library provides support, in javascript, for parsing and interpreting [EPUB 3.0 Canonical Fragment Identifiers](http://idpf.org/epub/linking/cfi/epub-cfi.html) (CFIs). jQuery is the only dependency. 
+**EPUB3 CFI utility library written in Javascript.**
 
-The purpose of this library is to allow reading systems to do useful things with EPUB CFIs. At the moment, this involves injecting HTML elements into EPUB documents at locations referenced by CFIs, as well as generating CFIs for simpler EPUBs. The intent for injecting HTML is that the injected elements can be used by reading systems to navigate to, or display something at, those CFI locations. 
+This is a software component used by other Readium projects, see https://github.com/readium/readium-shared-js
 
-The library may be extended to include other sorts of behaviour as the use cases for CFIs become clearer. 
+## License
 
-# Using the library for linking with CFIs
+**BSD-3-Clause** ( http://opensource.org/licenses/BSD-3-Clause )
 
-1. Get a copy of the library. Currently, a development version of the [library](https://github.com/readium/EPUBCFI/blob/master/epub_cfi.js) is available in the Github repository. When the library becomes more stable, a minified version will also be made available as a separate download. 
+See license.txt ( https://github.com/readium/readium-cfi-js/blob/develop/license.txt )
 
-2. Add the CFI library to your code using a script tag, and make sure you have jQuery:
 
-    ~~~
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script src="epub_cfi.js"></script>
-    ~~~
+## Prerequisites
 
-3. Use the library in your reading system
+* A decent terminal. On Windows, GitShell works great ( http://git-scm.com ), GitBash works too ( https://msysgit.github.io ), and Cygwin adds useful commands ( https://www.cygwin.com ).
+* NodeJS ( https://nodejs.org )
 
-    ~~~
-    var CFI = 'epubcfi(/6[id1]/18[id2]!/4[id3]/2[id4]/1:786)';
 
-    try {
+## Development
 
-        // Get the EPUB's package document
-        var packageDocument = get_the_package_document();
+Follow [this image link](readium-cfi-js_build_tasks.png) to see a flowchart for this project's build tasks (click on the "raw" button for the full size diagram).
 
-        // Get a reference to the "top level" content document in the CFI
-        hrefOfContentDoc = EPUBcfi.Interpreter.getContentDocHref(CFI, packageDocument);
 
-        // Load the content document
-        var contentDocument = get_the_content_document();
+**Initial setup:**
 
-        // Inject some arbitrary html at the location referenced by the CFI
-        EPUBcfi.Interpreter.injectElement(CFI, contentDocument, "<span id='cfi-id' class='cfi-marker'>CFI</span>");
-    } 
-    catch (err) {
-    
-        Do something with the errors;
-    }
-    ~~~
+* `npm run prepare` (to perform required preliminary tasks, like patching code before building)
 
-The result of this will be to inject the `'<span id='cfi-id' class="cfi-marker"></span>'` HTML element into a position in the EPUB referenced by the CFI.
+Note that the above command executes the following:
 
-# Using the library for generating CFIs
+* `npm install` (to download dependencies defined in `package.json` ... note that the `--production` option can be used to avoid downloading development dependencies, for example when testing only the pre-built `build-output` folder contents)
+* `npm update` (to make sure that the dependency tree is up to date)
 
-The CFI library can be used to generate CFIs in simple cases. This includes character offset terminus types for EPUBs that only require a package document (itemref) indirection step.
+**Typical workflow:**
 
-1. Get a copy of the library, as per step 1 of "linking with CFIs," above.
+* Hack away! (mostly the source code in the `js` and `plugins` folders)
+* `npm run build` (to update the RequireJS bundles in the build output folder)
+* `npm run http:watch` (to launch an http server with live-reload, automatically opens a web browser instance to the HTML files in the `dev` folder)
+* `npm run http` (same as above, but without watching for file changes (no automatic rebuild))
 
-2. Add the CFI library to your code using a script tag, as per step 2 of "linking with CFIs," above.
 
-3. Use the library to generate a CFI
+## NPM (Node Package Manager)
 
-    ~~~
-    try {
+All packages "owned" and maintained by the Readium Foundation are listed here: https://www.npmjs.com/~readium
 
-        // Get the starting text node
-        var startTextNode = get_node();
+Note that although Node and NPM natively use the CommonJS format, Readium modules are currently only defined as AMD (RequireJS).
+This explains why Browserify ( http://browserify.org ) is not used by this Readium project.
+More information at http://requirejs.org/docs/commonjs.html and http://requirejs.org/docs/node.html
 
-        // Get the starting offset into the text node
-        var charOffset = get_char_offset();
+* Make sure `npm install readium-cfi-js` completes successfully ( https://www.npmjs.com/package/readium-cfi-js )
+* Execute `npm run http`, which opens a web browser to a basic RequireJS bootstrapper located in the `dev` folder (this is *not* a fully-functioning application!)
+* To see an actual application that uses this "readium-cfi-js" component, try "readium-js-viewer" ( https://www.npmjs.com/package/readium-js-viewer )
 
-        // Get the idref in the spine of the current content document
-        var contentDocIdref = get_idref();
+Note: the `--dev` option after `npm install readium-cfi-js` can be used to force the download of development dependencies,
+but this is kind of pointless as the code source and RequireJS build configuration files are missing.
+See below if you need to hack the code.
 
-        // Get a reference to the package document
-        var packageDoc = get_package_doc();
 
-        // Generate the CFI
-        var generatedCFI = EPUBcfi.Generator.generateCharacterOffsetCFI(startTextNode, charOffset, contentDocIdref, packageDoc);
-    } 
-    catch (err) {
-    
-        Do something with the errors;
-    }
-    ~~~
+## How to use (RequireJS bundles / AMD modules)
 
-# Setting up the development environment
+The `build-output` directory contains common CSS styles, as well as two distinct folders:
 
-There are a number of dependencies for this project: 
+### Single bundle
 
-* Node.js and NPM
-* Grunt
-* [jasmine](http://pivotal.github.com/jasmine/). Used for testing.
-* [PEG.js](http://pegjs.majda.cz/). Used to generate the CFI parser.
+The `_single-bundle` folder contains `readium-cfi-js_all.js` (and its associated source-map file, as well as a RequireJS bundle index file (which isn't actually needed at runtime, so here just as a reference)),
+which aggregates all the required code (external library dependencies included, such as Underscore, jQuery, etc.),
+as well as the "Almond" lightweight AMD loader ( https://github.com/jrburke/almond ).
 
-You can get everything set up by just running: `npm install`
+This means that the full RequireJS library ( http://requirejs.org ) is not actually needed to bootstrap the AMD modules at runtime,
+as demonstrated by the HTML file in the `dev` folder (trimmed for brevity):
 
-Once all that is good to go, clone this repository. 
+```html
+<html>
+<head>
 
-Having cloned the repository to your system, there are a number of Grunt tasks to help you with development: 
+<!-- main code bundle, which includes its own Almond AMD loader (no need for the full RequireJS library) -->
+<script type="text/javascript" src="../build-output/_single-bundle/readium-cfi-js_all.js"> </script>
 
-* Generate a parser from the .pegjs grammar: `grunt peg`
-* Generate a parser and a vesion of the stand-alone library: `grunt compile`
-* Do all the above and run the tests using the default grunt task.
-r
-The default grunt task will generate a single (production) javascript file that contains all of the library components. The library components are developed and tested separately in the development enviroment. The output is in the `dist` directory.
+<!-- index.js calls into the above library -->
+<script type="text/javascript" src="./index.js"> </script>
 
-# Future development priorities
+</head>
+<body>
+<div id="viewport"> </div>
+</body>
+</html>
+```
 
-The following are the development priorities (in order), going forward:
+### Multiple bundles
 
-* Add checking of text assertions
-* Add utility methods to the library API (a method to indicate if a string is a valid CFI, maybe some methods that provide information about the CFI etc.)
-* Add the CFI text-range terminus.
-* Add additional terminus types.
-* Decide on some guarantees about the library API.
 
-# The library implementation, for developers
+The `_multiple-bundles` folder contains several Javascript bundles (and their respective source-map files, as well as RequireJS bundle index files):
 
-CFIs can be viewed, for the purposes of this library, as a Domain Specific Language (DSL) for creating unique, recoverable and sortable indexes for EPUBs. Most of what I know of DSLs I learned from reading [Martin Fowler's work](http://martinfowler.com/bliki/DomainSpecificLanguage.html), so I'll just link him in here and let him describe DSL concepts, if you haven't been exposed to them.
 
-This CFI library is implemented using a number of standard patterns for DSLs. Before getting into the rationale for using DSL patterns, I'll go over the requirements for the CFI library:
+* `readium-cfi-js.js`: The aggregated CFI library modules
 
-* Fully implement the EPUB 3.0 CFI specification.
-* Provide a stand-alone javascript library that enables a reading system to do useful things with a CFI. 
-* Demonstrate the implementation of the CFI specification and library; that is, make the methodology, code and development environment accessible to reading system designers and users of the EPUB standard.
+In addition, the folder contains the full `RequireJS.js` library ( http://requirejs.org ), as the above bundles do no include the lightweight "Almond" AMD loader ( https://github.com/jrburke/almond ). JQuery is also part of the build output.
 
-Given these requirements, the rationale for the DSL approach is two-fold. First, to do something useful with a CFI, it must essentially be parsed and interpreted. This part of the problem is irreducible. Even if a non-language-tool approach were taken, the eventual result would almost certainly be to write something that resembles a lexer-parser-interperter-something. Given that the EPUB CFI grammar is fully specified and that DSL tools and methodologies are mature and available, it makes sense to leverage existing DSL approaches for this type of work. Using well-understood and practiced patterns leads to a (hopefully) clean, robust and extensible solution. This is especially likely when considering benefits like built-in syntax error handling that comes free-ish with tools like parser generators. 
+Usage is demonstrated by the HTML file in the `dev` folder (trimmed for brevity):
 
-Second, using widely available DSL patterns aids in making the CFI library more accessible to developers and implementors. I think this is valid for all the standard reasons that design patterns, whether loosely or rigorously applied, are beneficial. First and foremost, it is easier to understand - or learn about - a common pattern, as opposed to whatever amorphous collection of objects I might have invented on my own. 
+```html
+<html>
+<head>
 
-## The CFI library architecture
+<!-- full RequireJS library -->
+<script type="text/javascript" src="../build-output/_multiple-bundles/RequireJS.js"> </script>
 
-The CFI library consists of a number of components that are based on DSL patterns, with reponsibilities as follows:
+<!-- JQuery -->
+<script type="text/javascript" src="../build-output/_multiple-bundles/jquery.js"> </script>
 
-* __Parser__: Lexes and parses (in one step) a CFI string. It produces either syntax errors or an Abstract Syntax Tree (AST) representation of the CFI, in JSON format.
-* __Interpreter__: Walks the JSON AST and executes instructions for each node in the AST. The result of executing the interpreter is to inject an element, or set of elements, into an EPUB content document. These element(s) will represent a position, or area, referenced by a CFI.
-* __Instructions__: The implementation of a single statement in the CFI language.
-* __Runtime errors__: A set of errors that might be thrown when interpreting a CFI AST. 
 
-The following describes the rationale behind each component:
 
-### Lexing and parsing
+<!-- individual bundles: -->
 
-The PEG.js parser generator is used to generate a lexer/parser from a Parsing Expression Grammar (PEG) representation of the CFI language. Given that an Extended Backus-Naur Form (EBNF) representation of the CFI grammar is provided by the EPUB spec, using a parser generator as the mechanism for building and maintaining a lexer/parser seems appropriate for a number of reasons: 
+<!-- The Readium CFI library -->
+<script type="text/javascript" src="../build-output/_multiple-bundles/readium-cfi-js.js"> </script>
 
-First, using a parser-generator with a well-specified grammar ensures a more complete (built-in syntax error generation, etc.) and error-free lexing/parsing solution, as opposed to writing the lexer/parser by hand. 
 
-Second, it is easier to maintain a parser generator solution over time, as changes to the spec or grammar can be more easily versioned, accommodated and understood if represented by a nice pretty grammar rather than directly in code. 
+<!-- index.js calls into the above libraries -->
+<script type="text/javascript" src="./index.js"> </script>
 
-Third, using a parser generator enables a separation-of-concerns between lexing/parsing and whatever comes after (interpretation, in this case). This is _good_ because separation-of-concerns makes the life a developer much, much better. 
+</head>
+<body>
+<div id="viewport"> </div>
+</body>
+</html>
+```
 
-Finally, in regards to the rationale for using a [Parsing Expression Grammar](http://en.wikipedia.org/wiki/Parsing_expression_grammar): The PEG.js library provides a simple generator and API, generates javascript parsers, and has decent documentation. This makes it a good choice for this project. Beyond that, there is nothing that I can see in the CFI language that necessitates, or is limited by, the use of a PEG (the alternative being a generator based on an EBNF, like [ANTLR](http://www.antlr.org/), or something similar). 
 
-tl;dr, I chose a generator based on a PEG because PEG.js seemed easy and useful, rather than for some deep language reason. 
+Note how the various sets of AMD modules can be invoked on-demand (lazy) using the `bundles` RequireJS configuration directive
+(this eliminates the apparent opacity of such as large container of library dependencies):
 
-### Interpreter and instructions
 
-The interpreter is responsible for walking the AST and calling instructions that do something to interpret a CFI. This _something_ is, at the moment, to inject some arbitrary user-specified HTML at the location referenced by a CFI. 
+```html
 
-The rationale for the interpreter and the instruction components being separate is based on the standard set of engineering reasons: Separation-of-concerns, extensibility, better abstraction etc. To illustrate, while there is currently a one-to-one correspondence (with one exception) between an interpreter function and an instruction function, in the future it is likely that the behaviour of the interpreter will become more complex. It may be required to act on a set of CFIs rather than a single CFI, load resources differently, etc. These types of changes to the interpreter would have no impact on the instructions being executed, hence the separation. 
+<script type="text/javascript">
+requirejs.config({
+    baseUrl: '../build-output/_multiple-bundles'
+});
+</script>
 
-### Error handling
+<script type="text/javascript" src="../build-output/_multiple-bundles/readium-cfi-js.js.bundles.js"> </script>
 
-At the moment, the only intention for this component is to provide some basic information for CFI interpretation errors (syntax errors are generated by the parser). There is not much to say about this other than that this component will likely evolve with a better understanding of the type of runtime errors a CFI might generate, and the use cases for this library. 
+```
 
-### Licensing info
 
-Licensing information can be found in the file license.txt in the root of the repo, as well as in the source code itself.
+
+
+## CSON vs. JSON (package.json)
+
+CSON = CoffeeScript-Object-Notation ( https://github.com/bevry/cson )
+
+Running the command `npm run cson2json` will re-generate the `package.json` JSON file.
+For more information, see comments in the master `package.cson` CSON file.
+
+Why CSON? Because it is a lot more readable than JSON, and therefore easier to maintain.
+The syntax is not only less verbose (separators, etc.), more importantly it allows *comments* and *line breaking*!
+
+Although these benefits are not so critical for basic "package" definitions,
+here `package.cson/json` declares relatively intricate `script` tasks that are used in the development workflow.
+`npm run SCRIPT_NAME` offers a lightweight technique to handle most build tasks,
+as NPM CLI utilities are available to perform cross-platform operations (agnostic to the actual command line interface / shell).
+For more complex build processes, Grunt / Gulp can be used, but these build systems do not necessarily offer the most readable / maintainable options.
+
+Downside: DO NOT invoke `npm init` or `npm install --save` `--save-dev` `--save-optional`,
+as this would overwrite / update the JSON, not the master CSON!

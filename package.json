@@ -1,19 +1,91 @@
 {
+  "/*": "----------------------------------------------------------------------------",
+  "..": "This package.json (JSON) is automatically generated from package.cson (CSON)",
+  ".-": "DO NOT invoke 'npm init' or 'npm install --save' ('--save-dev' / '--save-optional')",
+  "._": "as this would overwrite / update the JSON, not the master CSON!",
+  "*/": "----------------------------------------------------------------------------",
   "name": "readium-cfi-js",
-  "version": "0.1.0",
-  "homepage": "https://github.com/readium/readium-cfi-js",
+  "version": "0.20.0-alpha",
+  "description": "Readium - CFI javascript library",
+  "keywords": [
+    "readium",
+    "epub",
+    "epub3",
+    "cfi"
+  ],
+  "author": {
+    "name": "Readium (Daniel Weck)",
+    "email": "daniel.weck@gmail.com",
+    "url": "http://github.com/readium"
+  },
+  "license": "BSD-3-Clause",
+  "licenses": [
+    {
+      "type": "BSD-3-Clause",
+      "url": "http://opensource.org/licenses/BSD-3-Clause"
+    }
+  ],
+  "homepage": "http://github.com/readium/readium-cfi-js",
+  "bugs": {
+    "url": "http://github.com/readium/readium-cfi-js/issues",
+    "email": "daniel.weck@gmail.com"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/readium/readium-cfi-js.git"
+    "url": "git://github.com/readium/readium-cfi-js.git"
+  },
+  "files": [
+    "build-output/",
+    "dev/",
+    "license.txt",
+    "README.md"
+  ],
+  "dependencies": {
+    "parallelshell": "latest",
+    "opener": "latest",
+    "http-server": "danielweck/http-server"
   },
   "devDependencies": {
-    "grunt": "^0.4.5",
-    "grunt-karma": "^0.9.0",
-    "grunt-peg": "^1.5.0",
-    "grunt-template": "^0.2.3",
-    "karma": "^0.12.24",
-    "karma-chrome-launcher": "^0.1.5",
-    "karma-jasmine": "^0.2.2",
-    "karma-sauce-launcher": "^0.2.10"
+    "requirejs": "latest",
+    "almond": "latest",
+    "jquery": "latest",
+    "pegjs": "latest",
+    "karma": "latest",
+    "karma-chrome-launcher": "latest",
+    "karma-firefox-launcher": "latest",
+    "karma-jasmine": "latest",
+    "karma-sauce-launcher": "latest",
+    "cson": "latest",
+    "rimraf": "latest",
+    "cpy": "latest",
+    "ncp": "latest",
+    "mkdirp": "latest",
+    "watch": "latest",
+    "jshint": "latest",
+    "glob": "latest"
+  },
+  "scripts": {
+    "cson2json": "node ./node_modules/cson/bin/cson2json package.cson > package.json && node readium-build-tools/optimizePackageJsonScripts.js",
+    "prepare": "npm run prepare:dependencies",
+    "prepare:dependencies": "npm install && npm update && node readium-build-tools/patchRequireJS.js && node readium-build-tools/gitHubForksUpdater.js",
+    "clean": "node --version && npm --version && node ./node_modules/rimraf/bin.js build-output/* && node ./node_modules/rimraf/bin.js gen/*",
+    "prebuild": "npm run clean",
+    "build": "npm run build:scripts",
+    "lint": "node ./readium-build-tools/jshint_glob.js js/**.js",
+    "prebuild:scripts": "npm run build:scripts:peg",
+    "build:scripts": "npm run build:scripts:multiple && npm run build:scripts:single",
+    "build:scripts:peg": "node ./node_modules/pegjs/bin/pegjs --export-var EPUBcfiParser cfi_parser.pegjs gen/cfi_parser_gen.js",
+    "build:scripts:multiple": "node ./node_modules/requirejs/bin/r.js -o ./readium-build-tools/RequireJS_config.js --rjs_bundle=multiple",
+    "postbuild:scripts:multiple": "node ./node_modules/rimraf/bin.js build-output/_multiple-bundles/RequireJS.js.src.js",
+    "build:scripts:single": "node ./node_modules/requirejs/bin/r.js -o ./readium-build-tools/RequireJS_config.js --rjs_bundle=single",
+    "http:watch": "echo > open_webbrowser.js && parallelshell \"npm run dowatch\" \"npm run httpServe\"",
+    "http": "parallelshell \"npm run httpServe\" \"npm run webBrowser\"",
+    "test": "node ./node_modules/karma/bin/karma start tests/karma.conf.js --singleRun --no-auto-watch",
+    "test:travis": "node ./node_modules/karma/bin/karma start tests/karma.travis.conf.js --singleRun --no-auto-watch",
+    "test:travis:firefox": "npm run test:travis --readium-cfi-js:MODE=firefox",
+    "test:travis:chrome": "npm run test:travis --readium-cfi-js:MODE=chrome",
+    "dowatch": "node ./node_modules/watch/cli.js \"npm run build && npm run test && node readium-build-tools/webbrowser.js && npm run webBrowser && node ./node_modules/rimraf/bin.js open_webbrowser.js\" dev/ js/ tests/",
+    "httpServe": "http-server -p 9090 --cors ./",
+    "webBrowser": "opener http://127.0.0.1:9090/dev/"
   }
-}     
+}

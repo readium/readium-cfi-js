@@ -1,16 +1,20 @@
 branches:
   only:
-  - develop
+  - feature/plugins
 language: node_js
 node_js:
-- '0.10'
+- '0.12'
 env:
   global:
   - SAUCE_USERNAME=readium
   - SAUCE_ACCESS_KEY=a36ebc10-e514-4da6-924c-307aec513550
-before_install:
-- npm install -g grunt-cli
+  matrix:
+  - MODE=chrome
+  - MODE=firefox
+#before_install:
+#- npm install -g grunt-cli
 install:
-- npm install
+- npm run prepare
 script:
-- grunt travis
+- npm run build
+- npm run test:travis
