@@ -22,9 +22,12 @@ var ACCESSTOKEN = "fb424e90e36242ab9603034ea906a070c9ce2646";
 var USERAGENT = "Readium-GitHub";
 
 var httpGet = function(info, callback) {
-
+    
+try {
+    
     (info.ssl ? https : http).get(info.url, function(response) {
 
+try {
         // console.log("statusCode: ", response.statusCode);
         // console.log("headers: ", response.headers);
 
@@ -45,7 +48,15 @@ var httpGet = function(info, callback) {
             //console.log(allData);
             callback(info, allData);
         });
+        
+} catch(err) {
+    callback(info, undefined);
+}
     });
+    
+} catch(err) {
+    callback(info, undefined);
+}
 };
 
 var checkDiff = function(depSource, upstream) {
