@@ -112,9 +112,8 @@ uneval = (function(undefined) {
 
 var templates = {
     "RequireJS_config_plugins.js": '//Do not modify this file, it is automatically generated.\n' +
-
-        'if(process._RJS_isBrowser){var p=[],c=require.config;require.config=function(k){c.apply(require,arguments);var n=k.packages;' +
-        'n&&(p=n),require.config=c,window.setTimeout(function(){require(p.map(function(n){return n.name}),function(){console.log("Plugins loaded.")})},0)}}\n' +
+        'if(window._RJS_isBrowser){var p=[],c=require.config;require.config=function(e){c.apply(require,arguments);var r=e.packages;'+
+        'r&&(p=r),require.config=c,window._RJS_pluginsList=p.map(function(e){return e.name})}}\n'+
 
         'require.config({packages:[\n' +
 
