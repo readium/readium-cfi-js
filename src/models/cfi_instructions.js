@@ -132,7 +132,7 @@ EPUBcfi.CFIInstructions = {
 
 	retrieveItemRefHref : function ($itemRefElement, $packageDocument) {
 
-		return $("#" + $itemRefElement.attr("idref"), $packageDocument).attr("href");
+               return $("#" + $itemRefElement.attr("idref").replace('.', '\\.'), $packageDocument).attr("href");
 	},
 
 	indexOutOfRange : function (targetIndex, numChildElements) {
@@ -144,6 +144,7 @@ EPUBcfi.CFIInstructions = {
 	//   is required. This is obtained with the jquery parent() method. An alternative would be to 
 	//   pass in the parent with a filtered list containing only children that are part of the target text node.
     injectCFIMarkerIntoText : function ($textNodeList, textOffset, elementToInject) {
+        var document = $textNodeList[0].ownerDocument;
 
         var nodeNum;
         var currNodeLength;
@@ -155,7 +156,7 @@ EPUBcfi.CFIInstructions = {
         // The iteration counter may be incorrect here (should be $textNodeList.length - 1 ??)
         for (nodeNum = 0; nodeNum <= $textNodeList.length; nodeNum++) {
 
-            if ($textNodeList[nodeNum].nodeType === 3) {
+            if ($textNodeList[nodeNum].nodeType === Node.TEXT_NODE) {
 
                 currNodeMaxIndex = $textNodeList[nodeNum].nodeValue.length  + currTextPosition;
                 nodeOffset = textOffset - currTextPosition;
@@ -181,14 +182,23 @@ EPUBcfi.CFIInstructions = {
                     return $injectedNode;
                 }
                 else {
-
                     currTextPosition = currNodeMaxIndex;
                 }
+            } else if($textNodeList[nodeNum].nodeType === Node.COMMENT_NODE){
+            	currNodeMaxIndex = $textNodeList[nodeNum].nodeValue.length + 7 + currTextPosition;
+                currTextPosition = currNodeMaxIndex;
+            } else if($textNodeList[nodeNum].nodeType === Node.PROCESSING_INSTRUCTION_NODE){
+            	currNodeMaxIndex = $textNodeList[nodeNum].nodeValue.length + $textNodeList[nodeNum].target.length + 5
+                currTextPosition = currNodeMaxIndex;
             }
         }
 
         throw EPUBcfi.TerminusError("Text", "Text offset:" + textOffset, "The offset exceeded the length of the text");
     },
+
+	// Rationale: In order to inject an element into a specific position, access to the parent object 
+	//   is required. This is obtained with the jquery parent() method. An alternative would be to 
+	//   pass in the parent with a filtered list containing only children that are part of the target text node.
 
 	// Description: This method finds a target text node and then injects an element into the appropriate node
 	// Rationale: The possibility that cfi marker elements have been injected into a text node at some point previous to 
@@ -223,7 +233,7 @@ EPUBcfi.CFIInstructions = {
 				if (currLogicalTextNodeIndex === targetLogicalTextNodeIndex) {
 
 					// If it's a text node
-					if (this.nodeType === Node.TEXT_NODE) {
+					if (this.nodeType === Node.TEXT_NODE || this.nodeType === Node.COMMENT_NODE || this.nodeType === Node.PROCESSING_INSTRUCTION_NODE) {
 						prevNodeWasTextNode = true;
 						return true;
 					}
@@ -231,14 +241,17 @@ EPUBcfi.CFIInstructions = {
 					//   text node) has been passed by the loop. 
 					else if (prevNodeWasTextNode && (this.nodeType !== Node.TEXT_NODE)) {
 						currLogicalTextNodeIndex++;
-						prevNodeWasTextNode = false;			
+						prevNodeWasTextNode = false;
 						return false;
 					}
 				}
 				// Don't return any elements
 				else {
 
-					if (this.nodeType === Node.TEXT_NODE) {
+					if (this.nodeType === Node.TEXT_NODE || this.nodeType === Node.COMMENT_NODE || this.nodeType === Node.PROCESSING_INSTRUCTION_NODE) {
+						prevNodeWasTextNode = true;
+					}else if (!prevNodeWasTextNode && this.nodeType === Node.ELEMENT_NODE){
+                        currLogicalTextNodeIndex++;
 						prevNodeWasTextNode = true;
 					}
 					else if (prevNodeWasTextNode && (this.nodeType !== Node.TEXT_NODE) && (this !== $elementsWithoutMarkers.lastChild)) {
@@ -254,7 +267,7 @@ EPUBcfi.CFIInstructions = {
 		// The filtering above should have counted the number of "logical" text nodes; this can be used to 
 		// detect out of range errors
 		if ($targetTextNodeList.length === 0) {
-			throw EPUBcfi.OutOfRangeError(logicalTargetTextNodeIndex, currLogicalTextNodeIndex, "Index out of range");
+			throw EPUBcfi.OutOfRangeError(targetLogicalTextNodeIndex, currLogicalTextNodeIndex, "Index out of range");
 		}
 
 		// return the text node list

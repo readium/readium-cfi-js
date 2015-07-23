@@ -26,6 +26,99 @@ describe("CFI GENERATOR", function () {
             expect(generatedCFI).toEqual("/2[startParent]/2"); 
         });
 
+        it("can generate a range component between a text node and an element node", function () {
+
+            var dom = 
+                "<html>"
+                +    "<div></div>"
+                +    "<div>"
+                +         "<div id='startParent'>"
+                +             "textnode"
+                +             "<div></div>"
+                +             "textnode1"
+                +             "<div></div>"
+                +         "</div>"
+                +     "</div>"
+                +     "<div></div>"
+                + "</html>";
+            var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+
+            var $startElement1 = $($('#startParent', $dom).contents()[0]);
+            var $startElement2 = $($('#startParent', $dom).contents()[1]);
+            var generatedCFI = EPUBcfi.Generator.generateRangeComponent($startElement1[0], 1, $startElement2[0], 0);
+            expect(generatedCFI).toEqual("/4/2[startParent],/1:1,/2");
+        });
+
+        it("can generate a range component between an element node and a text node", function () {
+
+            var dom = 
+                "<html>"
+                +    "<div></div>"
+                +    "<div>"
+                +         "<div id='startParent'>"
+                +             "textnode"
+                +             "<div></div>"
+                +             "textnode1"
+                +             "<div></div>"
+                +         "</div>"
+                +     "</div>"
+                +     "<div></div>"
+                + "</html>";
+            var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+
+            var $startElement1 = $($('#startParent', $dom).contents()[1]);
+            var $startElement2 = $($('#startParent', $dom).contents()[2]);
+            var generatedCFI = EPUBcfi.Generator.generateRangeComponent($startElement1[0], 0, $startElement2[0], 1);
+            expect(generatedCFI).toEqual("/4/2[startParent],/2,/3:1");
+        });
+
+        it("can generate a range component between a text node in an element node and a text node with the same parent", function () {
+  
+          var dom =
+            "<html>"
+              +    "<div></div>"
+              +    "<div>"
+              +         "<div id='startParent'>"
+              +             "textnode0"
+              +             "<div id='startElement'>textnode1</div>"
+              +             "textnode2"
+              +             "<div></div>"
+              +         "</div>"
+              +     "</div>"
+              +     "<div></div>"
+              + "</html>";
+          var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+  
+          var $startElement1 = $($('#startElement', $dom).contents()[0]);
+          var $startElement2 = $($('#startParent', $dom).contents()[2]);
+          var generatedCFI = EPUBcfi.Generator.generateRangeComponent($startElement1[0], 4, $startElement2[0], 4);
+          expect(generatedCFI).toEqual("/4/2[startParent],/2[startElement]/1:4,/3:4");
+        });
+      
+        it("can generate a range component between an element node and a text node with different parents", function () {
+
+            var dom = 
+                "<html>"
+                +    "<div></div>"
+                +    "<div>"
+                +         "<div id='startParent'>"
+                +             "textnode"
+                +             "<div></div>"
+                +             "textnode1"
+                +             "<div></div>"
+                +         "</div>"
+                +     "</div>"
+                +     "<div id='end'></div>"
+                + "</html>";
+            var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+
+            var $startElement1 = $($('#startParent', $dom).contents()[0]);
+            var $startElement2 = $($('#end', $dom)[0]);
+            var generatedCFI = EPUBcfi.Generator.generateRangeComponent($startElement1[0], 1, $startElement2[0], 0);
+            expect(generatedCFI).toEqual("/2,/4/2[startParent]/1:1,/6[end]");
+        });
+
+
         it("can generate an element range CFI for a node with a period in the ID", function () {
 
            var dom = 
@@ -127,7 +220,7 @@ describe("CFI GENERATOR", function () {
                 var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
 
                 var $startElement = $($('#startParent', $dom).children()[0].firstChild);
-                var $endElement = $($('#startParent', $dom).children()[2].firstChild)
+                var $endElement = $($('#startParent', $dom).children()[2].firstChild);
                 var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
                     $startElement[0], 
                     6,
@@ -157,7 +250,7 @@ describe("CFI GENERATOR", function () {
                 var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
 
                 var $startElement = $($('#startParent', $dom).children()[0].firstChild);
-                var $endElement = $($('#startParent', $dom).children()[0].firstChild)
+                var $endElement = $($('#startParent', $dom).children()[0].firstChild);
                 var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
                     $startElement[0], 
                     2,
@@ -189,7 +282,7 @@ describe("CFI GENERATOR", function () {
                 var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
 
                 var $startElement = $($('#startParent', $dom).contents()[1]);
-                var $endElement = $($('#startParent', $dom).contents()[5])
+                var $endElement = $($('#startParent', $dom).contents()[5]);
                 var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
                     $startElement[0], 
                     2,
@@ -197,9 +290,116 @@ describe("CFI GENERATOR", function () {
                     6
                 );
 
-                expect(generatedCFI).toEqual("/4/2[startParent],/1:2,/5:6");
+                expect(generatedCFI).toEqual("/4/2[startParent],/3:2,/7:6");
             });
 
+            it("generates for an element with comments in a text node", function () {
+
+               var dom = 
+                    "<html>"
+                    +    "<div></div>"
+                    +    "<div>"
+                    +         "<div id='startParent'>"
+                    +             "textnode"
+                    +             "<!-- comment -->" // 16
+                    +             "textnode"
+                    +         "</div>"
+                    +     "</div>"
+                    +     "<div></div>"
+                    + "</html>";
+                var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+
+                var $startElement = $($('#startParent', $dom).contents()[0]);
+                var $endElement = $($('#startParent', $dom).contents()[2]);
+                var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
+                        $startElement[0], 
+                        4,
+                        $endElement[0],
+                        4
+                    );
+
+                    expect(generatedCFI).toEqual("/4/2[startParent],/1:4,/1:28");
+            });
+
+            it("generates for an element starting with a comment", function () {
+
+               var dom = 
+                    "<html>"
+                    +    "<div></div>"
+                    +    "<div>"
+                    +         "<div id='startParent'>"
+                    +             "<!-- comment -->" // 16
+                    +             "textnode"
+                    +         "</div>"
+                    +     "</div>"
+                    +     "<div></div>"
+                    + "</html>";
+                var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+
+                var $startElement = $($('#startParent', $dom).contents()[1]);
+                var $endElement = $($('#startParent', $dom).contents()[1]);
+                var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
+                        $startElement[0], 
+                        4,
+                        $endElement[0],
+                        8
+                    );
+
+                    expect(generatedCFI).toEqual("/4/2[startParent],/1:20,/1:24");
+            });
+            it("generates for an element with a processing instruction", function () {
+
+               var dom = 
+                    "<html>"
+                    +    "<div></div>"
+                    +    "<div>"
+                    +         "<div id='startParent'>"
+                    +             "textnode"
+                    +             "<?xml-stylesheet type='text/css' href='style.css'?>" // 51
+                    +             "textnode"
+                    +         "</div>"
+                    +     "</div>"
+                    +     "<div></div>"
+                    + "</html>";
+                var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+
+                var $startElement = $($('#startParent', $dom).contents()[0]);
+                var $endElement = $($('#startParent', $dom).contents()[2]);
+                var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
+                        $startElement[0], 
+                        4,
+                        $endElement[0],
+                        4
+                    );
+
+                    expect(generatedCFI).toEqual("/4/2[startParent],/1:4,/1:63");
+            });
+            it("generates for an element with a processing instruction at the begining", function () {
+
+               var dom = 
+                    "<html>"
+                    +    "<div></div>"
+                    +    "<div>"
+                    +         "<div id='startParent'>"
+                    +             "<?xml-stylesheet type='text/css' href='style.css'?>" // 51
+                    +             "textnode"
+                    +         "</div>"
+                    +     "</div>"
+                    +     "<div></div>"
+                    + "</html>";
+                var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+
+                var $startElement = $($('#startParent', $dom).contents()[1]);
+                var $endElement = $($('#startParent', $dom).contents()[1]);
+                var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
+                        $startElement[0], 
+                        4,
+                        $endElement[0],
+                        8
+                    );
+
+                    expect(generatedCFI).toEqual("/4/2[startParent],/1:55,/1:59");
+            });
             it("generates offsets with a simple node", function () {
 
                 var dom = 
@@ -273,7 +473,7 @@ describe("CFI GENERATOR", function () {
                 var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
 
                 var $startElement = $($('#startParent', $dom).contents()[1]);
-                var $endElement = $($('#startParent', $dom).contents()[3])
+                var $endElement = $($('#startParent', $dom).contents()[3]);
                 var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
                     $startElement[0], 
                     2,
@@ -281,7 +481,7 @@ describe("CFI GENERATOR", function () {
                     6
                 );
 
-                expect(generatedCFI).toEqual("/4/2[startParent],/1:2,/3:6");
+                expect(generatedCFI).toEqual("/4/2[startParent],/3:2,/5:6");
             });            
 
             it("generates offsets with the same parent element and a blacklist element", function () {
@@ -372,7 +572,6 @@ describe("CFI GENERATOR", function () {
 
                 );
 
-                console.log(generatedCFI);
                 expect(generatedCFI).toEqual("/4/2[startParent],/1:14,/1:18");
             });
 
@@ -429,7 +628,7 @@ describe("CFI GENERATOR", function () {
             var textTerminus = EPUBcfi.Generator.createCFITextNodeStep($startNode, 3, ["cfi-marker"]);
             var generatedCFI = EPUBcfi.Generator.createCFIElementSteps($startNode.parent(), "html", ["cfi-marker"]) + textTerminus;
 
-            expect(generatedCFI).toEqual("!/4/2[startParent]/1:25"); // [ te,xtn]
+            expect(generatedCFI).toEqual("!/4/2[startParent]/3:25"); // [ te,xtn]
         });
 
         it("can generate a package document CFI with the spine index", function () {
@@ -489,7 +688,7 @@ describe("CFI GENERATOR", function () {
             var packageDocCFIComponent = EPUBcfi.Generator.generatePackageDocumentCFIComponent("contentDocId", packageDoc);
             var generatedCFI = EPUBcfi.Generator.generateCompleteCFI(packageDocCFIComponent, contentDocCFIComponent);
 
-            expect(generatedCFI).toEqual("epubcfi(/6/2/6!/4/2[startParent]/1:3)"); // [ te,xtn]
+            expect(generatedCFI).toEqual("epubcfi(/6/2/6!/4/2[startParent]/3:3)"); // [ te,xtn]
         });
 
         it('can generate a CFI for an actual epub', function () {

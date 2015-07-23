@@ -133,6 +133,7 @@ EPUBcfi.Interpreter = {
         return $currElement;
     },
 
+    // Description: This method will return the start and end elements (along with their char offsets) that are the final targets of the range CFI.
     getRangeTargetElements : function (rangeCFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist) {
 
         var decodedCFI = decodeURI(rangeCFI);
@@ -159,10 +160,16 @@ EPUBcfi.Interpreter = {
         // Interpret second range local_path
         $range2TargetElement = this.interpretLocalPath(CFIAST.cfiString.range2, 0, $currElement, classBlacklist, elementBlacklist, idBlacklist);
 
-        // Return the element at the end of the CFI
+        // Get the start and end character offsets
+        var startOffset = parseInt(CFIAST.cfiString.range1.termStep.offsetValue) || undefined;
+        var endOffset = parseInt(CFIAST.cfiString.range2.termStep.offsetValue) || undefined;
+
+        // Return the element (and char offsets) at the end of the CFI
         return {
-            startElement : $range1TargetElement[0],
-            endElement : $range2TargetElement[0]
+            startElement: $range1TargetElement[0],
+            startOffset: startOffset,
+            endElement: $range2TargetElement[0],
+            endOffset: endOffset
         };
     },
 
@@ -218,6 +225,11 @@ EPUBcfi.Interpreter = {
         return { textNode : $currElement,
                  textOffset : textOffset
             };
+    },
+    // Description: This function will determine if the input CFI is expressed as a range
+    isRangeCfi: function (cfi) {
+        var CFIAST = EPUBcfi.Parser.parse(cfi);
+        return CFIAST.cfiString.range1 ? true : false;
     },
 
     // ------------------------------------------------------------------------------------ //

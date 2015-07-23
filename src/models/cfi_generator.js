@@ -5,9 +5,12 @@ EPUBcfi.Generator = {
     // ------------------------------------------------------------------------------------ //
 
     generateCharOffsetRangeComponent : function (rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist) {
+        var document = rangeStartElement.ownerDocument;
 
         var docRange;
         var commonAncestor;
+        var $rangeStartParent;
+        var $rangeEndParent;
         var range1OffsetStep;
         var range1CFI;
         var range2OffsetStep;
@@ -34,11 +37,23 @@ EPUBcfi.Generator = {
 
             // Generate terminating offset and range 1
             range1OffsetStep = this.createCFITextNodeStep($(rangeStartElement), startOffset, classBlacklist, elementBlacklist, idBlacklist);
-            range1CFI = this.createCFIElementSteps($(rangeStartElement).parent(), commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range1OffsetStep;
+            $rangeStartParent = $(rangeStartElement).parent();
+            if ($rangeStartParent[0] === commonAncestor) {
+              // rangeStartElement is a text child node of the commonAncestor, so it's CFI sub-path is only the text node step:
+              range1CFI = range1OffsetStep;
+            } else {
+              range1CFI = this.createCFIElementSteps($rangeStartParent, commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range1OffsetStep;
+            }
 
             // Generate terminating offset and range 2
             range2OffsetStep = this.createCFITextNodeStep($(rangeEndElement), endOffset, classBlacklist, elementBlacklist, idBlacklist);
-            range2CFI = this.createCFIElementSteps($(rangeEndElement).parent(), commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range2OffsetStep;
+            $rangeEndParent = $(rangeEndElement).parent();
+            if ($rangeEndParent[0] === commonAncestor) {
+              // rangeEndElement is a text child node of the commonAncestor, so it's CFI sub-path is only the text node step:
+              range2CFI = range2OffsetStep;
+            } else {
+              range2CFI = this.createCFIElementSteps($rangeEndParent, commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range2OffsetStep;
+            }
 
             // Generate shared component
             commonCFIComponent = this.createCFIElementSteps($(commonAncestor), "html", classBlacklist, elementBlacklist, idBlacklist);
@@ -49,6 +64,7 @@ EPUBcfi.Generator = {
     },
 
     generateElementRangeComponent : function (rangeStartElement, rangeEndElement, classBlacklist, elementBlacklist, idBlacklist) {
+        var document = rangeStartElement.ownerDocument;
 
         var docRange;
         var commonAncestor;
@@ -65,8 +81,8 @@ EPUBcfi.Generator = {
 
         // Create a document range to find the common ancestor
         docRange = document.createRange();
-        docRange.setStart(rangeStartElement);
-        docRange.setEnd(rangeEndElement);
+        docRange.setStart(rangeStartElement, 0);
+        docRange.setEnd(rangeEndElement, rangeEndElement.childNodes.length);
         commonAncestor = docRange.commonAncestorContainer;
 
         // Generate range 1
@@ -80,6 +96,64 @@ EPUBcfi.Generator = {
 
         // Return the result
         return commonCFIComponent.substring(1, commonCFIComponent.length) + "," + range1CFI + "," + range2CFI;
+    },
+
+    generateRangeComponent : function (rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist) {
+        var document = rangeStartElement.ownerDocument;
+
+        if(rangeStartElement.nodeType === Node.ELEMENT_NODE && rangeEndElement.nodeType === Node.ELEMENT_NODE){
+            return this.generateElementRangeComponent(rangeStartElement, rangeEndElement, classBlacklist, elementBlacklist, idBlacklist);
+        } else if(rangeStartElement.nodeType === Node.TEXT_NODE && rangeEndElement.nodeType === Node.TEXT_NODE){
+            return this.generateCharOffsetRangeComponent(rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist);
+        } else {
+            var docRange;
+            var range1CFI;
+            var range1OffsetStep;
+            var range2CFI;
+            var range2OffsetStep;
+            var commonAncestor;
+            var commonCFIComponent;
+
+            // Create a document range to find the common ancestor
+            docRange = document.createRange();
+            docRange.setStart(rangeStartElement, startOffset);
+            docRange.setEnd(rangeEndElement, endOffset);
+            commonAncestor = docRange.commonAncestorContainer;
+
+            if(rangeStartElement.nodeType === Node.ELEMENT_NODE){
+                this.validateStartElement(rangeStartElement);
+                range1CFI = this.createCFIElementSteps($(rangeStartElement), commonAncestor, classBlacklist, elementBlacklist, idBlacklist);
+            } else {
+                this.validateStartTextNode(rangeStartElement);
+                // Generate terminating offset and range 1
+                range1OffsetStep = this.createCFITextNodeStep($(rangeStartElement), startOffset, classBlacklist, elementBlacklist, idBlacklist);
+                if($(rangeStartElement).parent().is(commonAncestor)){
+                    range1CFI = range1OffsetStep;
+                } else {
+                    range1CFI = this.createCFIElementSteps($(rangeStartElement).parent(), commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range1OffsetStep;    
+                }
+            }
+
+            if(rangeEndElement.nodeType === Node.ELEMENT_NODE){
+                this.validateStartElement(rangeEndElement);
+                range2CFI = this.createCFIElementSteps($(rangeEndElement), commonAncestor, classBlacklist, elementBlacklist, idBlacklist);
+            } else {
+                this.validateStartTextNode(rangeEndElement);
+                // Generate terminating offset and range 2
+                range2OffsetStep = this.createCFITextNodeStep($(rangeEndElement), endOffset, classBlacklist, elementBlacklist, idBlacklist);
+                if($(rangeEndElement).parent().is(commonAncestor)){
+                    range2CFI = range2OffsetStep;
+                } else {
+                    range2CFI = this.createCFIElementSteps($(rangeEndElement).parent(), commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range2OffsetStep;    
+                }                
+            }
+
+            // Generate shared component
+            commonCFIComponent = this.createCFIElementSteps($(commonAncestor), "html", classBlacklist, elementBlacklist, idBlacklist);
+
+            // Return the result
+            return commonCFIComponent.substring(1, commonCFIComponent.length) + "," + range1CFI + "," + range2CFI;
+        }
     },
 
     // Description: Generates a character offset CFI 
@@ -228,9 +302,10 @@ EPUBcfi.Generator = {
         $.each($contentsExcludingMarkers, 
             function (index) {
 
-                // If this is a text node, check if it matches and return the current index
-                if (this.nodeType === Node.TEXT_NODE) {
+            // If this is a text node, check if it matches and return the current index
+            if (this.nodeType === Node.TEXT_NODE || !prevNodeWasTextNode) {
 
+                if (this.nodeType === Node.TEXT_NODE) {
                     if (this === $startTextNode[0]) {
 
                         // Set index as the first in the adjacent sequence of text nodes, or as the index of the current node if this 
@@ -238,8 +313,7 @@ EPUBcfi.Generator = {
                         if (prevNodeWasTextNode) {
                             indexOfTextNode = indexOfFirstInSequence;
                             finalCharacterOffsetInSequence = characterOffsetSinceUnsplit;
-                        }
-                        else {
+                        } else {
                             indexOfTextNode = textNodeOnlyIndex;
                         }
                         
@@ -249,20 +323,38 @@ EPUBcfi.Generator = {
 
                     // Save this index as the first in sequence of adjacent text nodes, if it is not already set by this point
                     prevNodeWasTextNode = true;
-                    characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.length
+                    characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.length;
                     if (indexOfFirstInSequence === undefined) {
                         indexOfFirstInSequence = textNodeOnlyIndex;
                         textNodeOnlyIndex = textNodeOnlyIndex + 1;
                     }
-                }
-                // This node is not a text node
-                else {
-                    prevNodeWasTextNode = false;
-                    indexOfFirstInSequence = undefined;
-                    characterOffsetSinceUnsplit  = 0;
+                } else if (this.nodeType === Node.ELEMENT_NODE) {
+                    textNodeOnlyIndex = textNodeOnlyIndex + 1;
+                } else if (this.nodeType === Node.COMMENT_NODE) {
+                    prevNodeWasTextNode = true;
+                    characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.length + 7; // 7 is the size of the html comment tag <!--[comment]-->
+                    if (indexOfFirstInSequence === undefined) {
+                        indexOfFirstInSequence = textNodeOnlyIndex;
+                    }
+                } else if (this.nodeType === Node.PROCESSING_INSTRUCTION_NODE) {
+                    prevNodeWasTextNode = true;
+                    characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.data.length + this.target.length + 5; // 5 is the size of the instruction processing tag including the required space between the target and the data <?[target] [data]?>
+                    if (indexOfFirstInSequence === undefined) {
+                        indexOfFirstInSequence = textNodeOnlyIndex;
+                    }
                 }
             }
-        );
+            // This node is not a text node
+            else if (this.nodeType === Node.ELEMENT_NODE) {
+                prevNodeWasTextNode = false;
+                indexOfFirstInSequence = undefined;
+                characterOffsetSinceUnsplit  = 0;
+            } else if (this.nodeType === Node.COMMENT_NODE) {
+                characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.length + 7; // <!--[comment]-->
+            } else if (this.nodeType === Node.PROCESSING_INSTRUCTION_NODE) {
+                characterOffsetSinceUnsplit = characterOffsetSinceUnsplit + this.data.length + this.target.length + 5; // <?[target] [data]?>
+            }
+        });
 
         // Convert the text node index to a CFI odd-integer representation
         CFIIndex = (indexOfTextNode * 2) + 1;

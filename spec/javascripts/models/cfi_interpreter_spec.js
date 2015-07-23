@@ -23,7 +23,7 @@ describe('CFI INTERPRETER OBJECT', function () {
         contentDocument = domParser.parseFromString(contentDocXHTML, 'text/xml');
         $contentDocument = $(contentDocument);
 
-        spyOn($, "ajax").andCallFake(function (params) {
+        spyOn($, "ajax").and.callFake(function (params) {
 
             params.success(domParser.parseFromString(contentDocXHTML, 'text/xml'));
         });
@@ -34,6 +34,97 @@ describe('CFI INTERPRETER OBJECT', function () {
         var expectedResult = 'c01p0006';
         var $injectedElement = EPUBcfi.Interpreter.injectElement(CFI, contentDocument, "<span></span>");
         expect($injectedElement.parent().attr("id")).toBe(expectedResult);
+    });
+
+    it('can inject into a node containing comments', function () {
+        var dom = 
+            "<html>"
+            +    "<div></div>"
+            +    "<div>"
+            +         "<div id='startParent'>"
+            +             "<!-- comment -->" // size=16
+            +             "text1 text2 text3"
+            +         "</div>"
+            +     "</div>"
+            +     "<div></div>"
+            + "</html>";
+
+        var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+
+        var CFI = "epubcfi(/6/14!/4/2[startParent],/1:22,/1:27)";
+
+        var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
+            CFI, 
+            $dom, 
+            "<span id='start' class='cfi-marker'></span>", 
+            "<span id='end' class='cfi-marker'></span>",
+            ["cfi-marker"]
+            );
+
+        var result = $($($($dom.contents()).contents()[1]).contents()).contents()[3];
+        expect(result.data).toEqual("text2");
+
+    });
+
+    it('can inject into a node containing processing instructions', function () {
+        var dom = 
+            "<html>"
+            +    "<div></div>"
+            +    "<div>"
+            +         "<div id='startParent'>"
+            +             "<?xml-stylesheet type='text/css' href='style.css'?>" // size=51
+            +             "text1 text2 text3"
+            +         "</div>"
+            +     "</div>"
+            +     "<div></div>"
+            + "</html>";
+
+        var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+
+        var CFI = "epubcfi(/6/14!/4/2[startParent],/1:57,/1:62)";
+
+        var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
+            CFI, 
+            $dom, 
+            "<span id='start' class='cfi-marker'></span>", 
+            "<span id='end' class='cfi-marker'></span>",
+            ["cfi-marker"]
+            );
+
+        var result = $($($($dom.contents()).contents()[1]).contents()).contents()[3];
+        expect(result.data).toEqual("text2");
+
+    });
+
+    it('can inject into a node containing processing instructions and comments', function () {
+        var dom = 
+            "<html>"
+            +    "<div></div>"
+            +    "<div>"
+            +         "<div id='startParent'>"
+            +             "<?xml-stylesheet type='text/css' href='style.css'?>" // size=51
+            +             "<!-- comment -->" // size=16
+            +             "text1 text2 text3"
+            +         "</div>"
+            +     "</div>"
+            +     "<div></div>"
+            + "</html>";
+
+        var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+
+        var CFI = "epubcfi(/6/14!/4/2[startParent],/1:73,/1:78)";
+
+        var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
+            CFI, 
+            $dom, 
+            "<span id='start' class='cfi-marker'></span>", 
+            "<span id='end' class='cfi-marker'></span>",
+            ["cfi-marker"]
+            );
+
+        var result = $($($($dom.contents()).contents()[1]).contents()).contents()[4];
+
+        expect(result.data).toEqual("text2");
     });
 
     it('can inject into previously injected text node (dmitry)', function () {
@@ -207,6 +298,13 @@ describe('CFI INTERPRETER OBJECT', function () {
     });
 
     describe("range CFI interpretation", function () {
+        
+        it("can determine that a CFI is a range CFI or not", function(){
+            var rangeCFI = "epubcfi(/6/14!/4,/2/14/1:4,/2/16/1:7)",
+                nonRangeCFI = "epubcfi(/6/14!/4/2/14[c01p0006]/1:4)";
+            expect(EPUBcfi.Interpreter.isRangeCfi(rangeCFI)).toEqual(true);
+            expect(EPUBcfi.Interpreter.isRangeCfi(nonRangeCFI)).toEqual(false);
+        });
 
         it("returns the href of a content document in the first local path", function () {
 
@@ -260,6 +358,8 @@ describe('CFI INTERPRETER OBJECT', function () {
             expect(rangeInfo.startElement.nodeType).toBe(Node.TEXT_NODE);
             expect(rangeInfo.endElement.nodeType).toBe(Node.TEXT_NODE);
             expect(rangeInfo.startElement).toBe(rangeInfo.endElement);
+            expect(rangeInfo.startOffset).toEqual(4);
+            expect(rangeInfo.endOffset).toEqual(7);
         });
 
         it('can return target elements when the target is the same element', function () {
@@ -287,6 +387,8 @@ describe('CFI INTERPRETER OBJECT', function () {
             expect(rangeInfo.startElement.nodeType).toBe(Node.TEXT_NODE);
             expect(rangeInfo.endElement.nodeType).toBe(Node.TEXT_NODE);
             expect(rangeInfo.startElement).not.toBe(rangeInfo.endElement);
+            expect(rangeInfo.startOffset).toEqual(4);
+            expect(rangeInfo.endOffset).toEqual(7);
         });
 
         it('can return target elements when the targets are different elements', function () {
@@ -300,6 +402,10 @@ describe('CFI INTERPRETER OBJECT', function () {
                 );
             expect(rangeInfo.startElement.id).toBe(targetElement1);
             expect(rangeInfo.endElement.id).toBe(targetElement2);
+
+            //there should be no character offset data
+            expect(rangeInfo.startOffset).toBeUndefined();
+            expect(rangeInfo.endOffset).toBeUndefined();
         });
     });
 
@@ -391,7 +497,7 @@ describe('ERROR HANDLING FOR ID AND TEXT ASSERTIONS', function () {
             var contentDocXHTML = jasmine.getFixtures().read("moby_dick_content_doc.xhtml");
             $contentDocument = $(domParser.parseFromString(contentDocXHTML, 'text/xml'));
 
-            spyOn($, "ajax").andCallFake(function (params) {
+            spyOn($, "ajax").and.callFake(function (params) {
 
                 params.success(domParser.parseFromString(contentDocXHTML, 'text/xml'));
             });
@@ -428,7 +534,7 @@ describe('ERROR HANDLING FOR ID AND TEXT ASSERTIONS', function () {
             CFIAST = EPUBcfi.Parser.parse("epubcfi(/6/14!/4[body2]/2/14[c01p0006]/1:4)");
 
             // Faking the follow indirection step, it'll return an element with an id that doesn't match the assertion
-            spyOn(EPUBcfi.CFIInstructions, "followIndirectionStep").andCallFake(function (params) {
+            spyOn(EPUBcfi.CFIInstructions, "followIndirectionStep").and.callFake(function (params) {
 
                 return $('<body></body>').attr("id", "body1");
             });
@@ -448,7 +554,7 @@ describe('ERROR HANDLING FOR ID AND TEXT ASSERTIONS', function () {
             CFIAST = EPUBcfi.Parser.parse("epubcfi(/6/14!/4[body1]/2/14[c01p0002]/1:4)");
 
             // Faking the follow indirection step, it'll return an element with an id that matches the assertion
-            spyOn(EPUBcfi.CFIInstructions, "followIndirectionStep").andCallFake(function (params) {
+            spyOn(EPUBcfi.CFIInstructions, "followIndirectionStep").and.callFake(function (params) {
 
                 return $('<body></body>').attr("id", "body1");
             });
