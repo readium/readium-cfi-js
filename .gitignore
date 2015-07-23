@@ -1,4 +1,4 @@
 .DS_Store
-Issues.txt
-epub_cfi.js
+build-output
 node_modules
+build.txt
