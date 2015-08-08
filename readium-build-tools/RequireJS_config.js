@@ -44,7 +44,7 @@ function(thiz){
     var configOverrideTarget = undefined;
     process._RJS_isSingleBundle = false;
 
-    process._RJS_isUgly = true;
+    process._RJS_isUgly = false;
 
     // For example, command line parameter after "npm run SCRIPT_NAME":
     //--readium-js-viewer:RJS_UGLY=no
