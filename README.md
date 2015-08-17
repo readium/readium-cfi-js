@@ -42,6 +42,8 @@ Note that the above command executes the following:
 
 * `npm run test` (Karma launcher)
 
+Travis (Continuous Integration): https://travis-ci.org/readium/readium-cfi-js/
+
 ## NPM (Node Package Manager)
 
 All packages "owned" and maintained by the Readium Foundation are listed here: https://www.npmjs.com/~readium
