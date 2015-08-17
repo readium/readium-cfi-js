@@ -8,7 +8,7 @@ This is a software component used by other Readium projects, see https://github.
 
 **BSD-3-Clause** ( http://opensource.org/licenses/BSD-3-Clause )
 
-See license.txt ( https://github.com/readium/readium-cfi-js/blob/develop/license.txt )
+See [license.txt](./license.txt).
 
 
 ## Prerequisites
