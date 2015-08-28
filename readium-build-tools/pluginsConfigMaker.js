@@ -234,27 +234,40 @@ console.log("Plugins to load: ", pluginsToLoad);
 
 var pluginBuildConfigs = {};
 
+// fs.existsSync is marked as deprecated, accessSync is used instead.
+// The problem is that accessSync isn't implented yet in a popular version of node at this time.
+function doesFileExist(path) {
+    var exists;
+    if (fs.existsSync) {
+        exists = fs.existsSync(path);
+    } else {
+        try {
+            fs.accessSync(path);
+            exists = true;
+        } catch (ex) {
+            exists = false;
+        }
+    }
+    return exists;
+}
+
 pluginsToLoad.forEach(function(pluginName) {
     // Check for the existance of main.js inside a plugin's folder
     // This will throw an error if the path does not exist or is unaccessable
-    try {
-        fs.accessSync(path.join(pluginsDir, pluginName, 'main.js'));
-    } catch (ex) {
-        console.error('Error: Does the plugin \'' + pluginName + '\' exist?');
-        throw ex;
+    if (!doesFileExist(path.join(pluginsDir, pluginName, 'main.js'))) {
+        throw new Error('Error: Does the plugin \'' + pluginName + '\' exist?');
     }
 
     // Parse rjs-config.js if it exists in the plugin dir
-    try {
-        var buildConfigJsFile = path.join(pluginsDir, pluginName, 'rjs-config.js');
-        fs.accessSync(buildConfigJsFile);
+    var buildConfigJsFile = path.join(pluginsDir, pluginName, 'rjs-config.js');
+    if (doesFileExist(buildConfigJsFile)) {
         var buildConfigJsText = fs.readFileSync(buildConfigJsFile, {encoding: "utf8"});
         // remove require.config usage to turn the javascript text into a single expression
         // that is: `require.config({paths: []})`` into ``({paths: []})``
         var buildConfigEval = buildConfigJsText.replace('require.config', '');
         var buildConfig = eval(buildConfigEval);
         pluginBuildConfigs[pluginName] = buildConfig;
-    } catch (ignored) {}
+    }
 });
 
 var pluginRequireJsConfig = {};

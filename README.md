@@ -8,13 +8,13 @@ This is a software component used by other Readium projects, see https://github.
 
 **BSD-3-Clause** ( http://opensource.org/licenses/BSD-3-Clause )
 
-See license.txt ( https://github.com/readium/readium-cfi-js/blob/develop/license.txt )
+See [license.txt](./license.txt).
 
 
 ## Prerequisites
 
 * A decent terminal. On Windows, GitShell works great ( http://git-scm.com ), GitBash works too ( https://msysgit.github.io ), and Cygwin adds useful commands ( https://www.cygwin.com ).
-* NodeJS ( https://nodejs.org )
+* NodeJS ( https://nodejs.org ) **v0.12** or higher
 
 
 ## Development
@@ -25,6 +25,8 @@ Follow [this image link](readium-cfi-js_build_tasks.png) to see a flowchart for 
 **Initial setup:**
 
 * `npm run prepare` (to perform required preliminary tasks, like patching code before building)
+
+Note that in some cases, administrator rights may be needed in order to install dependencies, because of NPM-related file access permissions (the console log would clearly show the error). Should this be the case, running `sudo npm run prepare` usually solves this.
 
 Note that the above command executes the following:
 
@@ -41,6 +43,8 @@ Note that the above command executes the following:
 **Unit tests:**
 
 * `npm run test` (Karma launcher)
+
+Travis (Continuous Integration): https://travis-ci.org/readium/readium-cfi-js/
 
 ## NPM (Node Package Manager)
 
