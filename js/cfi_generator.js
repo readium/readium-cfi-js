@@ -449,7 +449,8 @@ var obj = {
         //   Also need to check if the current node is the top-level element. This can occur if the start node is also the
         //   top level element.
         $parentNode = $currNode.parent();
-        if ($parentNode.is(topLevelElement) || $currNode.is(topLevelElement)) {
+        if ($parentNode.is(topLevelElement) || $currNode.is(topLevelElement) || 
+                $parentNode[0].localName === topLevelElement || $currNode[0].localName === topLevelElement) {
             
             // If the top level node is a type from which an indirection step, add an indirection step character (!)
             // REFACTORING CANDIDATE: It is possible that this should be changed to: if (topLevelElement = 'package') do
