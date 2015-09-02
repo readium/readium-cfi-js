@@ -1,0 +1,343 @@
+
+# NPM package file, see https://docs.npmjs.com/files/package.json
+# Oh, this is CSON, not JSON ( see CoffeeScript-Object-Notation https://github.com/bevry/cson )
+
+#####################################################################
+#####################################################################
+
+# Master source file used to generate package.json
+
+# DEFAULT METHOD (if package.json is intact):
+# npm run cson2json
+#
+# ALTERNATIVE METHOD (if package.json is corrupted):
+# npm install cson
+# node ./node_modules/cson/bin/cson2json package.cson > package.json
+# Note that on some Windows terminals (e.g. GitShell),
+# unfortunately the package.json file might need its encoding
+# converted to UTF-no-BOM :(
+# This is somehow due to the piped stdout-stdin result being UCS2-little-endian
+# (yet this works just fine when the same command is invoked from
+# "npm run cson2json" instead of from Node!)
+
+#####################################################################
+#####################################################################
+
+'/*': '----------------------------------------------------------------------------'
+'..': 'This package.json (JSON) is automatically generated from package.cson (CSON)'
+'.-': "DO NOT invoke 'npm init' or 'npm install --save' ('--save-dev' / '--save-optional')"
+'._': 'as this would overwrite / update the JSON, not the master CSON!'
+'*/': '----------------------------------------------------------------------------'
+
+#####################################################################
+
+name: "readium-cfi-js"
+
+version: "0.20.0-alpha"
+
+description: "Readium - CFI javascript library"
+
+keywords: [
+    "readium"
+    "epub"
+    "epub3"
+    "cfi"
+]
+
+author:
+    name: "Readium (Daniel Weck)"
+    email: "daniel.weck@gmail.com"
+    url: "http://github.com/readium"
+
+license: "BSD-3-Clause"
+
+licenses: [
+    type: "BSD-3-Clause"
+    url: "http://opensource.org/licenses/BSD-3-Clause"
+]
+
+homepage: "http://github.com/readium/readium-cfi-js"
+
+bugs:
+    url: "http://github.com/readium/readium-cfi-js/issues"
+    email: "daniel.weck@gmail.com"
+
+repository:
+    type: "git"
+    url: "git://github.com/readium/readium-cfi-js.git"
+
+#####################################################################
+files: [
+
+    "build-output/"
+
+    "dev/"
+
+    "license.txt"
+
+    "README.md"
+]
+
+# "main" is designed for Node/CommonJS modules, not RequireJS/AMD ones.
+# See http://requirejs.org/docs/commonjs.html
+# See http://requirejs.org/docs/node.html
+#
+#main: "build-output/_multiple-bundles/readium-cfi-js.js"
+
+#####################################################################
+dependencies:
+
+    "parallelshell": 'latest'
+
+    "opener": 'latest'
+
+    #"http-server": 'latest'
+    "http-server": 'danielweck/http-server'
+    # SEE: https://github.com/indexzero/http-server/issues/154
+
+
+#####################################################################
+# These dependencies can be fetched by using the "--dev" option
+# in "npm install --dev readium-cfi-js".
+devDependencies:
+
+    "requirejs": 'latest'
+
+    "almond": 'latest'
+
+    "jquery": 'latest'
+
+
+    "pegjs": 'latest'
+
+    "karma": 'latest'
+
+    "karma-chrome-launcher": 'latest'
+    "karma-firefox-launcher": 'latest'
+
+    "karma-jasmine": 'latest'
+
+    "karma-sauce-launcher": 'latest'
+
+
+# Below dependencies are only used for building tasks (above are runtime deps):
+
+    "cson": 'latest'
+
+    "rimraf": 'latest'
+
+    "cpy": 'latest'
+    "ncp": 'latest'
+
+    "mkdirp": 'latest'
+
+    "watch": 'latest'
+
+    #"live-reload": 'latest'
+
+    # see readium-build-tools
+    # jshint_glob.js
+    "jshint": 'latest'
+    "glob": 'latest'
+
+
+#####################################################################
+scripts:
+
+#=====================
+    cson2json: '
+
+        node ./node_modules/cson/bin/cson2json package.cson > package.json
+        &&
+        node readium-build-tools/optimizePackageJsonScripts.js
+    '
+
+#=====================
+    'prepare': '
+
+        npm run
+            prepare:dependencies
+    '
+
+#=====================
+    'prepare:dependencies': '
+
+        npm install
+        &&
+        npm update
+        &&
+        node
+            readium-build-tools/patchRequireJS.js
+        &&
+        node
+            readium-build-tools/gitHubForksUpdater.js
+    '
+
+#=====================
+    clean: '
+
+        node --version
+        &&
+        npm --version
+        &&
+        npm run rimraf
+            build-output/*
+        &&
+        npm run rimraf
+            gen/*
+    '
+
+#=====================
+    'prebuild': '
+
+        npm run clean
+    '
+
+#=====================
+    build: '
+
+        npm run
+            build:scripts
+    '
+
+#=====================
+    lint: '
+
+        npm run jshint
+            js/**.js
+    '
+
+#=====================
+    'prebuild:scripts': '
+
+        npm run build:scripts:peg
+    '
+
+#=====================
+    'build:scripts': '
+
+        npm run
+            build:scripts:multiple
+        &&
+        npm run
+            build:scripts:single
+    '
+
+#=====================
+    'build:scripts:peg': '
+
+        npm run pegjs
+            --export-var EPUBcfiParser cfi_parser.pegjs gen/cfi_parser_gen.js
+    '
+
+#=====================
+    'build:scripts:multiple': '
+
+        npm run rjs
+             --rjs_bundle=multiple
+    '
+
+#=====================
+    'postbuild:scripts:multiple': '
+
+        npm run rimraf
+            build-output/_multiple-bundles/RequireJS.js.src.js
+    '
+
+#=====================
+    'build:scripts:single': '
+
+        npm run rjs
+             --rjs_bundle=single
+    '
+
+#=====================
+#### BLOCKING! (CTRL-C) [watch][live-reload][http]
+    'http:watch': '
+
+        echo > open_webbrowser.js
+        &&
+        parallelshell
+            \"npm run dowatch\"
+            \"npm run httpServe\"
+    '
+#    \"npm run live-reload\"
+
+#=====================
+#### BLOCKING! (CTRL-C) [http]
+    'http': '
+
+        parallelshell
+            \"npm run httpServe\"
+            \"npm run webBrowser\"
+    '
+
+#=====================
+    'test': '
+
+       npm run karma
+          start tests/karma.conf.js --singleRun --no-auto-watch
+    '
+
+#=====================
+    'test:travis': '
+
+       npm run karma
+          start tests/karma.travis.conf.js --singleRun --no-auto-watch
+    '
+
+#=====================
+    'test:travis:firefox': '
+
+       npm run test:travis --readium-cfi-js:MODE=firefox
+    '
+
+#=====================
+    'test:travis:chrome': '
+
+       npm run test:travis --readium-cfi-js:MODE=chrome
+    '
+
+
+
+#=====================
+#### BLOCKING! (CTRL-C) [watch or nodemon]
+    'dowatch': '
+
+        npm run watch
+            \"npm run build
+                && npm run test
+                && node readium-build-tools/webbrowser.js
+                && npm run webBrowser
+                && npm run rimraf
+                      open_webbrowser.js\"
+            dev/ js/ tests/
+    '
+    # unfortunately, cannot watch single file cfi_parser.pegjs :(
+
+    #    nodemon -q
+    #    -w dev/
+    #    --ext \".\"
+    #    --exec \"npm run build
+    #            && node readium-build-tools/webbrowser.js
+    #            && npm run webbrowser
+    #            && npm run rimraf
+    #                  open_webbrowser.js\"
+
+#=====================
+    'httpServe': '
+
+        http-server -p 9090 --cors ./
+    '
+
+#=====================
+#    'live-reload': '
+#
+#        live-reload --port 9091 --delay 1000 build-output/
+#    '
+
+#=====================
+    'webBrowser': '
+
+        opener http://127.0.0.1:9090/dev/
+    '
