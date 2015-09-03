@@ -74,7 +74,7 @@
     "lint": "node ./readium-build-tools/jshint_glob.js js/**.js",
     "prebuild:scripts": "npm run build:scripts:peg",
     "build:scripts": "npm run build:scripts:multiple && npm run build:scripts:single",
-    "build:scripts:peg": "node ./node_modules/pegjs/bin/pegjs --export-var EPUBcfiParser cfi_parser.pegjs gen/cfi_parser_gen.js",
+    "build:scripts:peg": "node ./node_modules/pegjs/bin/pegjs --export-var window.EPUBcfiParser cfi_parser.pegjs gen/cfi_parser_gen.js",
     "build:scripts:multiple": "node ./node_modules/requirejs/bin/r.js -o ./readium-build-tools/RequireJS_config.js --rjs_bundle=multiple",
     "postbuild:scripts:multiple": "node ./node_modules/rimraf/bin.js build-output/_multiple-bundles/RequireJS.js.src.js",
     "build:scripts:single": "node ./node_modules/requirejs/bin/r.js -o ./readium-build-tools/RequireJS_config.js --rjs_bundle=single",

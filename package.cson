@@ -227,7 +227,7 @@ scripts:
     'build:scripts:peg': '
 
         npm run pegjs
-            --export-var EPUBcfiParser cfi_parser.pegjs gen/cfi_parser_gen.js
+            --export-var window.EPUBcfiParser cfi_parser.pegjs gen/cfi_parser_gen.js
     '
 
 #=====================
