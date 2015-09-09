@@ -259,7 +259,7 @@ scripts:
         &&
         parallelshell
             \"npm run dowatch\"
-            \"npm run httpServe\"
+            \"npm run http\"
     '
 #    \"npm run live-reload\"
 
@@ -267,9 +267,19 @@ scripts:
 #### BLOCKING! (CTRL-C) [http]
     'http': '
 
-        parallelshell
-            \"npm run httpServe\"
-            \"npm run webBrowser\"
+        node
+            readium-build-tools/http-server.js
+            
+            -LOGFILE
+            http.log
+            
+            -OPEN
+            /dev/
+            
+            -a 127.0.0.1
+            -p 9090
+            --cors
+            .
     '
 
 #=====================
@@ -308,7 +318,6 @@ scripts:
             \"npm run build
                 && npm run test
                 && node readium-build-tools/webbrowser.js
-                && npm run webBrowser
                 && npm run rimraf
                       open_webbrowser.js\"
             dev/ js/ tests/
@@ -318,26 +327,11 @@ scripts:
     #    nodemon -q
     #    -w dev/
     #    --ext \".\"
-    #    --exec \"npm run build
-    #            && node readium-build-tools/webbrowser.js
-    #            && npm run webbrowser
-    #            && npm run rimraf
-    #                  open_webbrowser.js\"
+    #    --exec \" ... "
 
-#=====================
-    'httpServe': '
-
-        http-server -p 9090 --cors ./
-    '
 
 #=====================
 #    'live-reload': '
 #
 #        live-reload --port 9091 --delay 1000 build-output/
 #    '
-
-#=====================
-    'webBrowser': '
-
-        opener http://127.0.0.1:9090/dev/
-    '
