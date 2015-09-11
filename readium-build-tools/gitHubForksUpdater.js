@@ -61,10 +61,17 @@ try {
 
 var checkDiff = function(depSource, upstream) {
 
+    var depSource_ = depSource;
+    var iSlash = depSource_.indexOf('/');
+    if (iSlash >= 0) {
+        depSource_ = depSource_.substr(0,iSlash);
+    }
+
+
     var url = {
       hostname: 'api.github.com',
       port: 443,
-      path: "/repos/" + upstream + "/compare/master..." + depSource + ":master" + "?access_token=" + ACCESSTOKEN,
+      path: "/repos/" + upstream + "/compare/master..." + depSource_ + ":master" + "?access_token=" + ACCESSTOKEN,
       method: 'GET',
 
       headers: {
@@ -81,17 +88,43 @@ var checkDiff = function(depSource, upstream) {
         var gitData = JSON.parse(res);
         if (!gitData) return;
 
+        console.log("+++++++ " + info.depSource + " >> " + info.upstream);
 
         //console.log(info.url);
         //console.log(res);
-        console.log("+++++++ " + info.depSource + " >> " + info.upstream);
+        
+        if (gitData.message) console.log(gitData.message);
+        
+        //if (gitData.url) console.log(gitData.url);
+        //if (gitData.html_url) console.log(gitData.html_url);
+        //if (gitData.permalink_url) console.log(gitData.permalink_url);
 
         if (gitData.behind_by) {
 
             console.log("!!!!!! NEEDS UPDATING");
             console.log(gitData.status);
             console.log(gitData.behind_by);
-
+            
+            console.log("Code diff URLs:");
+                    
+            var depSource_ = depSource;
+            var iSlash = depSource_.indexOf('/');
+            if (iSlash >= 0) {
+                depSource_ = depSource_.substr(0,iSlash);
+            }
+            
+            var upstream_ = info.upstream;
+            iSlash = upstream_.indexOf('/');
+            if (iSlash >= 0) {
+                upstream_ = upstream_.substr(0,iSlash);
+            }
+            
+            console.log("https://github.com/" + info.upstream + "/compare/master..." + depSource_ + ":master");
+            console.log("https://github.com/" + info.depSource + "/compare/master..." + upstream_ + ":master");
+            console.log("(open with web browser to visualize code changes, to and from the fork)");
+            console.log("..........");
+            
+            
             console.log("---------------------------------");
             console.log("Recommended steps (command line):");
             console.log("---------------------------------");
@@ -105,8 +138,11 @@ var checkDiff = function(depSource, upstream) {
             console.log("---------------------------------");
 
             //process.exit(1);
-        } else {
+        } else if (gitData.url) {
             console.log("Up to date.");
+        } else {
+            console.log("GitHub API error?!");
+            console.log(res);
         }
     });
 };
