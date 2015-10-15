@@ -234,19 +234,18 @@ console.log("Plugins to load: ", pluginsToLoad);
 
 var pluginBuildConfigs = {};
 
-// fs.existsSync is marked as deprecated, accessSync is used instead.
-// The problem is that accessSync isn't implented yet in a popular version of node at this time.
+// fs.existsSync is marked as deprecated, so accessSync is used instead (if it's available in the running version of Node).
 function doesFileExist(path) {
     var exists;
-    if (fs.existsSync) {
-        exists = fs.existsSync(path);
-    } else {
+    if (fs.accessSync) {
         try {
             fs.accessSync(path);
             exists = true;
         } catch (ex) {
             exists = false;
         }
+    } else {
+        exists = fs.existsSync(path);
     }
     return exists;
 }

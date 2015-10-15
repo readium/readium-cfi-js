@@ -59,12 +59,20 @@ try {
 }
 };
 
-var checkDiff = function(depSource, upstream) {
+var checkDiff = function(depSource, upstream, ID) {
+
+    var depSource_ = depSource;
+    
+    var iSlash = depSource_.indexOf('/');
+    if (iSlash >= 0) {
+        depSource_ = depSource_.substr(0,iSlash);
+    }
+
 
     var url = {
       hostname: 'api.github.com',
       port: 443,
-      path: "/repos/" + upstream + "/compare/master..." + depSource + ":master" + "?access_token=" + ACCESSTOKEN,
+      path: "/repos/" + upstream + "/compare/" + ID + "..." + depSource_ + ":" + ID + "?access_token=" + ACCESSTOKEN,
       method: 'GET',
 
       headers: {
@@ -73,7 +81,7 @@ var checkDiff = function(depSource, upstream) {
     };
 
     httpGet(
-    {ssl: true, url: url, depSource: depSource, upstream: upstream},
+    {ssl: true, url: url, depSource: depSource, upstream: upstream, ID: ID},
     function(info, res) {
 
         if (!res) return;
@@ -81,32 +89,61 @@ var checkDiff = function(depSource, upstream) {
         var gitData = JSON.parse(res);
         if (!gitData) return;
 
+        console.log("+++++++ " + info.depSource + " >> " + info.upstream + " [" + info.ID + "]");
 
         //console.log(info.url);
         //console.log(res);
-        console.log("+++++++ " + info.depSource + " >> " + info.upstream);
+        
+        if (gitData.message) console.log(gitData.message);
+        
+        //if (gitData.url) console.log(gitData.url);
+        //if (gitData.html_url) console.log(gitData.html_url);
+        //if (gitData.permalink_url) console.log(gitData.permalink_url);
 
         if (gitData.behind_by) {
 
             console.log("!!!!!! NEEDS UPDATING");
             console.log(gitData.status);
             console.log(gitData.behind_by);
-
+            
+            console.log("Code diff URLs:");
+                    
+            var depSource_ = depSource;
+            var iSlash = depSource_.indexOf('/');
+            if (iSlash >= 0) {
+                depSource_ = depSource_.substr(0,iSlash);
+            }
+            
+            var upstream_ = info.upstream;
+            iSlash = upstream_.indexOf('/');
+            if (iSlash >= 0) {
+                upstream_ = upstream_.substr(0,iSlash);
+            }
+            
+            console.log("https://github.com/" + info.upstream + "/compare/" + info.ID + "..." + depSource_ + ":" + info.ID);
+            console.log("https://github.com/" + info.depSource + "/compare/" + info.ID + "..." + upstream_ + ":" + info.ID);
+            console.log("(open with web browser to visualize code changes, to and from the fork)");
+            console.log("..........");
+            
+            
             console.log("---------------------------------");
             console.log("Recommended steps (command line):");
             console.log("---------------------------------");
             console.log("git clone git@github.com:"+info.depSource+".git");
             console.log("git remote add upstream git@github.com:"+info.upstream+".git");
-            console.log("git checkout master");
+            console.log("git checkout " + info.ID);
             console.log("git fetch upstream");
-            console.log("git merge upstream/master");
+            console.log("git merge upstream/" + info.ID);
             console.log("git commit -a");
             console.log("git push");
             console.log("---------------------------------");
 
             //process.exit(1);
-        } else {
+        } else if (gitData.url) {
             console.log("Up to date.");
+        } else {
+            console.log("GitHub API error?!");
+            console.log(res);
         }
     });
 };
@@ -124,7 +161,20 @@ var scanDeps = function(deps) {
         alreadyScannedDeps[depSource] = true;
 
         console.log(depSource);
-
+    
+        var ID = "master";
+    
+        var iHash = depSource.indexOf('#');
+        if (iHash >= 0) {
+            ID = depSource.substr(iHash+1);
+            depSource = depSource.substr(0,iHash);
+        }
+        
+        console.log("[[");
+        console.log(depSource);
+        console.log(ID);
+        console.log("]]");
+    
         var url = {
           hostname: 'api.github.com',
           port: 443,
@@ -137,7 +187,7 @@ var scanDeps = function(deps) {
         };
 
         httpGet(
-        {ssl: true, url: url, depSource: depSource},
+        {ssl: true, url: url, depSource: depSource, ID: ID},
         function(info, res) {
 
             if (!res) return;
@@ -156,12 +206,12 @@ var scanDeps = function(deps) {
             //console.log(res);
             if (gitData.source) {
                 //console.log("SOURCE: " + gitData.source.full_name);
-                checkDiff(info.depSource, gitData.source.full_name);
+                checkDiff(info.depSource, gitData.source.full_name, info.ID);
             }
 
             if (gitData.parent && (gitData.parent.full_name != gitData.source.full_name)) {
                 //console.log("PARENT: " + gitData.parent.full_name);
-                checkDiff(info.depSource, gitData.parent.full_name);
+                checkDiff(info.depSource, gitData.parent.full_name, info.ID);
             }
         });
     }

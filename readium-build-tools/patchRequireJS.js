@@ -3,7 +3,7 @@ var path = require('path');
 
 var rjsPath = path.join(process.cwd(), 'node_modules/requirejs/bin/r.js');
 
-console.log("Patching RequireJS optimizer (duplicate sourceMappingURL bug): ");
+console.log("Patching RequireJS optimizer (sourceMapIncludeSources bug): ");
 console.log(rjsPath);
 
 var rjs = fs.readFileSync(rjsPath, {encoding: 'utf8'});
