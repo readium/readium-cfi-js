@@ -63,7 +63,7 @@ function(thiz){
     console.log('process.env[RJS_UGLY]:');
     console.log(process.env['RJS_UGLY']);
     if (process.env.npm_package_config_RJS_UGLY)
-    		process.env['RJS_UGLY'] = process.env.npm_package_config_RJS_UGLY;
+            process.env['RJS_UGLY'] = process.env.npm_package_config_RJS_UGLY;
 
     if (typeof process.env['RJS_UGLY'] !== "undefined") {
         var ugly = process.env['RJS_UGLY'];

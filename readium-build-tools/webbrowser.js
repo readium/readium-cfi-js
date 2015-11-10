@@ -26,12 +26,12 @@ if (doesFileExist(path.join(process.cwd(), '/open_webbrowser.js'))) {
         // var i = 0;
         // var MAX = 10;
         // var htmlFileExists = false;
-  			// try {
-  			// 		fs.accessSync(process.cwd() + '/dist/index.html');
+              // try {
+              //         fs.accessSync(process.cwd() + '/dist/index.html');
         //     htmlFileExists = true;
-  			// } catch (e) {
-  			// 		// ignored
-  			// }
+              // } catch (e) {
+              //         // ignored
+              // }
         // while (i < MAX && !htmlFileExists) {
             // i++;
             // console.log('.');
