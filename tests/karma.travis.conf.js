@@ -7,7 +7,7 @@ module.exports = function(config) {
   console.log('process.env.npm_package_config_MODE:');
   console.log(process.env.npm_package_config_MODE);
   if (process.env.npm_package_config_MODE)
-  		process.env['MODE'] = process.env.npm_package_config_MODE;
+          process.env['MODE'] = process.env.npm_package_config_MODE;
   if (!process.env['MODE']) process.env.MODE = 'firefox';
 
 
@@ -26,8 +26,8 @@ module.exports = function(config) {
       sl_chrome: {
         base: 'SauceLabs',
         browserName: 'chrome',
-        platform: 'Windows 7',
-        version: '42'
+        platform: 'Windows 7'
+        //version: '42'
       }
     }
   ;
