@@ -172,10 +172,6 @@ scripts:
         &&
         npm update
         &&
-        npm ls --depth 0 --prod
-        &
-        npm ls --depth 0 --dev
-        &
         node
             readium-build-tools/patchRequireJS.js
         &&
