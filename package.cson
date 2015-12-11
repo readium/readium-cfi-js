@@ -160,16 +160,22 @@ scripts:
     'prepare': '
 
         npm run
-            prepare:dependencies
+            prepare:local
     '
 
 #=====================
-    'prepare:dependencies': '
+    'prepare:local': '
 
+        npm outdated
+        &&
         npm install
         &&
         npm update
         &&
+        npm ls --depth 0 --prod
+        &
+        npm ls --depth 0 --dev
+        &
         node
             readium-build-tools/patchRequireJS.js
         &&

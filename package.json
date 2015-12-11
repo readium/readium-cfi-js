@@ -70,8 +70,8 @@
   },
   "scripts": {
     "cson2json": "node ./node_modules/cson/bin/cson2json package.cson > package.json && node readium-build-tools/optimizePackageJsonScripts.js",
-    "prepare": "npm run prepare:dependencies",
-    "prepare:dependencies": "npm install && npm update && node readium-build-tools/patchRequireJS.js && node readium-build-tools/gitHubForksUpdater.js",
+    "prepare": "npm run prepare:local",
+    "prepare:local": "npm outdated && npm install && npm update && npm ls --depth 0 --prod & npm ls --depth 0 --dev & node readium-build-tools/patchRequireJS.js && node readium-build-tools/gitHubForksUpdater.js",
     "clean": "node --version && npm --version && node ./node_modules/rimraf/bin.js build-output/* && node ./node_modules/rimraf/bin.js gen/*",
     "prebuild": "npm run clean",
     "build": "npm run build:scripts",
