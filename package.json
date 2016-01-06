@@ -61,7 +61,7 @@
     "karma-sauce-launcher": "latest",
     "cson": "latest",
     "rimraf": "latest",
-    "cpy": "3.4.1",
+    "cpy-cli": "latest",
     "ncp": "latest",
     "mkdirp": "latest",
     "watch": "latest",

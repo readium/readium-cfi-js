@@ -130,7 +130,8 @@ devDependencies:
 
     "rimraf": 'latest'
 
-    "cpy": '3.4.1'
+    "cpy-cli": 'latest'
+
     "ncp": 'latest'
 
     "mkdirp": 'latest'
