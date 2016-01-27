@@ -1,15 +1,15 @@
 var fs = require('fs');
 
-var glob = require('glob');
-
 var path = require('path');
 
-var http = require('http');
+//var http = require('http');
 var https = require('https');
 
-var git = require('gift');
+var parseString = require('xml2js').parseString;
 
-var exec = require('child_process').exec;
+// var git = require('gift');
+// var glob = require('glob');
+// var exec = require('child_process').exec;
 
 // fs.existsSync is marked as deprecated, so accessSync is used instead (if it's available in the running version of Node).
 function doesFileExist(path) {
@@ -48,18 +48,31 @@ if (doesFileExist(opdsPath)) {
     //console.log("~~ delete: " + opdsPath);
     //fs.unlinkSync(opdsPath);
     
-    var opdsXml = fs.readFileSync(opdsPath, 'utf8');
-    fs.writeFileSync(opdsPath, opdsXml, 'utf8');
+    // var opdsXml = fs.readFileSync(opdsPath, 'utf8');
+    // fs.writeFileSync(opdsPath, opdsXml, 'utf8');
 }
+
+var opdsXml = "";
+
+opdsXml += '<feed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:odl="http://opds-spec.org/odl" xml:lang="en" xmlns:dcterms="http://purl.org/dc/terms/" xmlns="http://www.w3.org/2005/Atom" xmlns:app="http://www.w3.org/2007/app" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:thr="http://purl.org/syndication/thread/1.0" xmlns:opds="http://opds-spec.org/2010/catalog">';
+opdsXml += '\n';
 
 var processListItem = function(list, i) {
 
-    if (i >= list.length) return;
+    if (i >= list.length) {
+        
+        
+        opdsXml += '</feed>';
+        opdsXml += '\n';
 
-    var item = list[i];
-    console.log(item.path);
+        fs.writeFileSync(opdsPath, opdsXml, 'utf8');
+        return;
+    }
 
-    var urlContainerXmlPath = "/"+args[1]+"/"+args[2]+"/"+args[3]+"/"+item.path+"/META-INF/container.xml";
+    var listItem = list[i];
+    console.log(listItem.path);
+
+    var urlContainerXmlPath = "/"+args[1]+"/"+args[2]+"/"+args[3]+"/"+listItem.path+"/META-INF/container.xml";
 
     var urlContainerXml = {
         hostname: 'raw.githubusercontent.com',
@@ -100,7 +113,7 @@ var processListItem = function(list, i) {
                 console.log(opfPath);
                             
                             
-                var urlOpfPath = "/"+args[1]+"/"+args[2]+"/"+args[3]+"/"+item.path+"/"+opfPath;
+                var urlOpfPath = "/"+args[1]+"/"+args[2]+"/"+args[3]+"/"+listItem.path+"/"+opfPath;
 
                 var urlOpf = {
                     hostname: 'raw.githubusercontent.com',
@@ -133,22 +146,190 @@ var processListItem = function(list, i) {
                     response.on('end', function() {
                         //console.log(allData);
                         
-                        // var regexp = /full-path="([^"]+)"/g;
-                        // var match = allData.match(regexp);
-                        // if (match.length) {
-                        //     //console.log(match);
-                        //     var opfPath = match[0].replace(regexp, "$1");
-                        //     console.log(opfPath);
-                        // }
-                        processListItem(list, ++i);
-                    });
+                        parseString(allData,
+                        { explicitArray: false, ignoreAttrs: false },
+                        function (err, json) {
+                            
+                            var coverHref = undefined;
+                            var bookTitle = undefined;
+                            
+                            var _package = undefined;
+                            if (json) {
+                                _package = json.package;
+                                if (!_package) {
+                                    _package = json["opf:package"];
+                                }
+                            }
+                            
+                            if (_package) {
+                                
+                                var coverID = undefined;
+                                
+                                var _metadata = _package.metadata;
+                                if (!_metadata) {
+                                    _metadata = _package["opf:metadata"];
+                                }
+                                if (_metadata) {
+                                    
+                                    var _meta = _metadata.meta;
+                                    if (!_meta) {
+                                        _meta = _metadata["opf:meta"];
+                                    }
+                                    if (_meta) {
+                                        
+                                        var metas = Array.isArray(_meta) ? _meta : [_meta];
+                                        
+                                        for (var j = 0; j < metas.length; j++) {
+                                            var meta = metas[j];
+                                            
+                                            for (var key in meta.$) {
+                                            
+                                                // console.log(key);
+                                                // console.log(meta.$[key]);
+                                                    
+                                                if (key === "name" && meta.$[key] === "cover") {
+                                                    var id = meta.$["content"];
+                                                    if (id) {
+                                                        coverID = id;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            
+                                            if (coverID) break;
+                                        }
+                                    }
+                                    
+                                    if (_metadata["dc:title"]) {
+                                        
+                                        var titles = Array.isArray(_metadata["dc:title"]) ? _metadata["dc:title"] : [_metadata["dc:title"]];
+                                        
+                                        for (var j = 0; j < titles.length; j++) {
+                                            var title = titles[j];
+                                            bookTitle = title._ ? title._ : title;
+                                            
+                                            console.log("==========> TITLE: " + bookTitle);
+                                            break;
+                                        }
+                                    }
+                                }
+                                
+                                var _manifest = _package.manifest;
+                                if (!_manifest) {
+                                    _manifest = _package["opf:manifest"];
+                                }
+                                var _manifestItem = undefined; 
+                                if (_manifest) {
+                                    _manifestItem = _manifest.item;
+                                    if (!_manifestItem) {
+                                        _manifestItem = _manifest["opf:item"];
+                                    }
+                                }
+                                if (_manifestItem) {
 
+                                    var items = Array.isArray(_manifestItem) ? _manifestItem : [_manifestItem];
+                                    
+                                    for (var j = 0; j < items.length; j++) {
+                                        var item = items[j];
+                                        
+                                        var href = undefined;
+                                        var match = false;
+                                        
+                                        for (var key in item.$) {
+                                        
+                                            // console.log(key);
+                                            // console.log(meta.$[key]);
+                                                
+                                            if (coverID && key === "id" && item.$[key] === coverID) {
+                                                
+                                                match = true;
+                                                
+                                                if (href) {
+                                                    coverHref = href;
+                                                    break;
+                                                }
+                                            }
+                                            
+                                            if (!coverID && key === "properties" && item.$[key].indexOf("cover-image") >= 0) {
+                                                
+                                                match = true;
+                                                
+                                                if (href) {
+                                                    coverHref = href;
+                                                    break;
+                                                }
+                                            }
+                                            
+                                            if (key === "href") {
+                                                
+                                                href = item.$[key];
+                                                
+                                                if (match) {
+                                                    
+                                                    coverHref = href;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        
+                                        if (coverHref) break;
+                                    }
+                                    
+                                    if (coverHref) {
+                                        console.log("==========> COVER: " + coverHref);
+                                    }
+                                }
+                            }
+                            
+                            if (!bookTitle) {
+                                console.log("==========> NO TITLE ?!");
+                            }
+                            
+                            opdsXml += '<entry>';
+                            opdsXml += '\n';
+                                
+                            opdsXml += '<title>' + bookTitle + '</title>';
+                            opdsXml += '\n';
+                            
+                            opdsXml += '<author>';
+                            opdsXml += '\n';
+                                
+                            opdsXml += '  <name>' + args[1]+"/"+args[2]+" ("+args[3]+") - "+ listItem.path + '</name>';
+                            opdsXml += '\n';
+                                                
+                            opdsXml += '</author>';
+                            opdsXml += '\n';
+                            
+                            var fullUrl = 'https://cdn.rawgit.com/'+args[1]+'/'+args[2]+'/'+args[3]+'/'+listItem.path;
+                            opdsXml += '<link type="application/epub" href="'+fullUrl+'" rel="http://opds-spec.org/acquisition"/>';
+                            opdsXml += '\n';
+                            
+                            if (coverHref) {
+                                var contentType = "image/jpeg";
+                                var coverHref_low = coverHref.toLowerCase();
+                                if (coverHref_low.indexOf(".png") == (coverHref_low.length-4)) {
+                                    contentType = "image/png";
+                                }
+                                else if (coverHref_low.indexOf(".gif") == (coverHref_low.length-4)) {
+                                    contentType = "image/gif";
+                                }
+                                else if (coverHref_low.indexOf(".jpg") == (coverHref_low.length-4)) {
+                                    contentType = "image/jpg";
+                                }
+                                opdsXml += '<link type="'+contentType+'" href="'+fullUrl + "/" + opfPath + "/../" + coverHref+'" rel="http://opds-spec.org/image/thumbnail"/>';
+                                opdsXml += '\n';
+                            }
+                            
+                            opdsXml += '</entry>';
+                            opdsXml += '\n';
+                            
+                            processListItem(list, ++i);
+                        });
+                    });
                 });
             }
         });
-
     });
-    
 };
 
 
