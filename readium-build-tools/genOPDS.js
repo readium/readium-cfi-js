@@ -63,7 +63,7 @@ if (doesFileExist(opdsPath)) {
 
 var opdsXml = "";
 
-if (!args[5]) { // not: APPEND, LAST
+if (!args[5] || args[5] === "FIRST") {
     opdsXml += '<feed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:odl="http://opds-spec.org/odl" xml:lang="en" xmlns:dcterms="http://purl.org/dc/terms/" xmlns="http://www.w3.org/2005/Atom" xmlns:app="http://www.w3.org/2007/app" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:thr="http://purl.org/syndication/thread/1.0" xmlns:opds="http://opds-spec.org/2010/catalog">';
     opdsXml += '\n';
 }
@@ -77,7 +77,7 @@ var processListItem = function(list, i) {
             opdsXml += '\n';
         }
 
-        if (args[5]) { // APPEND, LAST
+        if (args[5] === "APPEND" || args[5] === "LAST") {
             fs.appendFileSync(opdsPath, opdsXml, 'utf8');
         } else {
             fs.writeFileSync(opdsPath, opdsXml, 'utf8');
