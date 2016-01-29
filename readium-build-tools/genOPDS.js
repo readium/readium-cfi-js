@@ -27,6 +27,15 @@ function doesFileExist(path) {
     return exists;
 }
 
+function escapeMarkupEntitiesInUrl(url) {
+    return url
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
 //https://github.com/blog/1509-personal-api-tokens
 //https://github.com/settings/tokens
 //var ACCESSTOKEN = "fb424e90e36242ab9603034ea906a070c9ce2646";
@@ -54,24 +63,39 @@ if (doesFileExist(opdsPath)) {
 
 var opdsXml = "";
 
-opdsXml += '<feed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:odl="http://opds-spec.org/odl" xml:lang="en" xmlns:dcterms="http://purl.org/dc/terms/" xmlns="http://www.w3.org/2005/Atom" xmlns:app="http://www.w3.org/2007/app" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:thr="http://purl.org/syndication/thread/1.0" xmlns:opds="http://opds-spec.org/2010/catalog">';
-opdsXml += '\n';
+if (!args[5]) { // not: APPEND, LAST
+    opdsXml += '<feed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:odl="http://opds-spec.org/odl" xml:lang="en" xmlns:dcterms="http://purl.org/dc/terms/" xmlns="http://www.w3.org/2005/Atom" xmlns:app="http://www.w3.org/2007/app" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:thr="http://purl.org/syndication/thread/1.0" xmlns:opds="http://opds-spec.org/2010/catalog">';
+    opdsXml += '\n';
+}
 
 var processListItem = function(list, i) {
 
     if (i >= list.length) {
         
-        
-        opdsXml += '</feed>';
-        opdsXml += '\n';
+        if (!args[5] || args[5] === "LAST") {
+            opdsXml += '</feed>';
+            opdsXml += '\n';
+        }
 
-        fs.writeFileSync(opdsPath, opdsXml, 'utf8');
+        if (args[5]) { // APPEND, LAST
+            fs.appendFileSync(opdsPath, opdsXml, 'utf8');
+        } else {
+            fs.writeFileSync(opdsPath, opdsXml, 'utf8');
+        }
+        
         return;
     }
 
     var listItem = list[i];
-    console.log(listItem.path);
+    
+    if (listItem.type !== "dir") {
+        console.log("Skipping non-directory path: " + listItem.path);
+        processListItem(list, ++i);
+        return;
+    }
 
+    console.log(listItem.path);
+    
     var urlContainerXmlPath = "/"+args[1]+"/"+args[2]+"/"+args[3]+"/"+listItem.path+"/META-INF/container.xml";
 
     var urlContainerXml = {
@@ -94,7 +118,9 @@ var processListItem = function(list, i) {
         response.setEncoding('utf8');
 
         response.on('error', function(error) {
-            console.log(error);
+            console.log("ERROR container XML: " + error);
+            
+            processListItem(list, ++i);
         });
 
         var allData = ''
@@ -105,8 +131,26 @@ var processListItem = function(list, i) {
         response.on('end', function() {
             //console.log(allData);
             
+            if (response.statusCode !== 200) {
+                
+                console.log("ERROR container XML HTTP: " + response.statusCode);
+                console.log(response.statusMessage);
+                
+                processListItem(list, ++i);
+                return;
+            }
+            
             var regexp = /full-path="([^"]+)"/g;
             var match = allData.match(regexp);
+            
+            if (!match) {
+                
+                console.log("ERROR container XML rootfile full-path.");
+                
+                processListItem(list, ++i);
+                return;
+            }
+            
             if (match.length) {
                 //console.log(match);
                 var opfPath = match[0].replace(regexp, "$1");
@@ -135,7 +179,9 @@ var processListItem = function(list, i) {
                     response.setEncoding('utf8');
 
                     response.on('error', function(error) {
-                        console.log(error);
+                        console.log("ERROR package OPF: " + error);
+            
+                        processListItem(list, ++i);
                     });
 
                     var allData = ''
@@ -145,10 +191,28 @@ var processListItem = function(list, i) {
 
                     response.on('end', function() {
                         //console.log(allData);
+                                    
+                        if (response.statusCode !== 200) {
+                            
+                            console.log("ERROR package OPF HTTP: " + response.statusCode);
+                            console.log(response.statusMessage);
+                            
+                            processListItem(list, ++i);
+                            return;
+                        }
                         
                         parseString(allData,
                         { explicitArray: false, ignoreAttrs: false },
                         function (err, json) {
+                            
+                            if (err) {
+                                console.log("ERROR package OPF parseXML: " + err);
+                                console.log(json);
+                                console.log(allData);
+                    
+                                processListItem(list, ++i);
+                                return;
+                            }
                             
                             var coverHref = undefined;
                             var bookTitle = undefined;
@@ -288,20 +352,21 @@ var processListItem = function(list, i) {
                             opdsXml += '<entry>';
                             opdsXml += '\n';
                                 
-                            opdsXml += '<title>' + bookTitle + '</title>';
+                            opdsXml += '<title>' + escapeMarkupEntitiesInUrl(bookTitle) + '</title>';
                             opdsXml += '\n';
                             
                             opdsXml += '<author>';
                             opdsXml += '\n';
                                 
-                            opdsXml += '  <name>' + args[1]+"/"+args[2]+" ("+args[3]+") - "+ listItem.path + '</name>';
+                            var entryName = args[1]+"/"+args[2]+" ("+args[3]+") - "+ listItem.path;
+                            opdsXml += '  <name>' + escapeMarkupEntitiesInUrl(entryName) + '</name>';
                             opdsXml += '\n';
-                                                
+                            
                             opdsXml += '</author>';
                             opdsXml += '\n';
                             
                             var fullUrl = 'https://cdn.rawgit.com/'+args[1]+'/'+args[2]+'/'+args[3]+'/'+listItem.path;
-                            opdsXml += '<link type="application/epub" href="'+fullUrl+'" rel="http://opds-spec.org/acquisition"/>';
+                            opdsXml += '<link type="application/epub" href="'+encodeURI(escapeMarkupEntitiesInUrl(fullUrl))+'" rel="http://opds-spec.org/acquisition"/>';
                             opdsXml += '\n';
                             
                             if (coverHref) {
@@ -316,7 +381,8 @@ var processListItem = function(list, i) {
                                 else if (coverHref_low.indexOf(".jpg") == (coverHref_low.length-4)) {
                                     contentType = "image/jpg";
                                 }
-                                opdsXml += '<link type="'+contentType+'" href="'+fullUrl + "/" + opfPath + "/../" + coverHref+'" rel="http://opds-spec.org/image/thumbnail"/>';
+                                var coverUrl = fullUrl + "/" + opfPath + "/../" + coverHref;
+                                opdsXml += '<link type="'+contentType+'" href="'+encodeURI(escapeMarkupEntitiesInUrl(coverUrl))+'" rel="http://opds-spec.org/image/thumbnail"/>';
                                 opdsXml += '\n';
                             }
                             
@@ -324,7 +390,7 @@ var processListItem = function(list, i) {
                             opdsXml += '\n';
                             
                             processListItem(list, ++i);
-                        });
+                        }); //parseString
                     });
                 });
             }
