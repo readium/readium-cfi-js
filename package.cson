@@ -145,6 +145,7 @@ devDependencies:
     "jshint": 'latest'
     "glob": 'latest'
 
+    "yuidocjs": 'latest'
 
 #####################################################################
 scripts:
@@ -191,7 +192,16 @@ scripts:
             build-output/*
         &&
         npm run rimraf
+            api-docs/*
+        &&
+        npm run rimraf
             gen/*
+    '
+
+#=====================
+    apidocs: '
+
+        npm run yuidocjs
     '
 
 #=====================

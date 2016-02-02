@@ -19,7 +19,8 @@ var scripts =
     jshint: 'node ' + PATH_PREFIX + '/' + 'readium-build-tools/jshint_glob.js',
     karma: 'node ' + PATH_PREFIX + '/' + 'node_modules/karma/bin/karma',
     pegjs: 'node ' + PATH_PREFIX + '/' + 'node_modules/pegjs/bin/pegjs',
-    watch: 'node ' + PATH_PREFIX + '/' + 'node_modules/watch/cli.js'
+    watch: 'node ' + PATH_PREFIX + '/' + 'node_modules/watch/cli.js',
+    yuidocjs: 'node ' + PATH_PREFIX + '/' + 'node_modules/yuidocjs/lib/cli.js -N -C -c yuidocs.json'
 };
 
 var npmCommands = {};
