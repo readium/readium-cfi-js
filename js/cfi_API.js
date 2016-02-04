@@ -13,7 +13,7 @@
 
 (function(global) {
 
-var init = function(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator) {
+var init = function(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator, xmlParse) {
 
     if (typeof cfiParser === "undefined") {
         throw new Error("UNDEFINED?! cfiParser");
@@ -122,10 +122,10 @@ var init = function(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors
 if (typeof define == 'function' && typeof define.amd == 'object') {
     console.log("RequireJS ... cfi_API");
 
-    define(['readium_cfi_js/cfi_parser', './cfi_interpreter', './cfi_instructions', './cfi_runtime_errors', './cfi_generator'],
-    function (cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator) {
+    define(['readium_cfi_js/cfi_parser', './cfi_interpreter', './cfi_instructions', './cfi_runtime_errors', './cfi_generator', './XmlParse'],
+    function (cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator, xmlParse) {
 
-        return init(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator);
+        return init(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator, xmlParse);
     });
 } else {
     console.log("!RequireJS ... cfi_API");
@@ -143,7 +143,7 @@ if (typeof define == 'function' && typeof define.amd == 'object') {
             TerminusError: global.EPUBcfi.TerminusError,
             CFIAssertionError: global.EPUBcfi.CFIAssertionError
         },
-        global.EPUBcfi.Generator);
+        global.EPUBcfi.Generator, global.XmlParse);
 }
 
 })(typeof window !== "undefined" ? window : this);

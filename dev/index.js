@@ -1,15 +1,17 @@
-var check = function(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator) {
+var check = function(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator, xmlParse) {
 
     $(document).ready(function () {
 
         console.log(window.EPUBcfi);
 
-        function checkAPI(obj, globalName) {
+        function checkAPI(obj, globalName, anchor) {
 
-            if (obj && obj === window.EPUBcfi[globalName]) {
-                console.log("OKAY => EPUBcfi." + globalName);
+            if (!anchor) anchor = window.EPUBcfi;
+            
+            if (obj && obj === anchor[globalName]) {
+                console.log("OKAY => " + globalName);
             } else {
-                console.log("ERROR! => EPUBcfi." + globalName);
+                console.log("ERROR! => " + globalName);
             }
         }
 
@@ -21,7 +23,7 @@ var check = function(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeError
         checkAPI(cfiRuntimeErrors.OutOfRangeError, "OutOfRangeError");
         checkAPI(cfiRuntimeErrors.TerminusError, "TerminusError");
         checkAPI(cfiRuntimeErrors.CFIAssertionError, "CFIAssertionError");
-
+        checkAPI(xmlParse, "XmlParse", window);
     });
 };
 
@@ -33,10 +35,10 @@ if (typeof define == 'function' && typeof define.amd == 'object') {
     require(["readium_cfi_js/cfi_API"], function () {
 
     // to access individual feature APIs, via dependency injection (not the global window-attached objects)
-    require(['jquery', 'readium_cfi_js/cfi_parser', 'readium_cfi_js/cfi_interpreter', 'readium_cfi_js/cfi_instructions', 'readium_cfi_js/cfi_runtime_errors', 'readium_cfi_js/cfi_generator'],
-    function ($, cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator) {
+    require(['jquery', 'readium_cfi_js/cfi_parser', 'readium_cfi_js/cfi_interpreter', 'readium_cfi_js/cfi_instructions', 'readium_cfi_js/cfi_runtime_errors', 'readium_cfi_js/cfi_generator', 'readium_cfi_js/XmlParse'],
+    function ($, cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator, xmlParse) {
 
-        check(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator);
+        check(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator, xmlParse);
     });
     });
 
@@ -57,5 +59,6 @@ if (typeof define == 'function' && typeof define.amd == 'object') {
             TerminusError: window.EPUBcfi.TerminusError,
             CFIAssertionError: window.EPUBcfi.CFIAssertionError
         },
-        window.EPUBcfi.Generator);
+        window.EPUBcfi.Generator,
+        window.XmlParse);
 }
