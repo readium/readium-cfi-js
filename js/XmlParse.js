@@ -31,10 +31,8 @@
 var init = function() {
     var XmlParse = {};
 
-    XmlParse.fromString = function(str, contentType) {
+    XmlParse.preprocess = function(str) {
         
-        if (!contentType) contentType = "text/xml"
-
         if (str && (str.indexOf('version="1.1"') > 0)) {
             
             console.warn("Replacing XML v1.1 with v1.0 (web browser compatibility).");
@@ -46,6 +44,15 @@ var init = function() {
             console.log(str.substr(0, 50));
         }
         
+        return str;
+    };
+
+    XmlParse.fromString = function(str, contentType) {
+        
+        if (!contentType) contentType = "text/xml";
+
+        str = XmlParse.preprocess(str);
+
         var parser = new window.DOMParser;
         return parser.parseFromString(str, contentType);
     };
