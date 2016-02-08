@@ -54,7 +54,9 @@ var init = function() {
         str = XmlParse.preprocess(str);
 
         var parser = new window.DOMParser;
-        return parser.parseFromString(str, contentType);
+        var dom = parser.parseFromString(str, contentType);
+        
+        return dom;
     };
 
     global.XmlParse = XmlParse;
