@@ -109,7 +109,7 @@ devDependencies:
 
     "almond": 'latest'
 
-    "jquery": 'latest'
+    "jquery": '2.1.4'
 
 
     "pegjs": 'latest'
