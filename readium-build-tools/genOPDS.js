@@ -36,6 +36,10 @@ function escapeMarkupEntitiesInUrl(url) {
     .replace(/'/g, "&apos;");
 }
 
+
+var datetime = new Date().toISOString();
+//2016-02-12T00:00:00Z
+
 //https://github.com/blog/1509-personal-api-tokens
 //https://github.com/settings/tokens
 //var ACCESSTOKEN = "fb424e90e36242ab9603034ea906a070c9ce2646";
@@ -65,6 +69,18 @@ var opdsXml = "";
 
 if (!args[5] || args[5] === "FIRST") {
     opdsXml += '<feed xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:odl="http://opds-spec.org/odl" xml:lang="en" xmlns:dcterms="http://purl.org/dc/terms/" xmlns="http://www.w3.org/2005/Atom" xmlns:app="http://www.w3.org/2007/app" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:thr="http://purl.org/syndication/thread/1.0" xmlns:opds="http://opds-spec.org/2010/catalog">';
+    opdsXml += '\n';
+    
+    opdsXml += '<updated>'+datetime+'</updated>';
+    opdsXml += '\n';
+    opdsXml += '<id>READIUM_OPDS_'+browserURL.replace(/[\/:]/g,"_")+'</id>';
+    opdsXml += '\n';
+    opdsXml += '<title>Readium CloudReader OPDS feed for [ '+browserURL+' ]</title>';
+    opdsXml += '\n';
+    opdsXml += '<link rel="self" href="'+args[0]+'" type="application/atom+xml;profile=opds-catalog;kind=navigation"/>';
+    opdsXml += '\n';
+    opdsXml += '<link rel="start" href="'+args[0]+'" type="application/atom+xml;profile=opds-catalog;kind=navigation"/>';
+    opdsXml += '\n';
     opdsXml += '\n';
 }
 
@@ -366,7 +382,8 @@ var processListItem = function(list, i) {
                             opdsXml += '\n';
                             
                             var fullUrl = 'https://cdn.rawgit.com/'+args[1]+'/'+args[2]+'/'+args[3]+'/'+listItem.path;
-                            opdsXml += '<link type="application/epub" href="'+encodeURI(escapeMarkupEntitiesInUrl(fullUrl))+'" rel="http://opds-spec.org/acquisition"/>';
+                            var escapedURL = encodeURI(escapeMarkupEntitiesInUrl(fullUrl));
+                            opdsXml += '<link type="application/epub" href="'+escapedURL+'" rel="http://opds-spec.org/acquisition"/>';
                             opdsXml += '\n';
                             
                             if (coverHref) {
@@ -386,6 +403,11 @@ var processListItem = function(list, i) {
                                 opdsXml += '\n';
                             }
                             
+                            opdsXml += '<updated>'+datetime+'</updated>';
+                            opdsXml += '\n';
+                            opdsXml += '<id>READIUM_OPDS_'+escapedURL.replace(/[\/:]/g,"_")+'</id>';
+                            opdsXml += '\n';
+
                             opdsXml += '</entry>';
                             opdsXml += '\n';
                             
