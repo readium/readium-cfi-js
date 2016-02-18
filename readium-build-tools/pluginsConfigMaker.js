@@ -186,7 +186,7 @@ pluginsCsonDefault = cson.parse(pluginsCsonDefault);
     console.log('process.env[RJS_PLUGINS_OVERRIDE]:');
     console.log(process.env['RJS_PLUGINS_OVERRIDE']);
     if ((typeof process.env['RJS_PLUGINS_OVERRIDE'] === "undefined") && process.env.npm_package_config_RJS_PLUGINS_OVERRIDE)
-    		process.env['RJS_PLUGINS_OVERRIDE'] = process.env.npm_package_config_RJS_PLUGINS_OVERRIDE;
+            process.env['RJS_PLUGINS_OVERRIDE'] = process.env.npm_package_config_RJS_PLUGINS_OVERRIDE;
 
     if (typeof process.env['RJS_PLUGINS_OVERRIDE'] !== "undefined") {
         var overridePlugins = process.env['RJS_PLUGINS_OVERRIDE'];

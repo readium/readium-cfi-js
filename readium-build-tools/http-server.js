@@ -69,15 +69,60 @@ for (var i = 0; i < args.length; i++) {
 
 var IP = undefined;
 
-for (var i = 0; i < args.length; i++) {
-    if (args[i] === "-a") {
-        if (++i < args.length) IP = args[i];
-        break;
+// For example, command line parameter after "npm run SCRIPT_NAME":
+//--readium-js-viewer:RJS_HTTP_IP=0.0.0.0
+// or:
+//--readium-js-viewer:RJS_HTTP_IP=127.0.0.1
+//
+// ... or ENV shell variable, e.g. PowerShell:
+//Set-Item Env:RJS_HTTP_IP 0.0.0.0
+// e.g. MS-DOS:
+//SET RJS_HTTP_IP=0.0.0.0
+// e.g. OSX terminal:
+//RJS_HTTP_IP=0.0.0.0 npm run SCRIPT_NAME
+//(temporary, command / process-specific ENV variable)
+// or:
+// export RJS_HTTP_IP="0.0.0.0"; npm run SCRIPT_NAME
+//(permanent env var)
+console.log('process.env.npm_package_config_RJS_HTTP_IP:');
+console.log(process.env.npm_package_config_RJS_HTTP_IP);
+console.log('process.env[RJS_HTTP_IP]:');
+console.log(process.env['RJS_HTTP_IP']);
+if (process.env.npm_package_config_RJS_HTTP_IP)
+        process.env['RJS_HTTP_IP'] = process.env.npm_package_config_RJS_HTTP_IP;
+
+if (typeof process.env['RJS_HTTP_IP'] !== "undefined" && process.env['RJS_HTTP_IP'].trim().length) {
+    IP = process.env['RJS_HTTP_IP'];
+    
+    var ipfound = false;
+    for (var i = 0; i < args.length; i++) {
+        if (args[i] === "-a") {
+            if (++i < args.length) {
+                args[i] = IP;
+                ipfound = true;
+            }
+            break;
+        }
+    }
+    if (!ipfound) {
+        args.unshift(IP);
+        args.unshift("-a");
     }
 }
 
 if (!IP) {
-    IP = localIP();
+    for (var i = 0; i < args.length; i++) {
+        if (args[i] === "-a") {
+            if (++i < args.length) IP = args[i];
+            break;
+        }
+    }
+}
+
+var localIP = localIP();
+
+if (!IP) {
+    IP = localIP;
     
     args.unshift(IP);
     args.unshift("-a");
@@ -147,7 +192,7 @@ child.on('close', function(code) {
 
 
 if (PATH) {
-    var child2 = child_process.spawn('node', ['node_modules/opener/opener.js', 'http://'+IP+':'+PORT+PATH]);
+    var child2 = child_process.spawn('node', ['node_modules/opener/opener.js', 'http://'+(IP=="0.0.0.0"?localIP:IP)+':'+PORT+PATH]);
     child2.stdout.on('data', function(data) {
         console.log(data.toString());
     });

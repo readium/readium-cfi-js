@@ -14,12 +14,13 @@ var scripts =
     rimraf: 'node ' + PATH_PREFIX + '/' + 'node_modules/rimraf/bin.js',
     cson2json: 'node ' + PATH_PREFIX + '/' + 'node_modules/cson/bin/cson2json',
     mkdirp: 'node ' + PATH_PREFIX + '/' + 'node_modules/mkdirp/bin/cmd.js',
-    cpy: 'node ' + PATH_PREFIX + '/' + 'node_modules/cpy/cli.js',
+    cpy: 'node ' + PATH_PREFIX + '/' + 'node_modules/cpy-cli/cli.js',
     ncp: 'node ' + PATH_PREFIX + '/' + 'node_modules/ncp/bin/ncp',
     jshint: 'node ' + PATH_PREFIX + '/' + 'readium-build-tools/jshint_glob.js',
     karma: 'node ' + PATH_PREFIX + '/' + 'node_modules/karma/bin/karma',
     pegjs: 'node ' + PATH_PREFIX + '/' + 'node_modules/pegjs/bin/pegjs',
-    watch: 'node ' + PATH_PREFIX + '/' + 'node_modules/watch/cli.js'
+    watch: 'node ' + PATH_PREFIX + '/' + 'node_modules/watch/cli.js',
+    yuidocjs: 'node ' + PATH_PREFIX + '/' + 'node_modules/yuidocjs/lib/cli.js -N -C -c yuidocs.json'
 };
 
 var npmCommands = {};

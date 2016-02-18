@@ -49,21 +49,28 @@ function(thiz){
     // For example, command line parameter after "npm run SCRIPT_NAME":
     //--readium-js-viewer:RJS_UGLY=no
     // or:
+    //--readium-js:RJS_UGLY=NO
+    // or:
     //--readium-shared-js:RJS_UGLY=false
     // or:
     //--readium-cfi-js:RJS_UGLY=FALSE
     //
     // ... or ENV shell variable, e.g. PowerShell:
     //Set-Item Env:RJS_UGLY no
+    // e.g. MS-DOS:
+    //SET RJS_UGLY=no 
     // e.g. OSX terminal:
     //RJS_UGLY=no npm run build
-    //(temporary, command process -specific ENV variable)
+    //(temporary, command / process-specific ENV variable)
+    // or:
+    // export RJS_UGLY="false"; npm run build
+    //(permanent env var)
     console.log('process.env.npm_package_config_RJS_UGLY:');
     console.log(process.env.npm_package_config_RJS_UGLY);
     console.log('process.env[RJS_UGLY]:');
     console.log(process.env['RJS_UGLY']);
     if (process.env.npm_package_config_RJS_UGLY)
-    		process.env['RJS_UGLY'] = process.env.npm_package_config_RJS_UGLY;
+            process.env['RJS_UGLY'] = process.env.npm_package_config_RJS_UGLY;
 
     if (typeof process.env['RJS_UGLY'] !== "undefined") {
         var ugly = process.env['RJS_UGLY'];
