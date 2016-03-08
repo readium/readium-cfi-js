@@ -77,7 +77,7 @@
     "apidocs": "node ./node_modules/yuidocjs/lib/cli.js -N -C -c yuidocs.json",
     "prebuild": "npm run clean",
     "build": "npm run build:scripts",
-    "lint": "node ./readium-build-tools/jshint_glob.js js/**.js",
+    "lint": "node ./readium-build-tools/jshint_glob.js \"js/**.js\"",
     "prebuild:scripts": "npm run build:scripts:peg",
     "build:scripts": "npm run build:scripts:multiple && npm run build:scripts:single",
     "build:scripts:peg": "node ./node_modules/pegjs/bin/pegjs --export-var window.EPUBcfiParser cfi_parser.pegjs gen/cfi_parser_gen.js",
