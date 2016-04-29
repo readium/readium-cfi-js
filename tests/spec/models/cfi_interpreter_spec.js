@@ -301,9 +301,16 @@ describe('CFI INTERPRETER OBJECT', function () {
         
         it("can determine that a CFI is a range CFI or not", function(){
             var rangeCFI = "epubcfi(/6/14!/4,/2/14/1:4,/2/16/1:7)",
-                nonRangeCFI = "epubcfi(/6/14!/4/2/14[c01p0006]/1:4)";
+                singleTextTerminusCfi = "epubcfi(/6/14!/4/2/14[c01p0006]/1:4)";
             expect(EPUBcfi.Interpreter.isRangeCfi(rangeCFI)).toEqual(true);
-            expect(EPUBcfi.Interpreter.isRangeCfi(nonRangeCFI)).toEqual(false);
+            expect(EPUBcfi.Interpreter.isRangeCfi(singleTextTerminusCfi)).toEqual(false);
+        });
+
+        it("can determine that a CFI has a text terminus CFI or not", function(){
+            var rangeCFI = "epubcfi(/6/14!/4,/2/14/1:4,/2/16/1:7)",
+                singleTextTerminusCfi = "epubcfi(/6/14!/4/2/14[c01p0006]/1:4)";
+            expect(EPUBcfi.Interpreter.hasTextTerminus(rangeCFI)).toEqual(false);
+            expect(EPUBcfi.Interpreter.hasTextTerminus(singleTextTerminusCfi)).toEqual(true);
         });
 
         it("returns the href of a content document in the first local path", function () {

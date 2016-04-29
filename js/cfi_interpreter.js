@@ -251,14 +251,21 @@ var obj = {
 
         // Return the element at the end of the CFI
         textOffset = parseInt(CFIAST.cfiString.localPath.termStep.offsetValue);
-        return { textNode : $currElement,
+        return { textNode : $currElement[0],
                  textOffset : textOffset
             };
     },
-    // Description: This function will determine if the input CFI is expressed as a range
+
+    // Description: This function will determine if the input "partial" CFI is expressed as a range
     isRangeCfi: function (cfi) {
         var CFIAST = cfiParser.parse(cfi);
         return CFIAST.cfiString.range1 ? true : false;
+    },
+
+    // Description: This function will determine if the input "partial" CFI has a text terminus step
+    hasTextTerminus: function (cfi) {
+        var CFIAST = cfiParser.parse(cfi);
+        return CFIAST.cfiString.localPath.termStep ? true : false;
     },
 
     // ------------------------------------------------------------------------------------ //
