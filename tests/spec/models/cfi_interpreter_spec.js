@@ -432,10 +432,10 @@ describe('CFI INTERPRETER OBJECT', function () {
             var textNodeType = 3;
             var expectedTextOffset = 4;
             var textTerminusInfo = EPUBcfi.Interpreter.getTextTerminusInfoWithPartialCFI(CFI, contentDocument);
-            var $textNode = textTerminusInfo.textNode;
+            var textNode = textTerminusInfo.textNode;
             var textOffset = textTerminusInfo.textOffset;
 
-            expect($textNode[0].nodeType).toBe(textNodeType); 
+            expect(textNode.nodeType).toBe(textNodeType); 
             expect(textOffset).toBe(4);
         });
     });
