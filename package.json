@@ -52,7 +52,7 @@
   "devDependencies": {
     "requirejs": "latest",
     "almond": "latest",
-    "jquery": "latest",
+    "jquery": "2.x.x",
     "pegjs": "latest",
     "karma": "latest",
     "karma-chrome-launcher": "latest",
