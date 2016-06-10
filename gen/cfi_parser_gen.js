@@ -153,7 +153,9 @@ window.EPUBcfiParser = (function() {
         peg$c64 = { type: "literal", value: "-", description: "\"-\"" },
         peg$c65 = "_",
         peg$c66 = { type: "literal", value: "_", description: "\"_\"" },
-        peg$c67 = function(charVal) { return charVal; },
+        peg$c67 = "%",
+        peg$c68 = { type: "literal", value: "%", description: "\"%\"" },
+        peg$c69 = function(charVal) { return charVal; },
 
         peg$currPos          = 0,
         peg$savedPos         = 0,
@@ -1427,6 +1429,15 @@ window.EPUBcfiParser = (function() {
                   s1 = peg$FAILED;
                   if (peg$silentFails === 0) { peg$fail(peg$c38); }
                 }
+                if (s1 === peg$FAILED) {
+                  if (input.charCodeAt(peg$currPos) === 37) {
+                    s1 = peg$c67;
+                    peg$currPos++;
+                  } else {
+                    s1 = peg$FAILED;
+                    if (peg$silentFails === 0) { peg$fail(peg$c68); }
+                  }
+                }
               }
             }
           }
@@ -1434,7 +1445,7 @@ window.EPUBcfiParser = (function() {
       }
       if (s1 !== peg$FAILED) {
         peg$savedPos = s0;
-        s1 = peg$c67(s1);
+        s1 = peg$c69(s1);
       }
       s0 = s1;
 

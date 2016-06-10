@@ -33,7 +33,7 @@
 
 name: "readium-cfi-js"
 
-version: "0.22.3"
+version: "0.23.0-alpha"
 
 engines:
     node: ">=0.12"
@@ -109,7 +109,7 @@ devDependencies:
 
     "almond": 'latest'
 
-    "jquery": 'latest'
+    "jquery": '2.x.x'
 
 
     "pegjs": 'latest'
@@ -131,7 +131,7 @@ devDependencies:
     "rimraf": 'latest'
 
     "cpy-cli": 'latest'
-
+    
     "ncp": 'latest'
 
     "mkdirp": 'latest'
@@ -145,6 +145,7 @@ devDependencies:
     "jshint": 'latest'
     "glob": 'latest'
 
+    "yuidocjs": 'latest'
 
 #####################################################################
 scripts:
@@ -161,12 +162,14 @@ scripts:
     'prepare': '
 
         npm run
-            prepare:dependencies
+            prepare:local
     '
 
 #=====================
-    'prepare:dependencies': '
+    'prepare:local': '
 
+        npm outdated
+        &&
         npm install
         &&
         npm update
@@ -189,7 +192,16 @@ scripts:
             build-output/*
         &&
         npm run rimraf
+            api-docs/*
+        &&
+        npm run rimraf
             gen/*
+    '
+
+#=====================
+    apidocs: '
+
+        npm run yuidocjs
     '
 
 #=====================
@@ -209,7 +221,7 @@ scripts:
     lint: '
 
         npm run jshint
-            js/**.js
+            "js/**.js"
     '
 
 #=====================

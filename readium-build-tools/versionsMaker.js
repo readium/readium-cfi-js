@@ -130,7 +130,16 @@ var nextRepo = function(i) {
                         var gitFileContents = fs.readFileSync(gitPath, 'utf-8');
                         if (gitFileContents.indexOf('gitdir: ') == 0) {
 
-                            headPath = path.join(repoPath, gitFileContents.substring('gitdir: '.length).trim());
+                            var gd = gitFileContents.substring('gitdir: '.length).trim();
+                            
+                            if (gd.indexOf("..") == 0) {
+                                // RELATIVE gitdir
+                                headPath = path.join(repoPath, gd);
+                            } else {
+                                // ABSOLUTE gitdir
+                                headPath = gd;
+                            }
+
                             headPath = path.join(headPath, 'HEAD');
                         } else {
                             headPath = undefined;
