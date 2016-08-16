@@ -184,4 +184,4 @@ equal
   = "=" { return "="; }
 
 character
-  = charVal:([a-z] / [A-Z] / [0-9] / "-" / "_" / "." ) { return charVal; }
+  = charVal:([a-z] / [A-Z] / [0-9] / "-" / "_" / "." / "%" ) { return charVal; }
