@@ -55,7 +55,7 @@ describe('CFI INTERPRETER OBJECT', function () {
 
         var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
             CFI, 
-            $dom, 
+            $dom[0], 
             "<span id='start' class='cfi-marker'></span>", 
             "<span id='end' class='cfi-marker'></span>",
             ["cfi-marker"]
@@ -85,7 +85,7 @@ describe('CFI INTERPRETER OBJECT', function () {
 
         var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
             CFI, 
-            $dom, 
+            $dom[0], 
             "<span id='start' class='cfi-marker'></span>", 
             "<span id='end' class='cfi-marker'></span>",
             ["cfi-marker"]
@@ -116,7 +116,7 @@ describe('CFI INTERPRETER OBJECT', function () {
 
         var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
             CFI, 
-            $dom, 
+            $dom[0], 
             "<span id='start' class='cfi-marker'></span>", 
             "<span id='end' class='cfi-marker'></span>",
             ["cfi-marker"]
@@ -149,7 +149,7 @@ describe('CFI INTERPRETER OBJECT', function () {
 
         var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
             CFI, 
-            $dom, 
+            $dom[0], 
             "<span id='start' class='cfi-marker'></span>", 
             "<span id='end' class='cfi-marker'></span>",
             ["cfi-marker"]
@@ -200,7 +200,7 @@ describe('CFI INTERPRETER OBJECT', function () {
 
         var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
             CFI, 
-            $dom, 
+            $dom[0], 
             "<span id='start' class='cfi-marker'></span>", 
             "<span id='end' class='cfi-marker'></span>",
             ["cfi-marker"]
@@ -235,7 +235,7 @@ describe('CFI INTERPRETER OBJECT', function () {
 
         var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
             CFI, 
-            $dom, 
+            $dom[0], 
             "<span id='start' class='cfi-marker'></span>", 
             "<span id='end' class='cfi-marker'></span>",
             ["cfi-marker"]
