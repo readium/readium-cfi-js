@@ -58,6 +58,7 @@
     "karma": "latest",
     "karma-chrome-launcher": "latest",
     "karma-firefox-launcher": "latest",
+    "jasmine-core": "latest",
     "karma-jasmine": "latest",
     "karma-sauce-launcher": "latest",
     "cson": "latest",
