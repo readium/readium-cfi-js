@@ -14,7 +14,8 @@
 (function(global) {
 
 var init = function($, cfiRuntimeErrors) {
-    
+
+
 var obj = {
 
 // Description: This model contains the implementation for "instructions" included in the EPUB CFI domain specific language (DSL). 
@@ -61,13 +62,13 @@ var obj = {
 
         // TODO: This check must be expanded to all the different types of indirection step
         // Only expects iframes, at the moment
-        if ($currNode === undefined || !$currNode.is("iframe")) {
+        if ($currNode === undefined || !this._matchesLocalNameOrElement($currNode[0], 'iframe')) {
 
             throw cfiRuntimeErrors.NodeTypeError($currNode, "expected an iframe element");
         }
 
         // Check node type; only iframe indirection is handled, at the moment
-        if ($currNode.is("iframe")) {
+        if (this._matchesLocalNameOrElement($currNode[0], 'iframe')) {
 
             // Get content
             $contentDocument = $currNode.contents();
@@ -292,7 +293,7 @@ var obj = {
     },
 
     applyBlacklist : function ($elements, classBlacklist, elementBlacklist, idBlacklist) {
-
+        var self = this;
         var $filteredElements;
 
         $filteredElements = $elements.filter(
@@ -320,7 +321,7 @@ var obj = {
                     // For each type of element
                     $.each(elementBlacklist, function (index, value) {
 
-                        if ($currElement.is(value)) {
+                        if (self._matchesLocalNameOrElement($currElement[0], value)) {
                             includeInList = false;
 
                             // Break this loop
@@ -348,6 +349,14 @@ var obj = {
         );
 
         return $filteredElements;
+    },
+
+    _matchesLocalNameOrElement: function (element, otherNameOrElement) {
+        if (typeof otherNameOrElement === 'string') {
+            return element.localName === otherNameOrElement;
+        } else {
+            return element.isSameNode(otherNameOrElement);
+        }
     }
 };
 
