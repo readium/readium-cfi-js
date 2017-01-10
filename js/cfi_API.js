@@ -93,13 +93,6 @@ var init = function(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors
         },
         injectElementAtOffset : function ($textNodeList, textOffset, elementToInject) {
             return cfiInstructions.injectCFIMarkerIntoText($textNodeList, textOffset, elementToInject);
-        },
-        _matchesLocalNameOrElement: function (element, otherNameOrElement) {
-            if (typeof otherNameOrElement === 'string') {
-                return element.localName === otherNameOrElement;
-            } else {
-                return element.isSameNode(otherNameOrElement);
-            }
         }
     };
 
