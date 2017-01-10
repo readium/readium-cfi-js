@@ -13,6 +13,8 @@
 
 (function(global) {
 
+var _matchesLocalNameOrElement = global.EPUBcfi._matchesLocalNameOrElement;
+
 var init = function($, cfiParser, cfiInstructions, cfiRuntimeErrors) {
 
     if (typeof cfiParser === "undefined") {
@@ -424,8 +426,7 @@ var obj = {
             }
 
             // Found the content document href referenced by the spine item
-            if ($currElement.is("itemref")) {
-
+            if (_matchesLocalNameOrElement($currElement[0], "itemref")) {
                 return cfiInstructions.retrieveItemRefHref($currElement, $packageDocument);
             }
         }

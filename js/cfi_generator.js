@@ -13,6 +13,8 @@
 
 (function(global) {
 
+var _matchesLocalNameOrElement = global.EPUBcfi._matchesLocalNameOrElement;
+
 var init = function($, cfiInstructions, cfiRuntimeErrors) {
     
     if (typeof cfiInstructions === "undefined") {
@@ -152,7 +154,7 @@ var obj = {
                 this.validateStartTextNode(rangeStartElement);
                 // Generate terminating offset and range 1
                 range1OffsetStep = this.createCFITextNodeStep($(rangeStartElement), startOffset, classBlacklist, elementBlacklist, idBlacklist);
-                if($(rangeStartElement).parent().is(commonAncestor)){
+                if ($(rangeStartElement).parent()[0].isSameNode(commonAncestor)) {
                     range1CFI = range1OffsetStep;
                 } else {
                     range1CFI = this.createCFIElementSteps($(rangeStartElement).parent(), commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range1OffsetStep;    
@@ -166,7 +168,7 @@ var obj = {
                 this.validateStartTextNode(rangeEndElement);
                 // Generate terminating offset and range 2
                 range2OffsetStep = this.createCFITextNodeStep($(rangeEndElement), endOffset, classBlacklist, elementBlacklist, idBlacklist);
-                if($(rangeEndElement).parent().is(commonAncestor)){
+                if ($(rangeEndElement).parent()[0].isSameNode(commonAncestor)) {
                     range2CFI = range2OffsetStep;
                 } else {
                     range2CFI = this.createCFIElementSteps($(rangeEndElement).parent(), commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range2OffsetStep;    
@@ -449,7 +451,7 @@ var obj = {
         //   Also need to check if the current node is the top-level element. This can occur if the start node is also the
         //   top level element.
         $parentNode = $currNode.parent();
-        if ($parentNode.is(topLevelElement) || $currNode.is(topLevelElement)) {
+        if (_matchesLocalNameOrElement($parentNode[0], topLevelElement) || _matchesLocalNameOrElement($currNode[0], topLevelElement)) {
             
             // If the top level node is a type from which an indirection step, add an indirection step character (!)
             // REFACTORING CANDIDATE: It is possible that this should be changed to: if (topLevelElement = 'package') do

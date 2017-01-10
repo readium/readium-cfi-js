@@ -13,6 +13,8 @@
 
 (function(global) {
 
+var _matchesLocalNameOrElement = global.EPUBcfi._matchesLocalNameOrElement;
+
 var init = function($, cfiRuntimeErrors) {
     
 var obj = {
@@ -61,13 +63,13 @@ var obj = {
 
         // TODO: This check must be expanded to all the different types of indirection step
         // Only expects iframes, at the moment
-        if ($currNode === undefined || !$currNode.is("iframe")) {
+        if ($currNode === undefined || !_matchesLocalNameOrElement($currNode[0], 'iframe')) {
 
             throw cfiRuntimeErrors.NodeTypeError($currNode, "expected an iframe element");
         }
 
         // Check node type; only iframe indirection is handled, at the moment
-        if ($currNode.is("iframe")) {
+        if (_matchesLocalNameOrElement($currNode[0], 'iframe')) {
 
             // Get content
             $contentDocument = $currNode.contents();
@@ -320,7 +322,7 @@ var obj = {
                     // For each type of element
                     $.each(elementBlacklist, function (index, value) {
 
-                        if ($currElement.is(value)) {
+                        if (_matchesLocalNameOrElement($currElement[0], value)) {
                             includeInList = false;
 
                             // Break this loop
