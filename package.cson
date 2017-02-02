@@ -33,7 +33,7 @@
 
 name: "readium-cfi-js"
 
-version: "0.24.0"
+version: "0.25.0-alpha"
 
 engines:
     node: ">=0.12"
@@ -91,7 +91,11 @@ files: [
 #####################################################################
 dependencies:
 
-    "parallelshell": 'latest'
+    #"parallelshell": 'latest'
+    "concurrently": 'latest'
+
+    "npm-run-all": 'latest'
+
 
     "opener": 'latest'
 
@@ -119,6 +123,8 @@ devDependencies:
     "karma-chrome-launcher": 'latest'
     "karma-firefox-launcher": 'latest'
 
+    "jasmine-core": 'latest'
+    
     "karma-jasmine": 'latest'
 
     "karma-sauce-launcher": 'latest'
@@ -274,11 +280,11 @@ scripts:
 
         echo > open_webbrowser.js
         &&
-        parallelshell
-            \"npm run dowatch\"
-            \"npm run http\"
+        run-p
+            \"dowatch\"
+            \"http\"
     '
-#    \"npm run live-reload\"
+#    \"live-reload\"
 
 #=====================
 #### BLOCKING! (CTRL-C) [http]
