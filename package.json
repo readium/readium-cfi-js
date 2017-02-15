@@ -54,6 +54,7 @@
     "requirejs": "latest",
     "almond": "latest",
     "jquery": "2.x.x",
+    "underscore": "latest",
     "pegjs": "latest",
     "karma": "latest",
     "karma-chrome-launcher": "latest",

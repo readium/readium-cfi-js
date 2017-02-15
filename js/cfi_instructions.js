@@ -13,7 +13,7 @@
 
 (function(global) {
 
-var init = function($, cfiRuntimeErrors) {
+var init = function($, _, cfiRuntimeErrors) {
     
 var obj = {
 
@@ -366,9 +366,9 @@ return obj;
 if (typeof define == 'function' && typeof define.amd == 'object') {
     console.log("RequireJS ... cfi_instructions");
     
-    define(['jquery', './cfi_runtime_errors'],
-    function ($, cfiRuntimeErrors) {
-        return init($, cfiRuntimeErrors);
+    define(['jquery', 'underscore', './cfi_runtime_errors'],
+    function ($, _, cfiRuntimeErrors) {
+        return init($, _, cfiRuntimeErrors);
     });
 } else {
     console.log("!RequireJS ... cfi_instructions");
@@ -377,7 +377,7 @@ if (typeof define == 'function' && typeof define.amd == 'object') {
         throw new Error("EPUBcfi not initialised on global object?! (window or this context)");
     }
     global.EPUBcfi.CFIInstructions = 
-    init($,
+    init($, _,
         {
             NodeTypeError: global.EPUBcfi.NodeTypeError,
             OutOfRangeError: global.EPUBcfi.OutOfRangeError,
