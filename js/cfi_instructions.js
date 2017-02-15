@@ -298,52 +298,39 @@ var obj = {
         $filteredElements = $elements.filter(
             function () {
 
-                var $currElement = $(this);
-                var includeInList = true;
+                var element = this;
 
-                if (classBlacklist) {
-
-                    // Filter each element with the class type
-                    $.each(classBlacklist, function (index, value) {
-
-                        if ($currElement.hasClass(value)) {
-                            includeInList = false;
-
-                            // Break this loop
-                            return false;
-                        }
-                    });
+                if (classBlacklist && classBlacklist.length) {
+                    var classAttribute = element.className;
+                    var classList = classAttribute ? classAttribute.split(' ') : [];
+                    if (classList.length === 1 && _.contains(classBlacklist, classList[0])) {
+                        return false;
+                    } else if (classList.length && _.intersection(classBlacklist, classList).length) {
+                        return false;
+                    }
                 }
 
-                if (elementBlacklist) {
-                    
-                    // For each type of element
-                    $.each(elementBlacklist, function (index, value) {
-
-                        if ($currElement.is(value)) {
-                            includeInList = false;
-
-                            // Break this loop
+                if (elementBlacklist && elementBlacklist.length) {
+                    var elementTag = element.tagName;
+                    if (elementTag) {
+                        var isElementBlacklisted = _.find(elementBlacklist, function (blacklistedTag) {
+                            blacklistedTag = blacklistedTag.toLowerCase();
+                            return blacklistedTag === elementTag.toLowerCase();
+                        });
+                        if (isElementBlacklisted) {
                             return false;
                         }
-                    });
+                    }
                 }
 
-                if (idBlacklist) {
-                    
-                    // For each type of element
-                    $.each(idBlacklist, function (index, value) {
-
-                        if ($currElement.attr("id") === value) {
-                            includeInList = false;
-
-                            // Break this loop
-                            return false;
-                        }
-                    });
+                if (idBlacklist && idBlacklist.length) {
+                    var id = element.id;
+                    if (id && id.length && _.contains(idBlacklist, id)) {
+                        return false;
+                    }
                 }
 
-                return includeInList;
+                return true;
             }
         );
 
