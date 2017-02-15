@@ -31,7 +31,10 @@ require.config({
             process._RJS_rootDir(0) + '/gen/cfi_parser_gen',
 
         jquery:
-            process._RJS_rootDir(0) + '/node_modules/jquery/dist/jquery'
+            process._RJS_rootDir(0) + '/node_modules/jquery/dist/jquery',
+
+        underscore:
+        process._RJS_rootDir(0) + '/node_modules/underscore/underscore'
     },
 
     shim:

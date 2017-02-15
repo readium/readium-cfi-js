@@ -115,6 +115,8 @@ devDependencies:
 
     "jquery": '2.x.x'
 
+    "underscore": 'latest'
+
 
     "pegjs": 'latest'
 
