@@ -49,8 +49,8 @@ var obj = {
         if ($(rangeStartElement).parent()[0] === $(rangeEndElement).parent()[0]) {
             range1OffsetStep = this.createCFITextNodeStep($(rangeStartElement), startOffset, classBlacklist, elementBlacklist, idBlacklist);
             range2OffsetStep = this.createCFITextNodeStep($(rangeEndElement), endOffset, classBlacklist, elementBlacklist, idBlacklist);          
-            return commonCFIComponent.substring(1, commonCFIComponent.length) + "," + range1OffsetStep + "," + range2OffsetStep;
             commonCFIComponent = this.createCFIElementSteps($(rangeStartElement).parent(), document.documentElement, classBlacklist, elementBlacklist, idBlacklist);
+            return commonCFIComponent + "," + range1OffsetStep + "," + range2OffsetStep;
         }
         else {
 
@@ -84,7 +84,7 @@ var obj = {
             commonCFIComponent = this.createCFIElementSteps($(commonAncestor), document.documentElement, classBlacklist, elementBlacklist, idBlacklist);
 
             // Return the result
-            return commonCFIComponent.substring(1, commonCFIComponent.length) + "," + range1CFI + "," + range2CFI;
+            return commonCFIComponent + "," + range1CFI + "," + range2CFI;
         }
     },
 
@@ -120,7 +120,7 @@ var obj = {
         commonCFIComponent = this.createCFIElementSteps($(commonAncestor), document.documentElement, classBlacklist, elementBlacklist, idBlacklist);
 
         // Return the result
-        return commonCFIComponent.substring(1, commonCFIComponent.length) + "," + range1CFI + "," + range2CFI;
+        return commonCFIComponent + "," + range1CFI + "," + range2CFI;
     },
 
     generateRangeComponent : function (rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist) {
@@ -177,7 +177,7 @@ var obj = {
             commonCFIComponent = this.createCFIElementSteps($(commonAncestor), document.documentElement, classBlacklist, elementBlacklist, idBlacklist);
 
             // Return the result
-            return commonCFIComponent.substring(1, commonCFIComponent.length) + "," + range1CFI + "," + range2CFI;
+            return commonCFIComponent + "," + range1CFI + "," + range2CFI;
         }
     },
 
@@ -185,7 +185,6 @@ var obj = {
     // Arguments: The text node that contains the offset referenced by the cfi, the offset value, the name of the 
     //   content document that contains the text node, the package document for this EPUB.
     generateCharacterOffsetCFIComponent : function (startTextNode, characterOffset, classBlacklist, elementBlacklist, idBlacklist) {
-
         var textNodeStep;
         var contentDocCFI;
         var $itemRefStartNode;
@@ -196,13 +195,12 @@ var obj = {
         // Create the text node step
         textNodeStep = this.createCFITextNodeStep($(startTextNode), characterOffset, classBlacklist, elementBlacklist, idBlacklist);
 
-        return contentDocCFI.substring(1, contentDocCFI.length);
         // Call the recursive method to create all the steps up to the head element of the content document (typically the "html" element, or the "svg" element)
         contentDocCFI = this.createCFIElementSteps($(startTextNode).parent(), startTextNode.ownerDocument.documentElement, classBlacklist, elementBlacklist, idBlacklist) + textNodeStep;
+        return contentDocCFI;
     },
 
     generateElementCFIComponent : function (startElement, classBlacklist, elementBlacklist, idBlacklist) {
-
         var contentDocCFI;
         var $itemRefStartNode;
         var packageDocCFI;
@@ -212,8 +210,7 @@ var obj = {
         // Call the recursive method to create all the steps up to the head element of the content document (typically the "html" element, or the "svg" element)
         contentDocCFI = this.createCFIElementSteps($(startElement), startElement.ownerDocument.documentElement, classBlacklist, elementBlacklist, idBlacklist);
 
-        // Remove the ! 
-        return contentDocCFI.substring(1, contentDocCFI.length);
+        return contentDocCFI;
     },
 
     generatePackageDocumentCFIComponent : function (contentDocumentName, packageDocument, classBlacklist, elementBlacklist, idBlacklist) {
