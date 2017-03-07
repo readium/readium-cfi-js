@@ -124,6 +124,9 @@ var obj = {
     },
 
     generateRangeComponent : function (rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist) {
+        this.validateTargetElement(rangeStartElement);
+        this.validateTargetElement(rangeEndElement);
+
         var document = rangeStartElement.ownerDocument;
 
         if(rangeStartElement.nodeType === Node.ELEMENT_NODE && rangeEndElement.nodeType === Node.ELEMENT_NODE){
@@ -269,12 +272,17 @@ var obj = {
 
     validateStartElement : function (startElement) {
 
-        if (!startElement) {
-            throw new cfiRuntimeErrors.NodeTypeError(startElement, "CFI target element is undefined");
-        }
+        this.validateTargetElement(startElement);
 
         if (!(startElement.nodeType && startElement.nodeType === 1)) {
             throw new cfiRuntimeErrors.NodeTypeError(startElement, "CFI target element is not an HTML element");
+        }
+    },
+
+    validateTargetElement : function (startElement) {
+
+        if (!startElement) {
+            throw new cfiRuntimeErrors.NodeTypeError(startElement, "CFI target element is undefined");
         }
     },
 
