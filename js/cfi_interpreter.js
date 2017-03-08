@@ -424,8 +424,7 @@ var obj = {
             }
 
             // Found the content document href referenced by the spine item
-            if ($currElement.is("itemref")) {
-
+            if (cfiInstructions._matchesLocalNameOrElement($currElement[0], "itemref")) {
                 return cfiInstructions.retrieveItemRefHref($currElement, $packageDocument);
             }
         }

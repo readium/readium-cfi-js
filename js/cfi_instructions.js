@@ -61,13 +61,13 @@ var obj = {
 
         // TODO: This check must be expanded to all the different types of indirection step
         // Only expects iframes, at the moment
-        if ($currNode === undefined || !$currNode.is("iframe")) {
+        if ($currNode === undefined || !this._matchesLocalNameOrElement($currNode[0], 'iframe')) {
 
             throw cfiRuntimeErrors.NodeTypeError($currNode, "expected an iframe element");
         }
 
         // Check node type; only iframe indirection is handled, at the moment
-        if ($currNode.is("iframe")) {
+        if (this._matchesLocalNameOrElement($currNode[0], 'iframe')) {
 
             // Get content
             $contentDocument = $currNode.contents();
@@ -292,7 +292,7 @@ var obj = {
     },
 
     applyBlacklist : function ($elements, classBlacklist, elementBlacklist, idBlacklist) {
-
+        var self = this;
         var $filteredElements;
 
         $filteredElements = $elements.filter(
@@ -311,11 +311,10 @@ var obj = {
                 }
 
                 if (elementBlacklist && elementBlacklist.length) {
-                    var elementTag = element.tagName;
-                    if (elementTag) {
+                    if (element.tagName) {
                         var isElementBlacklisted = _.find(elementBlacklist, function (blacklistedTag) {
                             blacklistedTag = blacklistedTag.toLowerCase();
-                            return blacklistedTag === elementTag.toLowerCase();
+                            return self._matchesLocalNameOrElement(element, blacklistedTag)
                         });
                         if (isElementBlacklisted) {
                             return false;
@@ -335,6 +334,14 @@ var obj = {
         );
 
         return $filteredElements;
+    },
+
+    _matchesLocalNameOrElement: function (element, otherNameOrElement) {
+        if (typeof otherNameOrElement === 'string') {
+            return (element.localName || element.nodeName) === otherNameOrElement;
+        } else {
+            return element.isSameNode(otherNameOrElement);
+        }
     }
 };
 
