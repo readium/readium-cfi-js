@@ -340,7 +340,7 @@ var obj = {
         if (typeof otherNameOrElement === 'string') {
             return (element.localName || element.nodeName) === otherNameOrElement;
         } else {
-            return element.isSameNode ? element.isSameNode(otherNameOrElement) : element === otherNameOrElement;
+            return element === otherNameOrElement;
         }
     }
 };

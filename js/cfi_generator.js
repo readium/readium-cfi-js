@@ -155,7 +155,7 @@ var obj = {
                 this.validateStartTextNode(rangeStartElement);
                 // Generate terminating offset and range 1
                 range1OffsetStep = this.createCFITextNodeStep($(rangeStartElement), startOffset, classBlacklist, elementBlacklist, idBlacklist);
-                if ($(rangeStartElement).parent()[0].isSameNode(commonAncestor)) {
+                if ($(rangeStartElement).parent()[0] === commonAncestor) {
                     range1CFI = range1OffsetStep;
                 } else {
                     range1CFI = this.createCFIElementSteps($(rangeStartElement).parent(), commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range1OffsetStep;    
@@ -169,7 +169,7 @@ var obj = {
                 this.validateStartTextNode(rangeEndElement);
                 // Generate terminating offset and range 2
                 range2OffsetStep = this.createCFITextNodeStep($(rangeEndElement), endOffset, classBlacklist, elementBlacklist, idBlacklist);
-                if ($(rangeEndElement).parent()[0].isSameNode(commonAncestor)) {
+                if ($(rangeEndElement).parent()[0] === commonAncestor) {
                     range2CFI = range2OffsetStep;
                 } else {
                     range2CFI = this.createCFIElementSteps($(rangeEndElement).parent(), commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range2OffsetStep;    
