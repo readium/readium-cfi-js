@@ -34,7 +34,7 @@ require.config({
             process._RJS_rootDir(0) + '/node_modules/jquery/dist/jquery',
 
         underscore:
-        process._RJS_rootDir(0) + '/node_modules/underscore/underscore'
+            process._RJS_rootDir(0) + '/node_modules/underscore/underscore'
     },
 
     shim:
