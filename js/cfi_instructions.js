@@ -301,8 +301,7 @@ var obj = {
                 var element = this;
 
                 if (classBlacklist && classBlacklist.length) {
-                    var classAttribute = element.className;
-                    var classList = classAttribute ? classAttribute.split(' ') : [];
+                    var classList = self._getClassNameArray(element);
                     if (classList.length === 1 && _.contains(classBlacklist, classList[0])) {
                         return false;
                     } else if (classList.length && _.intersection(classBlacklist, classList).length) {
@@ -341,6 +340,17 @@ var obj = {
             return (element.localName || element.nodeName) === otherNameOrElement;
         } else {
             return element === otherNameOrElement;
+        }
+    },
+
+    _getClassNameArray: function (element) {
+        var className = element.className;
+        if (typeof className === 'string') {
+            return className.split(/\s/);
+        } else if (typeof className === 'object' && 'baseVal' in className) {
+            return className.baseVal.split(/\s/);
+        } else {
+            return [];
         }
     }
 };
