@@ -658,7 +658,7 @@ describe("CFI GENERATOR", function () {
         });
 
 
-        it("can generate CFI steps recursively for a non-html content document", function () {
+        it("can generate CFI steps recursively for a non-html content document (SVG)", function () {
 
             var dom =
                 "<svg>"
