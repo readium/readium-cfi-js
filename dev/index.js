@@ -33,8 +33,8 @@ if (typeof define == 'function' && typeof define.amd == 'object') {
     require(["readium_cfi_js/cfi_API"], function () {
 
     // to access individual feature APIs, via dependency injection (not the global window-attached objects)
-    require(['jquery', 'readium_cfi_js/cfi_parser', 'readium_cfi_js/cfi_interpreter', 'readium_cfi_js/cfi_instructions', 'readium_cfi_js/cfi_runtime_errors', 'readium_cfi_js/cfi_generator'],
-    function ($, cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator) {
+    require(['jquery', 'underscore', 'readium_cfi_js/cfi_parser', 'readium_cfi_js/cfi_interpreter', 'readium_cfi_js/cfi_instructions', 'readium_cfi_js/cfi_runtime_errors', 'readium_cfi_js/cfi_generator'],
+    function ($, _, cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator) {
 
         check(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors, cfiGenerator);
     });

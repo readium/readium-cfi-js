@@ -654,7 +654,26 @@ describe("CFI GENERATOR", function () {
             var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
 
             var generatedCFI = EPUBcfi.Generator.createCFIElementSteps($($('#startParent', $dom).contents()[0]), "html");
-            expect(generatedCFI).toEqual("!/4/2[startParent]/2");
+            expect(generatedCFI).toEqual("/4/2[startParent]/2");
+        });
+
+
+        it("can generate CFI steps recursively for a non-html content document (SVG)", function () {
+
+            var dom =
+                "<svg>"
+                +     "<g></g>"
+                +     "<g>"
+                +          "<text id='startParent'>"
+                +               "<tspan></tspan>"
+                +          "</text>"
+                +     "</g>"
+                +     "<g></g>"
+                + "</svg>";
+            var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+
+            var generatedCFI = EPUBcfi.Generator.createCFIElementSteps($($('#startParent', $dom).contents()[0]), $dom[0].documentElement);
+            expect(generatedCFI).toEqual("/4/2[startParent]/2");
         });
 
         it("can infer the presence of a single node from multiple adjacent nodes", function () {
@@ -682,7 +701,7 @@ describe("CFI GENERATOR", function () {
             var textTerminus = EPUBcfi.Generator.createCFITextNodeStep($startNode, 3, ["cfi-marker"]);
             var generatedCFI = EPUBcfi.Generator.createCFIElementSteps($startNode.parent(), "html", ["cfi-marker"]) + textTerminus;
 
-            expect(generatedCFI).toEqual("!/4/2[startParent]/3:25"); // [ te,xtn]
+            expect(generatedCFI).toEqual("/4/2[startParent]/3:25"); // [ te,xtn]
         });
 
         it("can generate a package document CFI with the spine index", function () {
