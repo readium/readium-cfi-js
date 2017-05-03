@@ -33,7 +33,7 @@
 
 name: "readium-cfi-js"
 
-version: "0.25.0"
+version: "0.26.0-alpha"
 
 engines:
     node: ">=0.12"
@@ -114,6 +114,8 @@ devDependencies:
     "almond": 'latest'
 
     "jquery": '2.x.x'
+
+    "underscore": 'latest'
 
 
     "pegjs": 'latest'
