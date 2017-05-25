@@ -26,7 +26,7 @@ module.exports = function(config) {
       sl_chrome: {
         base: 'SauceLabs',
         browserName: 'chrome',
-        platform: 'Windows 7'
+        //platform: 'Windows 7'
         //version: '42'
       }
     }

@@ -33,11 +33,12 @@
 
 name: "readium-cfi-js"
 
-version: "0.25.0-alpha"
+version: "0.27.0-alpha"
 
 engines:
-    node: ">=0.12"
-    npm: ">2.10"
+    node: ">=4"
+    npm: ">=2"
+    yarn: ">=0.23"
 
 description: "Readium - CFI javascript library"
 
@@ -91,7 +92,11 @@ files: [
 #####################################################################
 dependencies:
 
-    "parallelshell": 'latest'
+    #"parallelshell": 'latest'
+    "concurrently": 'latest'
+
+    "npm-run-all": 'latest'
+
 
     "opener": 'latest'
 
@@ -111,6 +116,8 @@ devDependencies:
 
     "jquery": '2.x.x'
 
+    "underscore": 'latest'
+
 
     "pegjs": 'latest'
 
@@ -119,6 +126,8 @@ devDependencies:
     "karma-chrome-launcher": 'latest'
     "karma-firefox-launcher": 'latest'
 
+    "jasmine-core": 'latest'
+    
     "karma-jasmine": 'latest'
 
     "karma-sauce-launcher": 'latest'
@@ -159,7 +168,7 @@ scripts:
     '
 
 #=====================
-    'prepare': '
+    'prepare:all': '
 
         npm run
             prepare:local
@@ -169,11 +178,36 @@ scripts:
     'prepare:local': '
 
         npm outdated
-        &&
+        ;
         npm install
         &&
         npm update
         &&
+        npm run prepare:local:common
+    '
+
+#=====================
+    'prepare:yarn:all': '
+
+        yarn run
+            prepare:yarn:local
+    '
+
+#=====================
+    'prepare:yarn:local': '
+
+        yarn outdated
+        ;
+        yarn install
+        &&
+        yarn upgrade
+        &&
+        yarn run prepare:local:common
+    '
+
+#=====================
+    'prepare:local:common': '
+
         node
             readium-build-tools/patchRequireJS.js
         &&
@@ -184,6 +218,8 @@ scripts:
 #=====================
     clean: '
 
+        yarn --version
+        ;
         node --version
         &&
         npm --version
@@ -274,11 +310,11 @@ scripts:
 
         echo > open_webbrowser.js
         &&
-        parallelshell
-            \"npm run dowatch\"
-            \"npm run http\"
+        run-p
+            \"dowatch\"
+            \"http\"
     '
-#    \"npm run live-reload\"
+#    \"live-reload\"
 
 #=====================
 #### BLOCKING! (CTRL-C) [http]

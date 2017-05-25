@@ -25,7 +25,7 @@ require.config({
         {
             name: "readium-external-libs",
             create: true,
-            include: ['jquery'],
+            include: ['jquery', 'underscore'],
         }
     ]
 });
