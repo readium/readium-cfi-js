@@ -36,8 +36,9 @@ name: "readium-cfi-js"
 version: "0.27.0-alpha"
 
 engines:
-    node: ">=0.12"
-    npm: ">2.10"
+    node: ">=4"
+    npm: ">=2"
+    yarn: ">=0.23"
 
 description: "Readium - CFI javascript library"
 
@@ -167,7 +168,7 @@ scripts:
     '
 
 #=====================
-    'prepare': '
+    'prepare:all': '
 
         npm run
             prepare:local
@@ -177,11 +178,36 @@ scripts:
     'prepare:local': '
 
         npm outdated
-        &&
+        ;
         npm install
         &&
         npm update
         &&
+        npm run prepare:local:common
+    '
+
+#=====================
+    'prepare:yarn:all': '
+
+        yarn run
+            prepare:yarn:local
+    '
+
+#=====================
+    'prepare:yarn:local': '
+
+        yarn outdated
+        ;
+        yarn install
+        &&
+        yarn upgrade
+        &&
+        yarn run prepare:local:common
+    '
+
+#=====================
+    'prepare:local:common': '
+
         node
             readium-build-tools/patchRequireJS.js
         &&
@@ -192,6 +218,8 @@ scripts:
 #=====================
     clean: '
 
+        yarn --version
+        ;
         node --version
         &&
         npm --version
