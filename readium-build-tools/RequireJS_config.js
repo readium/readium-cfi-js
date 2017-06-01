@@ -328,7 +328,8 @@ function(thiz){
 
     //findNestedDependencies: true,
 
-    wrap: false,
+    // Allows users to specify a wrapper. Any value here takes precedence.
+    // wrap: false,
 
     wrapShim: false,
 
