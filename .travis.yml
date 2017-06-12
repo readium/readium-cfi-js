@@ -4,7 +4,7 @@ branches:
   - develop
 language: node_js
 node_js:
-- '0.12'
+- '8'
 env:
   global:
   - SAUCE_USERNAME=readium
@@ -15,7 +15,7 @@ env:
 #before_install:
 #- npm install -g grunt-cli
 install:
-- npm run prepare
+- yarn run prepare:yarn:all
 script:
 - npm run build
 - npm run test:travis
