@@ -26,6 +26,27 @@ describe("CFI GENERATOR", function () {
             expect(generatedCFI).toEqual("/2[startParent]/2"); 
         });
 
+        it("can generate a range component targeting a single element as a range", function () {
+
+            var dom =
+                "<html>"
+                +    "<div></div>"
+                +    "<div>"
+                +         "<div id='commonAncestor'>"
+                +             "textnode1"
+                +             "<div id='targetElement'></div>"
+                +             "textNode2"
+                +         "</div>"
+                +     "</div>"
+                +     "<div></div>"
+                + "</html>";
+            var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+
+            var $commonAncestor = $('#commonAncestor', $dom);
+            var generatedCFI = EPUBcfi.Generator.generateRangeComponent($commonAncestor[0], 1, $commonAncestor[0], 2);
+            expect(generatedCFI).toEqual("/4/2[commonAncestor]/2[targetElement]");
+        });
+
         it("can generate a range component between a text node and an element node", function () {
 
             var dom =
@@ -170,7 +191,7 @@ describe("CFI GENERATOR", function () {
             expect(generatedCFI).toEqual("/4/2[startParent],/2,/6");
         });
 
-        it("throws an error if the start and end node is the same", function () {
+        it("can generate an element range CFI if the start and end node is the same", function () {
 
            var dom =
                 "<html>"
@@ -191,12 +212,8 @@ describe("CFI GENERATOR", function () {
             var $startElement1 = $($('#startParent', $dom).children()[0]);
             var $startElement2 = $($('#startParent', $dom).children()[0]);
 
-            expect(function () {
-                EPUBcfi.Generator.generateElementRangeComponent($startElement1[0], $startElement2[0])})
-            .toThrow(
-                Error(
-                    "Start and end element cannot be the same for a CFI range")
-            );
+            var generatedCFI = EPUBcfi.Generator.generateElementRangeComponent($startElement1[0], $startElement2[0]);
+            expect(generatedCFI).toEqual("/4/2[startParent]/2");
         });
 
         describe("character offset range CFIs", function () {
