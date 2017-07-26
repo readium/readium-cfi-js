@@ -26,7 +26,7 @@ var check = function(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeError
 };
 
 
-if (typeof define == 'function' && typeof define.amd == 'object') {
+if (typeof define === 'function' && define.amd) {
     console.log("RequireJS ... index.js");
 
     // For attaching the global window objects

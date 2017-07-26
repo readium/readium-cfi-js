@@ -93,7 +93,7 @@ CFIAssertionError: function (expectedAssertion, targetElementAssertion, message)
 
 
 
-if (typeof define == 'function' && typeof define.amd == 'object') {
+if (typeof define === 'function' && define.amd) {
     console.log("RequireJS ... cfi_errors");
     
     define([],

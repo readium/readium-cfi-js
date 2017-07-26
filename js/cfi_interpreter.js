@@ -445,7 +445,7 @@ return obj;
 
 
 
-if (typeof define == 'function' && typeof define.amd == 'object') {
+if (typeof define === 'function' && define.amd) {
     console.log("RequireJS ... cfi_interpreter");
 
     define(['jquery', 'readium_cfi_js/cfi_parser', './cfi_instructions', './cfi_runtime_errors'],

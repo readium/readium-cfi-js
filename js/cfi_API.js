@@ -128,7 +128,7 @@ var init = function(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors
 
 
 
-if (typeof define == 'function' && typeof define.amd == 'object') {
+if (typeof define === 'function' && define.amd) {
     console.log("RequireJS ... cfi_API");
 
     define(['readium_cfi_js/cfi_parser', './cfi_interpreter', './cfi_instructions', './cfi_runtime_errors', './cfi_generator'],
