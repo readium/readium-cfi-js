@@ -316,7 +316,7 @@ function(thiz){
       }
 */
 
-
+    namespace: '_readium_js', // see http://requirejs.org/docs/faq-optimization.html#namespace
     inlineText: true,
 
     //xhtml: true, //document.createElementNS()
