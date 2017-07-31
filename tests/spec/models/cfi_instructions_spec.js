@@ -224,11 +224,32 @@ describe("CFI INSTRUCTION OBJECT", function () {
             + "<div class='blacklistClass2'></div>"
             );
 
-        $result = EPUBcfi.CFIInstructions.applyBlacklist($elements, ["blacklistClass1", "blacklistClass2"], []);
+        var $result = EPUBcfi.CFIInstructions.applyBlacklist($elements, ["blacklistClass1", "blacklistClass2"], []);
 
         expect($result[0].id).toEqual("survivor-1");
         expect($result[1].id).toEqual("survivor-2");
         expect($result[2].id).toEqual("survivor-3");
+    });
+
+    it('filters blacklist classes (SVG)', function () {
+
+        var dom =
+            "<svg xmlns='http://www.w3.org/2000/svg' width='0' height='0'>"
+            + "<g class='blacklistClass1'></g>"
+            + "<g id='survivor-1' class='some-other'></g>"
+            + "<g id='survivor-2' class=''></g>"
+            + "<g id='survivor-3'></g>"
+            + "<g class='blacklistClass2'></g>"
+            + "</svg>";
+        var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+        var svgEl = document.body.appendChild($dom[0].documentElement);
+        var $result = EPUBcfi.CFIInstructions.applyBlacklist($(svgEl.childNodes), ["blacklistClass1", "blacklistClass2"], []);
+
+        expect($result[0].id).toEqual("survivor-1");
+        expect($result[1].id).toEqual("survivor-2");
+        expect($result[2].id).toEqual("survivor-3");
+
+        $(svgEl).remove();
     });
 
     it("filters multiple blacklist classes", function () {
@@ -243,11 +264,34 @@ describe("CFI INSTRUCTION OBJECT", function () {
             + "<div class='blacklistClass2'></div>"
             );
 
-        $result = EPUBcfi.CFIInstructions.applyBlacklist($elements, ["blacklistClass1", "blacklistClass2"], []);
+        var $result = EPUBcfi.CFIInstructions.applyBlacklist($elements, ["blacklistClass1", "blacklistClass2"], []);
 
         expect($result[0].id).toEqual("survivor-1");
         expect($result[1].id).toEqual("survivor-2");
         expect($result[2].id).toEqual("survivor-3");
+    });
+
+    it('filters multiple blacklist classes (SVG)', function () {
+
+        var dom =
+            "<svg xmlns='http://www.w3.org/2000/svg' width='0' height='0'>"
+            + "<g class='blacklistClass1'></g>"
+            + "<g id='survivor-1' class='some-other'></g>"
+            + "<g id='survivor-2' class=''></g>"
+            + "<g class='blacklistClass2'></g>"
+            + "<g class='blacklistClass2'></g>"
+            + "<g id='survivor-3'></g>"
+            + "<g class='blacklistClass2'></g>"
+            + "</svg>";
+        var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+        var svgEl = document.body.appendChild($dom[0].documentElement);
+        var $result = EPUBcfi.CFIInstructions.applyBlacklist($(svgEl.childNodes), ["blacklistClass1", "blacklistClass2"], []);
+
+        expect($result[0].id).toEqual("survivor-1");
+        expect($result[1].id).toEqual("survivor-2");
+        expect($result[2].id).toEqual("survivor-3");
+
+        $(svgEl).remove();
     });
 
     it("filters blacklist elements", function () {
@@ -260,7 +304,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
             + "<div id='survivor-3'></div>"
             );
 
-        $result = EPUBcfi.CFIInstructions.applyBlacklist($elements, [], ["mathjax", "blacklistElement"]);
+        var $result = EPUBcfi.CFIInstructions.applyBlacklist($elements, [], ["mathjax", "blacklistElement"]);
 
         expect($result[0].id).toEqual("survivor-1");
         expect($result[1].id).toEqual("survivor-2");
@@ -279,7 +323,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
             + "<div class='blacklistClass2'></div>"
             );
 
-        $result = EPUBcfi.CFIInstructions.applyBlacklist($elements, ["blacklistClass1", "blacklistClass2"], []);
+        var $result = EPUBcfi.CFIInstructions.applyBlacklist($elements, ["blacklistClass1", "blacklistClass2"], []);
 
         expect($result[0].nodeType).toEqual(3);
         expect($result[1].id).toEqual("survivor-1");
@@ -300,7 +344,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
             + "<div id='survivor-3'></div>"
             );
 
-        $result = EPUBcfi.CFIInstructions.applyBlacklist($elements, [], ["mathjax", "blacklistElement"]);
+        var $result = EPUBcfi.CFIInstructions.applyBlacklist($elements, [], ["mathjax", "blacklistElement"]);
 
         expect($result[0].id).toEqual("survivor-1");
         expect($result[1].nodeType).toEqual(3);
@@ -321,7 +365,7 @@ describe("CFI INSTRUCTION OBJECT", function () {
             + "<div id='survivor-3'></div>"
             );
 
-        $result = EPUBcfi.CFIInstructions.applyBlacklist($elements, [], [], ["mathjax", "blacklist-1"]);
+        var $result = EPUBcfi.CFIInstructions.applyBlacklist($elements, [], [], ["mathjax", "blacklist-1"]);
 
         expect($result[0].id).toEqual("survivor-1");
         expect($result[1].nodeType).toEqual(3);

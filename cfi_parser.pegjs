@@ -47,9 +47,9 @@ fragment
 // Note: According to the spec, you can have three terminuses in a range: In the first local path, and in both
 //   branching local paths. In fact, I think this would a meaningless production.
 range 
-  = stepVal:indexStep localPathVal:local_path "," rangeLocalPath1Val:local_path "," rangeLocalPath2Val:local_path {
+  = stepVal:indexStep localPathVal:local_path? "," rangeLocalPath1Val:local_path "," rangeLocalPath2Val:local_path {
 
-        return { type:"range", path:stepVal, localPath:localPathVal, range1:rangeLocalPath1Val, range2:rangeLocalPath2Val };
+        return { type:"range", path:stepVal, localPath:localPathVal?localPathVal:"", range1:rangeLocalPath1Val, range2:rangeLocalPath2Val };
   } 
 
 path 
@@ -184,4 +184,4 @@ equal
   = "=" { return "="; }
 
 character
-  = charVal:([a-z] / [A-Z] / [0-9] / "-" / "_" / "." ) { return charVal; }
+  = charVal:([a-z] / [A-Z] / [0-9] / "-" / "_" / "." / "%" ) { return charVal; }

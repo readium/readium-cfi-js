@@ -26,6 +26,27 @@ describe("CFI GENERATOR", function () {
             expect(generatedCFI).toEqual("/2[startParent]/2"); 
         });
 
+        it("can generate a range component targeting a single element as a range", function () {
+
+            var dom =
+                "<html>"
+                +    "<div></div>"
+                +    "<div>"
+                +         "<div id='commonAncestor'>"
+                +             "textnode1"
+                +             "<div id='targetElement'></div>"
+                +             "textNode2"
+                +         "</div>"
+                +     "</div>"
+                +     "<div></div>"
+                + "</html>";
+            var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+
+            var $commonAncestor = $('#commonAncestor', $dom);
+            var generatedCFI = EPUBcfi.Generator.generateRangeComponent($commonAncestor[0], 1, $commonAncestor[0], 2);
+            expect(generatedCFI).toEqual("/4/2[commonAncestor]/2[targetElement]");
+        });
+
         it("can generate a range component between a text node and an element node", function () {
 
             var dom =
@@ -170,7 +191,7 @@ describe("CFI GENERATOR", function () {
             expect(generatedCFI).toEqual("/4/2[startParent],/2,/6");
         });
 
-        it("throws an error if the start and end node is the same", function () {
+        it("can generate an element range CFI if the start and end node is the same", function () {
 
            var dom =
                 "<html>"
@@ -191,12 +212,8 @@ describe("CFI GENERATOR", function () {
             var $startElement1 = $($('#startParent', $dom).children()[0]);
             var $startElement2 = $($('#startParent', $dom).children()[0]);
 
-            expect(function () {
-                EPUBcfi.Generator.generateElementRangeComponent($startElement1[0], $startElement2[0])})
-            .toThrow(
-                Error(
-                    "Start and end element cannot be the same for a CFI range")
-            );
+            var generatedCFI = EPUBcfi.Generator.generateElementRangeComponent($startElement1[0], $startElement2[0]);
+            expect(generatedCFI).toEqual("/4/2[startParent]/2");
         });
 
         describe("character offset range CFIs", function () {
@@ -654,7 +671,26 @@ describe("CFI GENERATOR", function () {
             var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
 
             var generatedCFI = EPUBcfi.Generator.createCFIElementSteps($($('#startParent', $dom).contents()[0]), "html");
-            expect(generatedCFI).toEqual("!/4/2[startParent]/2");
+            expect(generatedCFI).toEqual("/4/2[startParent]/2");
+        });
+
+
+        it("can generate CFI steps recursively for a non-html content document (SVG)", function () {
+
+            var dom =
+                "<svg>"
+                +     "<g></g>"
+                +     "<g>"
+                +          "<text id='startParent'>"
+                +               "<tspan></tspan>"
+                +          "</text>"
+                +     "</g>"
+                +     "<g></g>"
+                + "</svg>";
+            var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+
+            var generatedCFI = EPUBcfi.Generator.createCFIElementSteps($($('#startParent', $dom).contents()[0]), $dom[0].documentElement);
+            expect(generatedCFI).toEqual("/4/2[startParent]/2");
         });
 
         it("can infer the presence of a single node from multiple adjacent nodes", function () {
@@ -682,7 +718,7 @@ describe("CFI GENERATOR", function () {
             var textTerminus = EPUBcfi.Generator.createCFITextNodeStep($startNode, 3, ["cfi-marker"]);
             var generatedCFI = EPUBcfi.Generator.createCFIElementSteps($startNode.parent(), "html", ["cfi-marker"]) + textTerminus;
 
-            expect(generatedCFI).toEqual("!/4/2[startParent]/3:25"); // [ te,xtn]
+            expect(generatedCFI).toEqual("/4/2[startParent]/3:25"); // [ te,xtn]
         });
 
         it("can generate a package document CFI with the spine index", function () {

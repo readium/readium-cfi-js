@@ -56,7 +56,13 @@ var init = function(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors
             return cfiInterpreter.getRangeTargetElements(rangeCFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist);
         },
         isRangeCfi : function (cfi) {
-          return cfiInterpreter.isRangeCfi(cfi);
+            return cfiInterpreter.isRangeCfi(cfi);
+        },
+        hasTextTerminus: function(cfi) {
+            return cfiInterpreter.hasTextTerminus(cfi);
+        },
+        getTextTerminusInfo : function (CFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist) {
+            return cfiInterpreter.getTextTerminusInfo(CFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist);
         },
         getTextTerminusInfoWithPartialCFI : function (contentDocumentCFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist) {
             return cfiInterpreter.getTextTerminusInfoWithPartialCFI(contentDocumentCFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist);
@@ -75,6 +81,9 @@ var init = function(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors
         },
         generateCompleteCFI : function (packageDocumentCFIComponent, contentDocumentCFIComponent) {
             return cfiGenerator.generateCompleteCFI(packageDocumentCFIComponent, contentDocumentCFIComponent);
+        },
+        generateDocumentRangeComponent : function (domRange, classBlacklist, elementBlacklist, idBlacklist) {
+            return cfiGenerator.generateDocumentRangeComponent(domRange, classBlacklist, elementBlacklist, idBlacklist);
         },
         generateCharOffsetRangeComponent : function (rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist) {
             return cfiGenerator.generateCharOffsetRangeComponent(rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist);

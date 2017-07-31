@@ -14,7 +14,7 @@
 (function(global) {
 
 var init = function($, cfiInstructions, cfiRuntimeErrors) {
-    
+
     if (typeof cfiInstructions === "undefined") {
         throw new Error("UNDEFINED?! cfiInstructions");
     }
@@ -29,122 +29,96 @@ var obj = {
     //  "PUBLIC" METHODS (THE API)                                                          //
     // ------------------------------------------------------------------------------------ //
 
-    generateCharOffsetRangeComponent : function (rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist) {
-        var document = rangeStartElement.ownerDocument;
+    generateRangeComponent : function (rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist) {
+        var _document = rangeStartElement.ownerDocument;
 
-        var docRange;
-        var commonAncestor;
-        var $rangeStartParent;
-        var $rangeEndParent;
-        var range1OffsetStep;
-        var range1CFI;
-        var range2OffsetStep;
-        var range2CFI;
-        var commonCFIComponent;
+        // Create a document range from inputs
+        var docRange = _document.createRange();
+        docRange.setStart(rangeStartElement, startOffset);
+        docRange.setEnd(rangeEndElement, endOffset);
+
+        return this.generateDocumentRangeComponent(docRange, classBlacklist, elementBlacklist, idBlacklist);
+    },
+
+    generateCharOffsetRangeComponent : function (rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist) {
+        var _document = rangeStartElement.ownerDocument;
 
         this.validateStartTextNode(rangeStartElement);
         this.validateStartTextNode(rangeEndElement);
 
-        // Parent element is the same
-        if ($(rangeStartElement).parent()[0] === $(rangeEndElement).parent()[0]) {
-            range1OffsetStep = this.createCFITextNodeStep($(rangeStartElement), startOffset, classBlacklist, elementBlacklist, idBlacklist);
-            range2OffsetStep = this.createCFITextNodeStep($(rangeEndElement), endOffset, classBlacklist, elementBlacklist, idBlacklist);          
-            commonCFIComponent = this.createCFIElementSteps($(rangeStartElement).parent(), "html", classBlacklist, elementBlacklist, idBlacklist);
-            return commonCFIComponent.substring(1, commonCFIComponent.length) + "," + range1OffsetStep + "," + range2OffsetStep;
-        }
-        else {
+        // Create a document range to find the common ancestor
+        var docRange = _document.createRange();
+        docRange.setStart(rangeStartElement, startOffset);
+        docRange.setEnd(rangeEndElement, endOffset);
 
-            // Create a document range to find the common ancestor
-            docRange = document.createRange();
-            docRange.setStart(rangeStartElement, startOffset);
-            docRange.setEnd(rangeEndElement, endOffset);
-            commonAncestor = docRange.commonAncestorContainer;
-
-            // Generate terminating offset and range 1
-            range1OffsetStep = this.createCFITextNodeStep($(rangeStartElement), startOffset, classBlacklist, elementBlacklist, idBlacklist);
-            $rangeStartParent = $(rangeStartElement).parent();
-            if ($rangeStartParent[0] === commonAncestor) {
-              // rangeStartElement is a text child node of the commonAncestor, so it's CFI sub-path is only the text node step:
-              range1CFI = range1OffsetStep;
-            } else {
-              range1CFI = this.createCFIElementSteps($rangeStartParent, commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range1OffsetStep;
-            }
-
-            // Generate terminating offset and range 2
-            range2OffsetStep = this.createCFITextNodeStep($(rangeEndElement), endOffset, classBlacklist, elementBlacklist, idBlacklist);
-            $rangeEndParent = $(rangeEndElement).parent();
-            if ($rangeEndParent[0] === commonAncestor) {
-              // rangeEndElement is a text child node of the commonAncestor, so it's CFI sub-path is only the text node step:
-              range2CFI = range2OffsetStep;
-            } else {
-              range2CFI = this.createCFIElementSteps($rangeEndParent, commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range2OffsetStep;
-            }
-
-            // Generate shared component
-            commonCFIComponent = this.createCFIElementSteps($(commonAncestor), "html", classBlacklist, elementBlacklist, idBlacklist);
-
-            // Return the result
-            return commonCFIComponent.substring(1, commonCFIComponent.length) + "," + range1CFI + "," + range2CFI;
-        }
+        return this.generateDocumentRangeComponent(docRange, classBlacklist, elementBlacklist, idBlacklist);
     },
 
     generateElementRangeComponent : function (rangeStartElement, rangeEndElement, classBlacklist, elementBlacklist, idBlacklist) {
-        var document = rangeStartElement.ownerDocument;
+        var _document = rangeStartElement.ownerDocument;
 
-        var docRange;
-        var commonAncestor;
-        var range1CFI;
-        var range2CFI;
-        var commonCFIComponent;
-
-        this.validateStartElement(rangeStartElement);
-        this.validateStartElement(rangeEndElement);
-
-        if (rangeStartElement === rangeEndElement) {
-            throw new Error("Start and end element cannot be the same for a CFI range");
-        }
-
-        // Create a document range to find the common ancestor
-        docRange = document.createRange();
-        docRange.setStart(rangeStartElement, 0);
-        docRange.setEnd(rangeEndElement, rangeEndElement.childNodes.length);
-        commonAncestor = docRange.commonAncestorContainer;
-
-        // Generate range 1
-        range1CFI = this.createCFIElementSteps($(rangeStartElement), commonAncestor, classBlacklist, elementBlacklist, idBlacklist);
-
-        // Generate range 2
-        range2CFI = this.createCFIElementSteps($(rangeEndElement), commonAncestor, classBlacklist, elementBlacklist, idBlacklist);
-
-        // Generate shared component
-        commonCFIComponent = this.createCFIElementSteps($(commonAncestor), "html", classBlacklist, elementBlacklist, idBlacklist);
-
-        // Return the result
-        return commonCFIComponent.substring(1, commonCFIComponent.length) + "," + range1CFI + "," + range2CFI;
+        // Create a document range from inputs
+        var docRange = _document.createRange();
+        docRange.setStartBefore(rangeStartElement);
+        docRange.setEndAfter(rangeEndElement);
+       
+        return this.generateDocumentRangeComponent(docRange, classBlacklist, elementBlacklist, idBlacklist);
     },
 
-    generateRangeComponent : function (rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist) {
-        var document = rangeStartElement.ownerDocument;
+    generateDocumentRangeComponent : function (domRange, classBlacklist, elementBlacklist, idBlacklist) {
 
-        if(rangeStartElement.nodeType === Node.ELEMENT_NODE && rangeEndElement.nodeType === Node.ELEMENT_NODE){
-            return this.generateElementRangeComponent(rangeStartElement, rangeEndElement, classBlacklist, elementBlacklist, idBlacklist);
-        } else if(rangeStartElement.nodeType === Node.TEXT_NODE && rangeEndElement.nodeType === Node.TEXT_NODE){
-            return this.generateCharOffsetRangeComponent(rangeStartElement, startOffset, rangeEndElement, endOffset, classBlacklist, elementBlacklist, idBlacklist);
+        var rangeStartElement = domRange.startContainer;
+        var startOffset = domRange.startOffset;
+        var rangeEndElement = domRange.endContainer;
+        var endOffset = domRange.endOffset;
+        var commonAncestor = domRange.commonAncestorContainer;
+
+        var _document = rangeStartElement.ownerDocument;
+
+        var range1CFI;
+        var range1OffsetStep;
+        var range2CFI;
+        var range2OffsetStep;
+        var commonCFIComponent;
+
+        if (rangeStartElement.nodeType === Node.TEXT_NODE && rangeEndElement.nodeType === Node.TEXT_NODE) {
+            // Parent element is the same
+            if ($(rangeStartElement).parent()[0] === $(rangeEndElement).parent()[0]) {
+                range1OffsetStep = this.createCFITextNodeStep($(rangeStartElement), startOffset, classBlacklist, elementBlacklist, idBlacklist);
+                range2OffsetStep = this.createCFITextNodeStep($(rangeEndElement), endOffset, classBlacklist, elementBlacklist, idBlacklist);
+                commonCFIComponent = this.createCFIElementSteps($(rangeStartElement).parent(), _document.documentElement, classBlacklist, elementBlacklist, idBlacklist);
+                return commonCFIComponent + "," + range1OffsetStep + "," + range2OffsetStep;
+            }
+        }
+
+        if (rangeStartElement.nodeType === Node.ELEMENT_NODE &&
+            rangeEndElement.nodeType === Node.ELEMENT_NODE &&
+            rangeStartElement === rangeEndElement &&
+            commonAncestor === rangeStartElement) {
+
+            var startElement = commonAncestor.childNodes[startOffset];
+            var endElement;
+            if (endOffset === commonAncestor.childNodes.length) {
+                endElement = commonAncestor.childNodes[endOffset - 1];
+            } else {
+                endElement = commonAncestor.childNodes[endOffset].previousSibling;
+            }
+
+            // Generate shared component
+            commonCFIComponent = this.createCFIElementSteps($(commonAncestor), _document.documentElement, classBlacklist, elementBlacklist, idBlacklist);
+
+            range1CFI = this.createCFIElementSteps($(startElement), commonAncestor, classBlacklist, elementBlacklist, idBlacklist);
+
+            if (startElement === endElement) {
+                return commonCFIComponent + range1CFI;
+            }
+
+            range2CFI = this.createCFIElementSteps($(endElement), commonAncestor, classBlacklist, elementBlacklist, idBlacklist);
+
+            // Return the result
+            return commonCFIComponent + "," + range1CFI + "," + range2CFI;
         } else {
-            var docRange;
-            var range1CFI;
-            var range1OffsetStep;
-            var range2CFI;
-            var range2OffsetStep;
-            var commonAncestor;
-            var commonCFIComponent;
-
-            // Create a document range to find the common ancestor
-            docRange = document.createRange();
-            docRange.setStart(rangeStartElement, startOffset);
-            docRange.setEnd(rangeEndElement, endOffset);
-            commonAncestor = docRange.commonAncestorContainer;
-
+            
             if(rangeStartElement.nodeType === Node.ELEMENT_NODE){
                 this.validateStartElement(rangeStartElement);
                 range1CFI = this.createCFIElementSteps($(rangeStartElement), commonAncestor, classBlacklist, elementBlacklist, idBlacklist);
@@ -152,7 +126,7 @@ var obj = {
                 this.validateStartTextNode(rangeStartElement);
                 // Generate terminating offset and range 1
                 range1OffsetStep = this.createCFITextNodeStep($(rangeStartElement), startOffset, classBlacklist, elementBlacklist, idBlacklist);
-                if($(rangeStartElement).parent().is(commonAncestor)){
+                if ($(rangeStartElement).parent()[0] === commonAncestor) {
                     range1CFI = range1OffsetStep;
                 } else {
                     range1CFI = this.createCFIElementSteps($(rangeStartElement).parent(), commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range1OffsetStep;    
@@ -166,7 +140,7 @@ var obj = {
                 this.validateStartTextNode(rangeEndElement);
                 // Generate terminating offset and range 2
                 range2OffsetStep = this.createCFITextNodeStep($(rangeEndElement), endOffset, classBlacklist, elementBlacklist, idBlacklist);
-                if($(rangeEndElement).parent().is(commonAncestor)){
+                if ($(rangeEndElement).parent()[0] === commonAncestor) {
                     range2CFI = range2OffsetStep;
                 } else {
                     range2CFI = this.createCFIElementSteps($(rangeEndElement).parent(), commonAncestor, classBlacklist, elementBlacklist, idBlacklist) + range2OffsetStep;    
@@ -174,10 +148,10 @@ var obj = {
             }
 
             // Generate shared component
-            commonCFIComponent = this.createCFIElementSteps($(commonAncestor), "html", classBlacklist, elementBlacklist, idBlacklist);
+            commonCFIComponent = this.createCFIElementSteps($(commonAncestor), _document.documentElement, classBlacklist, elementBlacklist, idBlacklist);
 
             // Return the result
-            return commonCFIComponent.substring(1, commonCFIComponent.length) + "," + range1CFI + "," + range2CFI;
+            return commonCFIComponent + "," + range1CFI + "," + range2CFI;
         }
     },
 
@@ -185,7 +159,6 @@ var obj = {
     // Arguments: The text node that contains the offset referenced by the cfi, the offset value, the name of the 
     //   content document that contains the text node, the package document for this EPUB.
     generateCharacterOffsetCFIComponent : function (startTextNode, characterOffset, classBlacklist, elementBlacklist, idBlacklist) {
-
         var textNodeStep;
         var contentDocCFI;
         var $itemRefStartNode;
@@ -196,24 +169,22 @@ var obj = {
         // Create the text node step
         textNodeStep = this.createCFITextNodeStep($(startTextNode), characterOffset, classBlacklist, elementBlacklist, idBlacklist);
 
-        // Call the recursive method to create all the steps up to the head element of the content document (the "html" element)
-        contentDocCFI = this.createCFIElementSteps($(startTextNode).parent(), "html", classBlacklist, elementBlacklist, idBlacklist) + textNodeStep;
-        return contentDocCFI.substring(1, contentDocCFI.length);
+        // Call the recursive method to create all the steps up to the head element of the content document (typically the "html" element, or the "svg" element)
+        contentDocCFI = this.createCFIElementSteps($(startTextNode).parent(), startTextNode.ownerDocument.documentElement, classBlacklist, elementBlacklist, idBlacklist) + textNodeStep;
+        return contentDocCFI;
     },
 
     generateElementCFIComponent : function (startElement, classBlacklist, elementBlacklist, idBlacklist) {
-
         var contentDocCFI;
         var $itemRefStartNode;
         var packageDocCFI;
 
         this.validateStartElement(startElement);
 
-        // Call the recursive method to create all the steps up to the head element of the content document (the "html" element)
-        contentDocCFI = this.createCFIElementSteps($(startElement), "html", classBlacklist, elementBlacklist, idBlacklist);
+        // Call the recursive method to create all the steps up to the head element of the content document (typically the "html" element, or the "svg" element)
+        contentDocCFI = this.createCFIElementSteps($(startElement), startElement.ownerDocument.documentElement, classBlacklist, elementBlacklist, idBlacklist);
 
-        // Remove the ! 
-        return contentDocCFI.substring(1, contentDocCFI.length);
+        return contentDocCFI;
     },
 
     generatePackageDocumentCFIComponent : function (contentDocumentName, packageDocument, classBlacklist, elementBlacklist, idBlacklist) {
@@ -272,12 +243,17 @@ var obj = {
 
     validateStartElement : function (startElement) {
 
-        if (!startElement) {
-            throw new cfiRuntimeErrors.NodeTypeError(startElement, "CFI target element is undefined");
-        }
+        this.validateTargetElement(startElement);
 
         if (!(startElement.nodeType && startElement.nodeType === 1)) {
             throw new cfiRuntimeErrors.NodeTypeError(startElement, "CFI target element is not an HTML element");
+        }
+    },
+
+    validateTargetElement : function (startElement) {
+
+        if (!startElement) {
+            throw new cfiRuntimeErrors.NodeTypeError(startElement, "CFI target element is undefined");
         }
     },
 
@@ -409,16 +385,7 @@ var obj = {
         var currNodePosition;
         var CFIPosition;
         var idAssertion;
-        var elementStep; 
-
-
-
-        // per https://github.com/readium/readium-cfi-js/issues/28
-        // if the currentNode is the same as top level element, we're looking at a text node 
-        // that's a direct child of "topLevelElement" so we don't need to include it in the element step.
-        if ($currNode[0] === topLevelElement) {
-            return "";
-        }
+        var elementStep;
 
         // Find position of current node in parent list
         $blacklistExcluded = cfiInstructions.applyBlacklist($currNode.parent().children(), classBlacklist, elementBlacklist, idBlacklist);
@@ -449,21 +416,13 @@ var obj = {
         //   Also need to check if the current node is the top-level element. This can occur if the start node is also the
         //   top level element.
         $parentNode = $currNode.parent();
-        if ($parentNode.is(topLevelElement) || $currNode.is(topLevelElement) || 
-                $parentNode[0].localName === topLevelElement || $currNode[0].localName === topLevelElement) {
-            
-            // If the top level node is a type from which an indirection step, add an indirection step character (!)
-            // REFACTORING CANDIDATE: It is possible that this should be changed to: if (topLevelElement = 'package') do
-            //   not return an indirection character. Every other type of top-level element may require an indirection
-            //   step to navigate to, thus requiring that ! is always prepended. 
-            if (topLevelElement === 'html') {
-                return "!" + elementStep;
-            }
-            else {
-                return elementStep;
-            }
-        }
-        else {
+        if (typeof topLevelElement === 'string' &&
+            cfiInstructions._matchesLocalNameOrElement($parentNode[0], topLevelElement) ||
+            cfiInstructions._matchesLocalNameOrElement($currNode[0], topLevelElement)) {
+            return elementStep;
+        } else if ($parentNode[0] === topLevelElement || $currNode[0] === topLevelElement) {
+            return elementStep;
+        } else {
             return this.createCFIElementSteps($parentNode, topLevelElement, classBlacklist, elementBlacklist, idBlacklist) + elementStep;
         }
     }
