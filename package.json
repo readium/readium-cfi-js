@@ -47,31 +47,31 @@
   ],
   "dependencies": {
     "concurrently": "latest",
-    "http-server": "danielweck/http-server",
+    "http-server": "github:danielweck/http-server",
     "npm-run-all": "latest",
-    "opener": "latest"
+    "opener": "^1.4.3"
   },
   "devDependencies": {
     "almond": "latest",
-    "cpy-cli": "latest",
-    "cson": "latest",
+    "cpy-cli": "^1.0.1",
+    "cson": "^4.1.0",
     "glob": "latest",
     "jasmine-core": "latest",
-    "jquery": "2.x.x",
+    "jquery": "^2.2.4",
     "jshint": "latest",
     "karma": "latest",
     "karma-chrome-launcher": "latest",
-    "karma-firefox-launcher": "latest",
+    "karma-firefox-launcher": "^1.0.1",
     "karma-jasmine": "latest",
     "karma-sauce-launcher": "latest",
     "mkdirp": "latest",
     "ncp": "latest",
-    "pegjs": "latest",
+    "pegjs": "^0.10.0",
     "requirejs": "latest",
-    "rimraf": "latest",
+    "rimraf": "^2.6.1",
     "underscore": "latest",
-    "watch": "latest",
-    "yuidocjs": "latest"
+    "watch": "^1.0.2",
+    "yuidocjs": "^0.10.2"
   },
   "scripts": {
     "cson2json": "node ./node_modules/cson/bin/cson2json package.cson > package.json && node readium-build-tools/optimizePackageJsonScripts.js",
