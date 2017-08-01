@@ -193,7 +193,7 @@ var obj = {
         this.validatePackageDocument(packageDocument, contentDocumentName);
 
         // Get the start node (itemref element) that references the content document
-        $itemRefStartNode = $("itemref[idref='" + contentDocumentName + "']", $(packageDocument));
+        $itemRefStartNode = $(packageDocument.querySelector('itemref[idref="' + contentDocumentName + '"]'));
 
         // Create the steps up to the top element of the package document (the "package" element)
         packageDocCFIComponent = this.createCFIElementSteps($itemRefStartNode, "package", classBlacklist, elementBlacklist, idBlacklist);
@@ -271,7 +271,8 @@ var obj = {
         if (!packageDocument) {
             throw new Error("A package document must be supplied to generate a CFI");
         }
-        else if ($($("itemref[idref='" + contentDocumentName + "']", packageDocument)[0]).length === 0) {
+      
+        if (!packageDocument.querySelector('itemref[idref="' + contentDocumentName + '"]')) {
             throw new Error("The idref of the content document could not be found in the spine");
         }
     },
@@ -381,18 +382,20 @@ var obj = {
     createCFIElementSteps : function ($currNode, topLevelElement, classBlacklist, elementBlacklist, idBlacklist) {
 
         var $blacklistExcluded;
-        var $parentNode;
         var currNodePosition;
         var CFIPosition;
         var idAssertion;
         var elementStep;
 
+        var $parentNode = $currNode.parent();
+        var currNode = $currNode[0];
+
         // Find position of current node in parent list
-        $blacklistExcluded = cfiInstructions.applyBlacklist($currNode.parent().children(), classBlacklist, elementBlacklist, idBlacklist);
+        $blacklistExcluded = cfiInstructions.applyBlacklist($parentNode.children(), classBlacklist, elementBlacklist, idBlacklist);
         $.each($blacklistExcluded, 
             function (index, value) {
 
-                if (this === $currNode[0]) {
+                if (this === currNode) {
 
                     currNodePosition = index;
 
@@ -405,8 +408,9 @@ var obj = {
         CFIPosition = (currNodePosition + 1) * 2;
 
         // Create CFI step with id assertion, if the element has an id
-        if ($currNode.attr("id")) {
-            elementStep = "/" + CFIPosition + "[" + $currNode.attr("id") + "]";
+        var nodeId = currNode.getAttribute('id');
+        if (nodeId) {
+            elementStep = "/" + CFIPosition + "[" + nodeId + "]";
         }
         else {
             elementStep = "/" + CFIPosition;
@@ -415,12 +419,11 @@ var obj = {
         // If a parent is an html element return the (last) step for this content document, otherwise, continue.
         //   Also need to check if the current node is the top-level element. This can occur if the start node is also the
         //   top level element.
-        $parentNode = $currNode.parent();
         if (typeof topLevelElement === 'string' &&
             cfiInstructions._matchesLocalNameOrElement($parentNode[0], topLevelElement) ||
-            cfiInstructions._matchesLocalNameOrElement($currNode[0], topLevelElement)) {
+            cfiInstructions._matchesLocalNameOrElement(currNode, topLevelElement)) {
             return elementStep;
-        } else if ($parentNode[0] === topLevelElement || $currNode[0] === topLevelElement) {
+        } else if ($parentNode[0] === topLevelElement || currNode === topLevelElement) {
             return elementStep;
         } else {
             return this.createCFIElementSteps($parentNode, topLevelElement, classBlacklist, elementBlacklist, idBlacklist) + elementStep;

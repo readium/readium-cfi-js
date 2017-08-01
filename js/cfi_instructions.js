@@ -332,11 +332,11 @@ var obj = {
                 // but fixes the current comment issues we have. Will remove in the future when Readium
                 // supplies a fix.
                 // take out comment nodes
-                if($currElement[0].nodeType === Node.COMMENT_NODE) {
-                    includeInList = false;
+                if(element.nodeType === Node.COMMENT_NODE) {
+                    return false;
                 }
 
-                return includeInList;
+                return true;
             }
         );
 

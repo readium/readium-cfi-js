@@ -64,7 +64,7 @@ var obj = {
         }
 
         // Interpet the path node (the package document step)
-        var $packageElement = $($("package", $packageDocument)[0]);
+        $packageElement = $(packageDocument.querySelector("package"));
         var $currElement = this.interpretIndexStepNode(CFIAST.cfiString.path, $packageElement, classBlacklist, elementBlacklist, idBlacklist);
         foundHref = this.searchLocalPathForHref($currElement, $packageDocument, CFIAST.cfiString.localPath, classBlacklist, elementBlacklist, idBlacklist);
 
