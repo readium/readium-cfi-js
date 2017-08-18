@@ -293,7 +293,7 @@ describe('CFI INTERPRETER OBJECT', function () {
 
     it('returns the href of a content document for the first indirection step of a cfi', function () {
 
-        var result = EPUBcfi.Interpreter.getContentDocHref(CFI, $packageDocument);
+        var result = EPUBcfi.Interpreter.getContentDocHref(CFI, $packageDocument[0]);
         expect(result).toBe("chapter_001.xhtml");
     });
 
@@ -316,7 +316,7 @@ describe('CFI INTERPRETER OBJECT', function () {
         it("returns the href of a content document in the first local path", function () {
 
             var CFI = "epubcfi(/6/14!/4,/4/4,/4/6)";
-            var href = EPUBcfi.Interpreter.getContentDocHref(CFI, $packageDocument);
+            var href = EPUBcfi.Interpreter.getContentDocHref(CFI, $packageDocument[0]);
             expect(href).toBe("chapter_001.xhtml");
         });
 

@@ -55,7 +55,6 @@ var obj = {
     //   the reading system, as it stands now.
     getContentDocHref : function (CFI, packageDocument, classBlacklist, elementBlacklist, idBlacklist) {
 
-        var $packageDocument = $(packageDocument);
         var decodedCFI = decodeURI(CFI);
         var CFIAST = cfiParser.parse(decodedCFI);
 
@@ -64,9 +63,9 @@ var obj = {
         }
 
         // Interpet the path node (the package document step)
-        var $packageElement = $($("package", $packageDocument)[0]);
+        var $packageElement = $(packageDocument.getElementsByTagNameNS('*', 'package'));
         var $currElement = this.interpretIndexStepNode(CFIAST.cfiString.path, $packageElement, classBlacklist, elementBlacklist, idBlacklist);
-        foundHref = this.searchLocalPathForHref($currElement, $packageDocument, CFIAST.cfiString.localPath, classBlacklist, elementBlacklist, idBlacklist);
+        foundHref = this.searchLocalPathForHref($currElement, packageDocument, CFIAST.cfiString.localPath, classBlacklist, elementBlacklist, idBlacklist);
 
         if (foundHref) {
             return foundHref;
@@ -454,7 +453,7 @@ var obj = {
         return $injectedElement;
     },
 
-    searchLocalPathForHref : function ($currElement, $packageDocument, localPathNode, classBlacklist, elementBlacklist, idBlacklist) {
+    searchLocalPathForHref : function ($currElement, packageDocument, localPathNode, classBlacklist, elementBlacklist, idBlacklist) {
 
         // Interpret the first local_path node, which is a set of steps and and a terminus condition
         var stepNum = 0;
@@ -473,7 +472,7 @@ var obj = {
 
             // Found the content document href referenced by the spine item
             if (cfiInstructions._matchesLocalNameOrElement($currElement[0], "itemref")) {
-                return cfiInstructions.retrieveItemRefHref($currElement, $packageDocument);
+                return cfiInstructions.retrieveItemRefHref($currElement, packageDocument);
             }
         }
 
