@@ -805,6 +805,64 @@ describe("CFI GENERATOR", function () {
             expect(packageDocCFIComponent).toEqual("/6/2/6!"); // [ te,xtn]
         });
 
+        it("can generate a package document CFI with the spine index (XML document with namespace)", function () {
+
+            var packageDocXhtml =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
+                + "<opf:package xmlns:opf=\"http://www.idpf.org/2007/opf\" version=\"2.0\">"
+                +    "<opf:metadata></opf:metadata>"
+                +    "<opf:manifest></opf:manifest>"
+                +    "<opf:spine>"
+                +      "<opf:itemref/>"
+                +      "<opf:itemref/>"
+                +      "<opf:itemref idref=\"contentDocId\"/>"
+                +    "</opf:spine>"
+                + "</opf:package>";
+
+            var packageDoc = (new window.DOMParser).parseFromString(packageDocXhtml, "text/xml");
+            var packageDocCFIComponent = EPUBcfi.Generator.generatePackageDocumentCFIComponentWithSpineIndex(2, packageDoc);
+            expect(packageDocCFIComponent).toEqual("/6/6!");
+        });
+
+        it("can generate a package document CFI with the spine idref", function () {
+
+            var packageDocXhtml =
+                "<package>"
+                +   "<div></div>"
+                +   "<div></div>"
+                +   "<div>"
+                +       "<spine>"
+                +           "<itemref></itemref>"
+                +           "<itemref></itemref>"
+                +           "<itemref idref='contentDocId'></itemref>"
+                +       "</spine>"
+                +   "</div>"
+                + "</package>";
+
+            var packageDoc = (new window.DOMParser).parseFromString(packageDocXhtml, "text/xml");
+            var packageDocCFIComponent = EPUBcfi.Generator.generatePackageDocumentCFIComponent("contentDocId", packageDoc);
+            expect(packageDocCFIComponent).toEqual("/6/2/6!");
+        });
+
+        it("can generate a package document CFI with the spine idref (XML document with namespace)", function () {
+
+            var packageDocXhtml =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
+                + "<opf:package xmlns:opf=\"http://www.idpf.org/2007/opf\" version=\"2.0\">"
+                +    "<opf:metadata></opf:metadata>"
+                +    "<opf:manifest></opf:manifest>"
+                +    "<opf:spine>"
+                +      "<opf:itemref/>"
+                +      "<opf:itemref/>"
+                +      "<opf:itemref idref=\"contentDocId\"/>"
+                +    "</opf:spine>"
+                + "</opf:package>";
+
+            var packageDoc = (new window.DOMParser).parseFromString(packageDocXhtml, "text/xml");
+            var packageDocCFIComponent = EPUBcfi.Generator.generatePackageDocumentCFIComponent("contentDocId", packageDoc);
+            expect(packageDocCFIComponent).toEqual("/6/6!");
+        });
+
         it("can generate a complete CFI for both the content document and package document", function () {
 
             var packageDocXhtml =

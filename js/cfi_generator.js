@@ -194,10 +194,12 @@ var obj = {
         this.validatePackageDocument(packageDocument, contentDocumentName);
 
         // Get the start node (itemref element) that references the content document
-        $itemRefStartNode = $("itemref[idref='" + contentDocumentName + "']", $(packageDocument));
+        var $itemRefStartNode = $($(packageDocument.getElementsByTagNameNS('*', 'itemref')).toArray().find(function (node) {
+            return node.getAttribute('idref') === contentDocumentName;
+        }));
 
         // Create the steps up to the top element of the package document (the "package" element)
-        packageDocCFIComponent = this.createCFIElementSteps($itemRefStartNode, "package", classBlacklist, elementBlacklist, idBlacklist);
+        var packageDocCFIComponent = this.createCFIElementSteps($itemRefStartNode, "package", classBlacklist, elementBlacklist, idBlacklist);
 
         // Append an !; this assumes that a CFI content document CFI component will be appended at some point
         return packageDocCFIComponent + "!";
@@ -206,10 +208,11 @@ var obj = {
     generatePackageDocumentCFIComponentWithSpineIndex : function (spineIndex, packageDocument, classBlacklist, elementBlacklist, idBlacklist) {
 
         // Get the start node (itemref element) that references the content document
-        $itemRefStartNode = $($("spine", packageDocument).children()[spineIndex]);
+        var spineItemNode = packageDocument.getElementsByTagNameNS('*', 'spine');
+        var $itemRefStartNode = $($(spineItemNode).children()[spineIndex]);
 
         // Create the steps up to the top element of the package document (the "package" element)
-        packageDocCFIComponent = this.createCFIElementSteps($itemRefStartNode, "package", classBlacklist, elementBlacklist, idBlacklist);
+        var packageDocCFIComponent = this.createCFIElementSteps($itemRefStartNode, "package", classBlacklist, elementBlacklist, idBlacklist);
 
         // Append an !; this assumes that a CFI content document CFI component will be appended at some point
         return packageDocCFIComponent + "!";
@@ -272,7 +275,12 @@ var obj = {
         if (!packageDocument) {
             throw new Error("A package document must be supplied to generate a CFI");
         }
-        else if ($($("itemref[idref='" + contentDocumentName + "']", packageDocument)[0]).length === 0) {
+
+        var spineItemNode = $(packageDocument.getElementsByTagNameNS('*', 'itemref')).toArray().find(function (node) {
+            return node.getAttribute('idref') === contentDocumentName;
+        });
+
+        if (!spineItemNode) {
             throw new Error("The idref of the content document could not be found in the spine");
         }
     },
