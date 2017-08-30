@@ -544,8 +544,10 @@ var obj = {
             }
             if (L > R) {
                 result = 1;
+                break;
             } else if (L < R) {
                 result = -1;
+                break;
             } else {
                 result = 0;
             }
