@@ -439,6 +439,218 @@ describe('CFI INTERPRETER OBJECT', function () {
             expect(textOffset).toBe(4);
         });
     });
+
+    describe('CFI comparison', function () {
+
+        // -1 is cfiA is located before cfiB
+        // 0 is cfiA is equal to cfiB
+        // 1 is cfiA is located after cfiB
+
+        it('can compare a CFI with equal paths', function () {
+            var CFI1 = "epubcfi(/4/2/14)";
+            var CFI2 = "epubcfi(/4/2/14)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([0, 0]);
+        });
+
+        it('can compare a CFI with equal paths and terminus', function () {
+            var CFI1 = "epubcfi(/4/2/14/1:123)";
+            var CFI2 = "epubcfi(/4/2/14/1:123)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([0, 0]);
+        });
+
+        it('can compare an equal CFI with a mix of assertions', function () {
+            var CFI1 = "epubcfi(/4/2[id]/14[0]/2/1:123)";
+            var CFI2 = "epubcfi(/4/2/14/2/1[abc123]:123[aaa,000;z=1])";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([0, 0]);
+        });
+
+        it("can compare CFIs where the first CFI has a location that's further ahead", function () {
+            var CFI1 = "epubcfi(/4/2/18/14/4/2/16)";
+            var CFI2 = "epubcfi(/4/2/14)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
+        });
+
+        it("can compare CFIs where the first CFI has a location that's before the other", function () {
+            var CFI1 = "epubcfi(/4/2/1:123)";
+            var CFI2 = "epubcfi(/4/2/14)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
+        });
+
+        it("can compare CFIs where the CFIs have equal paths but the first has a terminus step that's further ahead", function () {
+            var CFI1 = "epubcfi(/4/2/1:123)";
+            var CFI2 = "epubcfi(/4/2/1:0)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
+        });
+
+        it("can compare CFIs where the CFIs have equal paths but the first has a terminus step that's before the other", function () {
+            var CFI1 = "epubcfi(/4/2/1:123)";
+            var CFI2 = "epubcfi(/4/2/1:456)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
+        });
+
+        it("can compare CFIs where the CFIs have equal paths but the second has an implied terminus step, therefore further ahead", function () {
+            var CFI1 = "epubcfi(/4/2/1:456)";
+            var CFI2 = "epubcfi(/4/2/1)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
+        });
+
+        it("can compare CFIs where the CFIs have equal paths but the first has an implied terminus step, therefore before the other", function () {
+            var CFI1 = "epubcfi(/4/2/1)";
+            var CFI2 = "epubcfi(/4/2/1:456)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
+        });
+
+
+        it("can compare given range CFI inputs: equal start span, end span has the first path that's after", function () {
+            var CFI1 = "epubcfi(/4/2,/2,/6)";
+            var CFI2 = "epubcfi(/4/2,/2,/4)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([0, 1]);
+        });
+
+        it("can compare given range CFI inputs: equal start span, end span has the first path that's before", function () {
+            var CFI1 = "epubcfi(/4/2,/2,/4)";
+            var CFI2 = "epubcfi(/4/2,/2,/6)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([0, -1]);
+        });
+
+        it("can compare given range CFI inputs: start span has the first path that's after, equal end span", function () {
+            var CFI1 = "epubcfi(/4/2,/6,/2)";
+            var CFI2 = "epubcfi(/4/2,/4,/2)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 0]);
+        });
+
+        it("can compare given range CFI inputs: start span has the first path that's before, equal end span", function () {
+            var CFI1 = "epubcfi(/4/2,/4,/2)";
+            var CFI2 = "epubcfi(/4/2,/6,/2)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, 0]);
+        });
+
+        it("can compare given range CFI inputs: start span has the first path that's after, end span has the first path that's after", function () {
+            var CFI1 = "epubcfi(/4/2,/6,/16)";
+            var CFI2 = "epubcfi(/4/2,/4,/14)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
+        });
+
+        it("can compare given range CFI inputs: start span has the first path that's before, end span has the first path that's before", function () {
+            var CFI1 = "epubcfi(/4/2,/4,/14)";
+            var CFI2 = "epubcfi(/4/2,/6,/16)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
+        });
+
+        it("can compare given range CFI inputs: start span has the first path that's after, end span has the first path that's before", function () {
+            var CFI1 = "epubcfi(/4/2,/6,/14)";
+            var CFI2 = "epubcfi(/4/2,/4,/16)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, -1]);
+        });
+
+        it("can compare given range CFI inputs: start span has the first path that's before, end span has the first path that's after", function () {
+            var CFI1 = "epubcfi(/4/2,/4,/16)";
+            var CFI2 = "epubcfi(/4/2,/6,/14)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, 1]);
+        });
+
+        it("can compare given range CFI inputs: the ranges don't overlap, the first range is ahead", function () {
+            var CFI1 = "epubcfi(/4/2,/6,/8)";
+            var CFI2 = "epubcfi(/4/2,/2,/4)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
+        });
+
+        it("can compare given range CFI inputs: the ranges don't overlap, the first range is before", function () {
+            var CFI1 = "epubcfi(/4/2,/2,/4)";
+            var CFI2 = "epubcfi(/4/2,/4,/6)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
+        });
+
+
+        it("can compare given character offset range CFI inputs: equal start span, end span has the first path that's after", function () {
+            var CFI1 = "epubcfi(/4/2,/1:2,/1:6)";
+            var CFI2 = "epubcfi(/4/2,/1:2,/1:4)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([0, 1]);
+        });
+
+        it("can compare given character offset range CFI inputs: equal start span, end span has the first path that's before", function () {
+            var CFI1 = "epubcfi(/4/2,/1:2,/1:4)";
+            var CFI2 = "epubcfi(/4/2,/1:2,/1:6)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([0, -1]);
+        });
+
+        it("can compare given character offset range CFI inputs: start span has the first path that's after, equal end span", function () {
+            var CFI1 = "epubcfi(/4/2,/1:6,/1:2)";
+            var CFI2 = "epubcfi(/4/2,/1:4,/1:2)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 0]);
+        });
+
+        it("can compare given character offset range CFI inputs: start span has the first path that's before, equal end span", function () {
+            var CFI1 = "epubcfi(/4/2,/1:4,/1:2)";
+            var CFI2 = "epubcfi(/4/2,/1:6,/1:2)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, 0]);
+        });
+
+        it("can compare given character offset range CFI inputs: start span has the first path that's after, end span has the first path that's after", function () {
+            var CFI1 = "epubcfi(/4/2,/1:6,/1:16)";
+            var CFI2 = "epubcfi(/4/2,/1:4,/1:14)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
+        });
+
+        it("can compare given character offset range CFI inputs: start span has the first path that's before, end span has the first path that's before", function () {
+            var CFI1 = "epubcfi(/4/2,/1:4,/1:14)";
+            var CFI2 = "epubcfi(/4/2,/1:6,/1:16)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
+        });
+
+        it("can compare given character offset range CFI inputs: start span has the first path that's after, end span has the first path that's before", function () {
+            var CFI1 = "epubcfi(/4/2,/1:6,/1:14)";
+            var CFI2 = "epubcfi(/4/2,/1:4,/1:16)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, -1]);
+        });
+
+        it("can compare given character offset range CFI inputs: start span has the first path that's before, end span has the first path that's after", function () {
+            var CFI1 = "epubcfi(/4/2,/1:4,/1:16)";
+            var CFI2 = "epubcfi(/4/2,/1:6,/1:14)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, 1]);
+        });
+
+        it("can compare given character offset range CFI inputs: the ranges don't overlap, the first range is ahead", function () {
+            var CFI1 = "epubcfi(/4/2,/1:6,/1:8)";
+            var CFI2 = "epubcfi(/4/2,/1:2,/1:4)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
+        });
+
+        it("can compare given character offset range CFI inputs: the ranges don't overlap, the first range is before", function () {
+            var CFI1 = "epubcfi(/4/2,/1:0,/1:2)";
+            var CFI2 = "epubcfi(/4/2,/1:2,/1:4)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
+        });
+    });
 });
 
 describe('CFI INTERPRETER ERROR HANDLING', function () {
