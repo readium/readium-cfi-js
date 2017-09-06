@@ -580,6 +580,20 @@ describe('CFI INTERPRETER OBJECT', function () {
             expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
         });
 
+        it("can compare given range CFI inputs: the ranges don't overlap, the first range is ahead, the common component differs", function () {
+            var CFI1 = "epubcfi(/4/106,/6,/8)";
+            var CFI2 = "epubcfi(/4/62,/2,/4)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
+        });
+
+        it("can compare given range CFI inputs: the ranges don't overlap, the first range is before, the common component differs", function () {
+            var CFI1 = "epubcfi(/4/62,/2,/4)";
+            var CFI2 = "epubcfi(/4/106,/4,/6)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
+        });
+
 
         it("can compare given character offset range CFI inputs: equal start span, end span has the first path that's after", function () {
             var CFI1 = "epubcfi(/4/2,/1:2,/1:6)";
@@ -647,6 +661,20 @@ describe('CFI INTERPRETER OBJECT', function () {
         it("can compare given character offset range CFI inputs: the ranges don't overlap, the first range is before", function () {
             var CFI1 = "epubcfi(/4/2,/1:0,/1:2)";
             var CFI2 = "epubcfi(/4/2,/1:2,/1:4)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
+        });
+
+        it("can compare given character offset range CFI inputs: the ranges don't overlap, the first range is ahead, the common component differs", function () {
+            var CFI1 = "epubcfi(/4/106,/1:6,/1:8)";
+            var CFI2 = "epubcfi(/4/62,/3:2,/3:4)";
+
+            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
+        });
+
+        it("can compare given character offset range CFI inputs: the ranges don't overlap, the first range is before, the common component differs", function () {
+            var CFI1 = "epubcfi(/4/62,/3:0,/3:2)";
+            var CFI2 = "epubcfi(/4/106,/1:2,/1:4)";
 
             expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
         });
