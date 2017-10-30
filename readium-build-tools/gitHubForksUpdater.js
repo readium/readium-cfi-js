@@ -154,6 +154,7 @@ var scanDeps = function(deps) {
 
     for (var depName in deps) {
         var depSource = deps[depName];
+        depSource = depSource.replace("github:", "");
 
         if (depSource.indexOf("/") == -1) continue;
 

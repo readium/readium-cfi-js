@@ -101,7 +101,7 @@ dependencies:
     "opener": 'latest'
 
     #"http-server": 'latest'
-    "http-server": 'danielweck/http-server'
+    "http-server": 'github:danielweck/http-server'
     # SEE: https://github.com/indexzero/http-server/issues/154
 
 
