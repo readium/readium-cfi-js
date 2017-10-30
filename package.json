@@ -47,7 +47,7 @@
   ],
   "dependencies": {
     "concurrently": "latest",
-    "http-server": "danielweck/http-server",
+    "http-server": "github:danielweck/http-server",
     "npm-run-all": "latest",
     "opener": "latest"
   },
