@@ -147,9 +147,9 @@ var obj = {
         return $targetNode;
     },
 
-    retrieveItemRefHref : function ($itemRefElement, $packageDocument) {
+    retrieveItemRefHref : function ($itemRefElement, packageDocument) {
 
-        return $("#" + $itemRefElement.attr("idref"), $packageDocument).attr("href");
+        return $("#" + $itemRefElement.attr("idref"), packageDocument).attr("href");
     },
 
     indexOutOfRange : function (targetIndex, numChildElements) {

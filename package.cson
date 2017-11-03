@@ -33,7 +33,7 @@
 
 name: "readium-cfi-js"
 
-version: "0.27.0"
+version: "0.28.0-alpha"
 
 engines:
     node: ">=4"
@@ -101,7 +101,7 @@ dependencies:
     "opener": 'latest'
 
     #"http-server": 'latest'
-    "http-server": 'danielweck/http-server'
+    "http-server": 'github:danielweck/http-server'
     # SEE: https://github.com/indexzero/http-server/issues/154
 
 
@@ -177,7 +177,7 @@ scripts:
 #=====================
     'prepare:local': '
 
-        npm outdated || echo outdated
+        (npm outdated || echo outdated)
         &&
         npm install --no-save --only=prod
         &&
@@ -198,7 +198,7 @@ scripts:
 #=====================
     'prepare:yarn:local': '
 
-        yarn outdated || echo outdated
+        (yarn outdated || echo outdated)
         &&
         yarn install
         &&
@@ -220,7 +220,7 @@ scripts:
 #=====================
     clean: '
 
-        yarn --version
+        (yarn --version || echo noyarn)
         &&
         node --version 
         &&
