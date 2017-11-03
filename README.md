@@ -4,6 +4,7 @@
 
 This is a software component used by other Readium projects, see https://github.com/readium/readium-shared-js
 
+
 ## License
 
 **BSD-3-Clause** ( http://opensource.org/licenses/BSD-3-Clause )
