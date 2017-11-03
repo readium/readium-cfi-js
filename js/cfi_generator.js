@@ -194,9 +194,7 @@ var obj = {
         this.validatePackageDocument(packageDocument, contentDocumentName);
 
         // Get the start node (itemref element) that references the content document
-        var $itemRefStartNode = $($(packageDocument.getElementsByTagNameNS('*', 'itemref')).toArray().find(function (node) {
-            return node.getAttribute('idref') === contentDocumentName;
-        }));
+        var $itemRefStartNode = $(this._findSpineItemNode(packageDocument, contentDocumentName));
 
         // Create the steps up to the top element of the package document (the "package" element)
         var packageDocCFIComponent = this.createCFIElementSteps($itemRefStartNode, "package", classBlacklist, elementBlacklist, idBlacklist);
@@ -276,9 +274,7 @@ var obj = {
             throw new Error("A package document must be supplied to generate a CFI");
         }
 
-        var spineItemNode = $(packageDocument.getElementsByTagNameNS('*', 'itemref')).toArray().find(function (node) {
-            return node.getAttribute('idref') === contentDocumentName;
-        });
+        var spineItemNode = this._findSpineItemNode(packageDocument, contentDocumentName);
 
         if (!spineItemNode) {
             throw new Error("The idref of the content document could not be found in the spine");
@@ -287,6 +283,17 @@ var obj = {
 
     _validNodeTypesFilter: function (node) {
         return node.nodeType === Node.TEXT_NODE || node.nodeType === Node.ELEMENT_NODE;
+    },
+
+    _findSpineItemNode: function (packageDocument, idref) {
+        var spineItemNode = null;
+        $(packageDocument.getElementsByTagNameNS('*', 'itemref')).each(function () {
+            if (this.getAttribute('idref') === idref) {
+                spineItemNode = this;
+                return false;
+            }
+        });
+        return spineItemNode;
     },
 
     _normalizeDomRange: function (domRange) {
