@@ -43,6 +43,7 @@ function(thiz){
     var configCustomTarget = undefined;
     var configOverrideTarget = undefined;
     process._RJS_isSingleBundle = false;
+    process._RJS_isNpmBundle = false;
 
     process._RJS_isUgly = true;
 
@@ -92,7 +93,10 @@ function(thiz){
             var configBundleType = parameter;
             configBundleType = configBundleType.substr(token.length);
             console.log(configBundleType);
-            process._RJS_isSingleBundle = (configBundleType === "single" ? true : false);
+            process._RJS_isSingleBundle = (configBundleType === "single" || configBundleType === "npm" ? true : false);
+            process._RJS_isNpmBundle = (configBundleType === "npm" ? true : false);
+
+            process._RJS__configTarget = (process._RJS_isNpmBundle ? "npm-bundle" : (process._RJS_isSingleBundle ? "single-bundle" : "multiple-bundles"));
         }
 
         token = "--rjs_configCustomTarget=";
@@ -252,11 +256,11 @@ function(thiz){
 
         if (!configOverrideTarget)
         {
-            mainConfigFile.push(pathPrefix + "RequireJS_config_" + (process._RJS_isSingleBundle ? "single-bundle" : "multiple-bundles") + ((i == N-1) && configCustomTarget ? configCustomTarget : "") + ".js");
+            mainConfigFile.push(pathPrefix + "RequireJS_config_" + process._RJS__configTarget + ((i == N-1) && configCustomTarget ? configCustomTarget : "") + ".js");
         }
         else if (i == N-1)
         {
-            mainConfigFile.push(pathPrefix + "RequireJS_config_" + (process._RJS_isSingleBundle ? "single-bundle" : "multiple-bundles") + configOverrideTarget + ".js");
+            mainConfigFile.push(pathPrefix + "RequireJS_config_" + process._RJS__configTarget + configOverrideTarget + ".js");
         }
 
         // if (!process._RJS_isSingleBundle)
@@ -353,7 +357,7 @@ function(thiz){
             + "/"
             + process._RJS_Path_RelCwd__ConfigDir
             + "/RequireJS_function_"
-            + (process._RJS_isSingleBundle ? "single-bundle" : "multiple-bundles")
+            + process._RJS__configTarget
             + "_complete.js";
 
         var fs = nodeRequire("fs");
