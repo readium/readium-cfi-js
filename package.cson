@@ -132,29 +132,6 @@ devDependencies:
     "karma-sauce-launcher": '^1.2.0'
 
 
-# Below dependencies are only used for building tasks (above are runtime deps):
-
-    "cson": '^4.1.0'
-
-    "rimraf": '^2.6.2'
-
-    "cpy-cli": '^1.0.1'
-    
-    "ncp": '^2.0.0'
-
-    "mkdirp": '^0.5.1'
-
-    "watch": '^1.0.2'
-
-    #"live-reload": 'latest'
-
-    # see readium-build-tools
-    # jshint_glob.js
-    "jshint": '^2.9.5'
-    "glob": '^7.1.2'
-
-    "yuidocjs": '^0.10.2'
-
 #####################################################################
 scripts:
 
