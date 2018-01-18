@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 describe('CFI INTERPRETER OBJECT', function () {
 
     var CFI;
@@ -11,7 +11,7 @@ describe('CFI INTERPRETER OBJECT', function () {
 
         // Generate CFI AST to reference a paragraph in the Moby Dick test features
         CFI = "epubcfi(/6/14!/4/2/14/1:4)";
-        CFIAST = EPUBcfi.Parser.parse(CFI);
+        CFIAST = EPUBcfi.parse(CFI);
 
         // Set up package document
         var domParser = new window.DOMParser();
@@ -32,7 +32,7 @@ describe('CFI INTERPRETER OBJECT', function () {
     it('can inject into text when supplied with a content document', function () {
 
         var expectedResult = 'c01p0006';
-        var $injectedElement = EPUBcfi.Interpreter.injectElement(CFI, contentDocument, "<span></span>");
+        var $injectedElement = EPUBcfi.injectElement(CFI, contentDocument, "<span></span>");
         expect($injectedElement.parent().attr("id")).toBe(expectedResult);
     });
 
@@ -53,7 +53,7 @@ describe('CFI INTERPRETER OBJECT', function () {
 
         var CFI = "epubcfi(/6/14!/4/2[startParent],/1:22,/1:27)";
 
-        var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
+        var rangeInfo = EPUBcfi.injectRangeElements(
             CFI, 
             $dom[0], 
             "<span id='start' class='cfi-marker'></span>", 
@@ -83,7 +83,7 @@ describe('CFI INTERPRETER OBJECT', function () {
 
         var CFI = "epubcfi(/6/14!/4/2[startParent],/1:57,/1:62)";
 
-        var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
+        var rangeInfo = EPUBcfi.injectRangeElements(
             CFI, 
             $dom[0], 
             "<span id='start' class='cfi-marker'></span>", 
@@ -114,7 +114,7 @@ describe('CFI INTERPRETER OBJECT', function () {
 
         var CFI = "epubcfi(/6/14!/4/2[startParent],/1:73,/1:78)";
 
-        var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
+        var rangeInfo = EPUBcfi.injectRangeElements(
             CFI, 
             $dom[0], 
             "<span id='start' class='cfi-marker'></span>", 
@@ -147,7 +147,7 @@ describe('CFI INTERPRETER OBJECT', function () {
 
         var CFI = "epubcfi(/6/14!/4/2[startParent],/1:6,/1:7)";
 
-        var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
+        var rangeInfo = EPUBcfi.injectRangeElements(
             CFI, 
             $dom[0], 
             "<span id='start' class='cfi-marker'></span>", 
@@ -163,17 +163,17 @@ describe('CFI INTERPRETER OBJECT', function () {
 
     it ('can inject a marker properly (dmitry)', function() {
         var $currNode = $('<div>0<div class="cfiMarker"></div>12345<div class="cfiMarker"></div>6789</div>');
-        var $targetTextNodeList = EPUBcfi.CFIInstructions.getNextNode(1, $currNode, ["cfiMarker"], []);
+        var $targetTextNodeList = EPUBcfi.followIndexStep(1, $currNode, ["cfiMarker"], []);
 
-        var injectedNode = EPUBcfi.CFIInstructions.injectCFIMarkerIntoText($targetTextNodeList, 6, "<span id='start' class='cfi-marker'></span>");
+        var injectedNode = EPUBcfi.injectCFIMarkerIntoText($targetTextNodeList, 6, "<span id='start' class='cfi-marker'></span>");
         expect(injectedNode.parent().contents()[5].nodeValue).toBe("6789");
     });
 
     it ('can inject a marker properly #2 (dmitry)', function() {
         var $currNode = $('<div>012<div class="cfiMarker"></div>34<div class="cfiMarker"></div>56789</div>');
-        var $targetTextNodeList = EPUBcfi.CFIInstructions.getNextNode(1, $currNode, ["cfiMarker"], []);
+        var $targetTextNodeList = EPUBcfi.followIndexStep(1, $currNode, ["cfiMarker"], []);
 
-        var injectedNode = EPUBcfi.CFIInstructions.injectCFIMarkerIntoText($targetTextNodeList, 6, "<span id='start' class='cfi-marker'></span>");
+        var injectedNode = EPUBcfi.injectCFIMarkerIntoText($targetTextNodeList, 6, "<span id='start' class='cfi-marker'></span>");
         expect(injectedNode.parent().contents()[4].nodeValue).toBe("5");
     });
 
@@ -198,7 +198,7 @@ describe('CFI INTERPRETER OBJECT', function () {
 
         var CFI = "epubcfi(/6/14!/4/2[start.Parent],/1:6,/1:8)";
 
-        var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
+        var rangeInfo = EPUBcfi.injectRangeElements(
             CFI, 
             $dom[0], 
             "<span id='start' class='cfi-marker'></span>", 
@@ -206,7 +206,8 @@ describe('CFI INTERPRETER OBJECT', function () {
             ["cfi-marker"]
             );
 
-        var result = $($($($dom.contents()).contents()[1]).contents()).contents()[5];
+        // Whitespace text-nodes and changing jquery implementation may break this
+        var result = $($($($dom.contents()).contents()[1]).contents()).contents()[6];
         expect(result.data).toEqual("67");
 
     });
@@ -233,7 +234,7 @@ describe('CFI INTERPRETER OBJECT', function () {
 
         var CFI = "epubcfi(/6/14!/4/2[startParent],/1:6,/1:8)";
 
-        var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
+        var rangeInfo = EPUBcfi.injectRangeElements(
             CFI, 
             $dom[0], 
             "<span id='start' class='cfi-marker'></span>", 
@@ -241,7 +242,8 @@ describe('CFI INTERPRETER OBJECT', function () {
             ["cfi-marker"]
             );
 
-        var result = $($($($dom.contents()).contents()[1]).contents()).contents()[5];
+        // Whitespace text-nodes and changing jquery implementation may break this
+        var result = $($($($dom.contents()).contents()[1]).contents()).contents()[6];
         expect(result.data).toEqual("67");
 
     });
@@ -252,7 +254,7 @@ describe('CFI INTERPRETER OBJECT', function () {
 
         var CFI = "epubcfi(/6/14!/4/2/14/1:4)";
         var textNode = 3;
-        var $result = EPUBcfi.Interpreter.getTargetElement(CFI, contentDocument);
+        var $result = EPUBcfi.getTargetElement(CFI, contentDocument);
         expect($result[0].nodeType).toEqual(textNode); 
     });
 
@@ -260,21 +262,21 @@ describe('CFI INTERPRETER OBJECT', function () {
 
         var CFI = "epubcfi(/6/14!/4/2/14)";
         var expectedResult = 'c01p0006';
-        var $result = EPUBcfi.Interpreter.getTargetElement(CFI, contentDocument);
+        var $result = EPUBcfi.getTargetElement(CFI, contentDocument);
         expect($result.attr("id")).toEqual(expectedResult); 
     });
 
     it('interprets an index step node without an id assertion', function () {
 
         var $expectedResult = $($('spine', $packageDocument)[0]);
-        var $result = EPUBcfi.Interpreter.interpretIndexStepNode(CFIAST.cfiString.path, $($packageDocument.children()[0]));
+        var $result = EPUBcfi.interpretIndexStepNode(CFIAST.cfiString.path, $($packageDocument.children()[0]));
 
         expect($result.children()[0]).toEqual($expectedResult.children()[0]);
     });
 
     it('injects an element for a text terminus with a text location assertion', function () {
 
-        var $injectedElement = EPUBcfi.Interpreter.interpretTextTerminusNode(
+        var $injectedElement = EPUBcfi.interpretTextTerminusNode(
             CFIAST.cfiString.localPath.termStep,
             $($("#c01p0002", $contentDocument)[0].firstChild),
             '<span class="cfi_marker"></span>');
@@ -293,7 +295,7 @@ describe('CFI INTERPRETER OBJECT', function () {
 
     it('returns the href of a content document for the first indirection step of a cfi', function () {
 
-        var result = EPUBcfi.Interpreter.getContentDocHref(CFI, $packageDocument[0]);
+        var result = EPUBcfi.getContentDocHref(CFI, $packageDocument[0]);
         expect(result).toBe("chapter_001.xhtml");
     });
 
@@ -302,21 +304,21 @@ describe('CFI INTERPRETER OBJECT', function () {
         it("can determine that a CFI is a range CFI or not", function(){
             var rangeCFI = "epubcfi(/6/14!/4,/2/14/1:4,/2/16/1:7)",
                 singleTextTerminusCfi = "epubcfi(/6/14!/4/2/14[c01p0006]/1:4)";
-            expect(EPUBcfi.Interpreter.isRangeCfi(rangeCFI)).toEqual(true);
-            expect(EPUBcfi.Interpreter.isRangeCfi(singleTextTerminusCfi)).toEqual(false);
+            expect(EPUBcfi.isRangeCfi(rangeCFI)).toEqual(true);
+            expect(EPUBcfi.isRangeCfi(singleTextTerminusCfi)).toEqual(false);
         });
 
         it("can determine that a CFI has a text terminus CFI or not", function(){
             var rangeCFI = "epubcfi(/6/14!/4,/2/14/1:4,/2/16/1:7)",
                 singleTextTerminusCfi = "epubcfi(/6/14!/4/2/14[c01p0006]/1:4)";
-            expect(EPUBcfi.Interpreter.hasTextTerminus(rangeCFI)).toEqual(false);
-            expect(EPUBcfi.Interpreter.hasTextTerminus(singleTextTerminusCfi)).toEqual(true);
+            expect(EPUBcfi.hasTextTerminus(rangeCFI)).toEqual(false);
+            expect(EPUBcfi.hasTextTerminus(singleTextTerminusCfi)).toEqual(true);
         });
 
         it("returns the href of a content document in the first local path", function () {
 
             var CFI = "epubcfi(/6/14!/4,/4/4,/4/6)";
-            var href = EPUBcfi.Interpreter.getContentDocHref(CFI, $packageDocument[0]);
+            var href = EPUBcfi.getContentDocHref(CFI, $packageDocument[0]);
             expect(href).toBe("chapter_001.xhtml");
         });
 
@@ -324,7 +326,7 @@ describe('CFI INTERPRETER OBJECT', function () {
 
             var CFI = "epubcfi(/6/14!/4,/2/14/1:4,/2/14/1:18)";
             var expectedResult = 'c01p0006';
-            var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
+            var rangeInfo = EPUBcfi.injectRangeElements(
                 CFI, 
                 contentDocument, 
                 "<span id='start' class='injected-element'></span>", 
@@ -342,7 +344,7 @@ describe('CFI INTERPRETER OBJECT', function () {
             var CFI = "epubcfi(/6/14!/4,/2/14/1:4,/2/16/1:7)";
             var targetElement1 = 'c01p0006';
             var targetElement2 = 'c01p0007';
-            var rangeInfo = EPUBcfi.Interpreter.injectRangeElements(
+            var rangeInfo = EPUBcfi.injectRangeElements(
                 CFI, 
                 contentDocument, 
                 "<span id='start' class='injected-element'></span>", 
@@ -358,7 +360,7 @@ describe('CFI INTERPRETER OBJECT', function () {
         it('can return target nodes when the target is the same text node', function () {
 
             var CFI = "epubcfi(/6/14!/4,/2/14/1:4,/2/14/1:7)";
-            var rangeInfo = EPUBcfi.Interpreter.getRangeTargetElements(
+            var rangeInfo = EPUBcfi.getRangeTargetElements(
                 CFI, 
                 contentDocument
                 );
@@ -374,7 +376,7 @@ describe('CFI INTERPRETER OBJECT', function () {
             var CFI = "epubcfi(/6/14!/4,/2/14,/2/14)";
             var targetElement1 = 'c01p0006';
             var targetElement2 = 'c01p0006';
-            var rangeInfo = EPUBcfi.Interpreter.getRangeTargetElements(
+            var rangeInfo = EPUBcfi.getRangeTargetElements(
                 CFI, 
                 contentDocument
                 );
@@ -387,7 +389,7 @@ describe('CFI INTERPRETER OBJECT', function () {
             var CFI = "epubcfi(/6/14!/4,/2/14/1:4,/2/16/1:7)";
             var targetElement1 = 'c01p0006';
             var targetElement2 = 'c01p0007';
-            var rangeInfo = EPUBcfi.Interpreter.getRangeTargetElements(
+            var rangeInfo = EPUBcfi.getRangeTargetElements(
                 CFI, 
                 contentDocument
                 );
@@ -403,7 +405,7 @@ describe('CFI INTERPRETER OBJECT', function () {
             var CFI = "epubcfi(/6/14!/4,/2/14,/2/16)";
             var targetElement1 = 'c01p0006';
             var targetElement2 = 'c01p0007';
-            var rangeInfo = EPUBcfi.Interpreter.getRangeTargetElements(
+            var rangeInfo = EPUBcfi.getRangeTargetElements(
                 CFI, 
                 contentDocument
                 );
@@ -422,7 +424,7 @@ describe('CFI INTERPRETER OBJECT', function () {
 
             var CFI = "epubcfi(/4/2/14)";
             var expectedResult = 'c01p0006';
-            var $result = EPUBcfi.Interpreter.getTargetElementWithPartialCFI(CFI, contentDocument);
+            var $result = EPUBcfi.getTargetElementWithPartialCFI(CFI, contentDocument);
             expect($result.attr("id")).toBe(expectedResult);
         });
 
@@ -431,7 +433,7 @@ describe('CFI INTERPRETER OBJECT', function () {
             var CFI = "epubcfi(/4/2/14/1:4)";
             var textNodeType = 3;
             var expectedTextOffset = 4;
-            var textTerminusInfo = EPUBcfi.Interpreter.getTextTerminusInfoWithPartialCFI(CFI, contentDocument);
+            var textTerminusInfo = EPUBcfi.getTextTerminusInfoWithPartialCFI(CFI, contentDocument);
             var textNode = textTerminusInfo.textNode;
             var textOffset = textTerminusInfo.textOffset;
 
@@ -450,63 +452,63 @@ describe('CFI INTERPRETER OBJECT', function () {
             var CFI1 = "epubcfi(/4/2/14)";
             var CFI2 = "epubcfi(/4/2/14)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([0, 0]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([0, 0]);
         });
 
         it('can compare a CFI with equal paths and terminus', function () {
             var CFI1 = "epubcfi(/4/2/14/1:123)";
             var CFI2 = "epubcfi(/4/2/14/1:123)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([0, 0]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([0, 0]);
         });
 
         it('can compare an equal CFI with a mix of assertions', function () {
             var CFI1 = "epubcfi(/4/2[id]/14[0]/2/1:123)";
             var CFI2 = "epubcfi(/4/2/14/2/1[abc123]:123[aaa,000;z=1])";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([0, 0]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([0, 0]);
         });
 
         it("can compare CFIs where the first CFI has a location that's further ahead", function () {
             var CFI1 = "epubcfi(/4/2/18/14/4/2/16)";
             var CFI2 = "epubcfi(/4/2/14)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
         });
 
         it("can compare CFIs where the first CFI has a location that's before the other", function () {
             var CFI1 = "epubcfi(/4/2/1:123)";
             var CFI2 = "epubcfi(/4/2/14)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
         });
 
         it("can compare CFIs where the CFIs have equal paths but the first has a terminus step that's further ahead", function () {
             var CFI1 = "epubcfi(/4/2/1:123)";
             var CFI2 = "epubcfi(/4/2/1:0)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
         });
 
         it("can compare CFIs where the CFIs have equal paths but the first has a terminus step that's before the other", function () {
             var CFI1 = "epubcfi(/4/2/1:123)";
             var CFI2 = "epubcfi(/4/2/1:456)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
         });
 
         it("can compare CFIs where the CFIs have equal paths but the second has an implied terminus step, therefore further ahead", function () {
             var CFI1 = "epubcfi(/4/2/1:456)";
             var CFI2 = "epubcfi(/4/2/1)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
         });
 
         it("can compare CFIs where the CFIs have equal paths but the first has an implied terminus step, therefore before the other", function () {
             var CFI1 = "epubcfi(/4/2/1)";
             var CFI2 = "epubcfi(/4/2/1:456)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
         });
 
 
@@ -514,84 +516,84 @@ describe('CFI INTERPRETER OBJECT', function () {
             var CFI1 = "epubcfi(/4/2,/2,/6)";
             var CFI2 = "epubcfi(/4/2,/2,/4)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([0, 1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([0, 1]);
         });
 
         it("can compare given range CFI inputs: equal start span, end span has the first path that's before", function () {
             var CFI1 = "epubcfi(/4/2,/2,/4)";
             var CFI2 = "epubcfi(/4/2,/2,/6)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([0, -1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([0, -1]);
         });
 
         it("can compare given range CFI inputs: start span has the first path that's after, equal end span", function () {
             var CFI1 = "epubcfi(/4/2,/6,/2)";
             var CFI2 = "epubcfi(/4/2,/4,/2)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 0]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([1, 0]);
         });
 
         it("can compare given range CFI inputs: start span has the first path that's before, equal end span", function () {
             var CFI1 = "epubcfi(/4/2,/4,/2)";
             var CFI2 = "epubcfi(/4/2,/6,/2)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, 0]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([-1, 0]);
         });
 
         it("can compare given range CFI inputs: start span has the first path that's after, end span has the first path that's after", function () {
             var CFI1 = "epubcfi(/4/2,/6,/16)";
             var CFI2 = "epubcfi(/4/2,/4,/14)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
         });
 
         it("can compare given range CFI inputs: start span has the first path that's before, end span has the first path that's before", function () {
             var CFI1 = "epubcfi(/4/2,/4,/14)";
             var CFI2 = "epubcfi(/4/2,/6,/16)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
         });
 
         it("can compare given range CFI inputs: start span has the first path that's after, end span has the first path that's before", function () {
             var CFI1 = "epubcfi(/4/2,/6,/14)";
             var CFI2 = "epubcfi(/4/2,/4,/16)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, -1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([1, -1]);
         });
 
         it("can compare given range CFI inputs: start span has the first path that's before, end span has the first path that's after", function () {
             var CFI1 = "epubcfi(/4/2,/4,/16)";
             var CFI2 = "epubcfi(/4/2,/6,/14)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, 1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([-1, 1]);
         });
 
         it("can compare given range CFI inputs: the ranges don't overlap, the first range is ahead", function () {
             var CFI1 = "epubcfi(/4/2,/6,/8)";
             var CFI2 = "epubcfi(/4/2,/2,/4)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
         });
 
         it("can compare given range CFI inputs: the ranges don't overlap, the first range is before", function () {
             var CFI1 = "epubcfi(/4/2,/2,/4)";
             var CFI2 = "epubcfi(/4/2,/4,/6)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
         });
 
         it("can compare given range CFI inputs: the ranges don't overlap, the first range is ahead, the common component differs", function () {
             var CFI1 = "epubcfi(/4/106,/6,/8)";
             var CFI2 = "epubcfi(/4/62,/2,/4)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
         });
 
         it("can compare given range CFI inputs: the ranges don't overlap, the first range is before, the common component differs", function () {
             var CFI1 = "epubcfi(/4/62,/2,/4)";
             var CFI2 = "epubcfi(/4/106,/4,/6)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
         });
 
 
@@ -599,84 +601,84 @@ describe('CFI INTERPRETER OBJECT', function () {
             var CFI1 = "epubcfi(/4/2,/1:2,/1:6)";
             var CFI2 = "epubcfi(/4/2,/1:2,/1:4)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([0, 1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([0, 1]);
         });
 
         it("can compare given character offset range CFI inputs: equal start span, end span has the first path that's before", function () {
             var CFI1 = "epubcfi(/4/2,/1:2,/1:4)";
             var CFI2 = "epubcfi(/4/2,/1:2,/1:6)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([0, -1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([0, -1]);
         });
 
         it("can compare given character offset range CFI inputs: start span has the first path that's after, equal end span", function () {
             var CFI1 = "epubcfi(/4/2,/1:6,/1:2)";
             var CFI2 = "epubcfi(/4/2,/1:4,/1:2)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 0]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([1, 0]);
         });
 
         it("can compare given character offset range CFI inputs: start span has the first path that's before, equal end span", function () {
             var CFI1 = "epubcfi(/4/2,/1:4,/1:2)";
             var CFI2 = "epubcfi(/4/2,/1:6,/1:2)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, 0]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([-1, 0]);
         });
 
         it("can compare given character offset range CFI inputs: start span has the first path that's after, end span has the first path that's after", function () {
             var CFI1 = "epubcfi(/4/2,/1:6,/1:16)";
             var CFI2 = "epubcfi(/4/2,/1:4,/1:14)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
         });
 
         it("can compare given character offset range CFI inputs: start span has the first path that's before, end span has the first path that's before", function () {
             var CFI1 = "epubcfi(/4/2,/1:4,/1:14)";
             var CFI2 = "epubcfi(/4/2,/1:6,/1:16)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
         });
 
         it("can compare given character offset range CFI inputs: start span has the first path that's after, end span has the first path that's before", function () {
             var CFI1 = "epubcfi(/4/2,/1:6,/1:14)";
             var CFI2 = "epubcfi(/4/2,/1:4,/1:16)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, -1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([1, -1]);
         });
 
         it("can compare given character offset range CFI inputs: start span has the first path that's before, end span has the first path that's after", function () {
             var CFI1 = "epubcfi(/4/2,/1:4,/1:16)";
             var CFI2 = "epubcfi(/4/2,/1:6,/1:14)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, 1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([-1, 1]);
         });
 
         it("can compare given character offset range CFI inputs: the ranges don't overlap, the first range is ahead", function () {
             var CFI1 = "epubcfi(/4/2,/1:6,/1:8)";
             var CFI2 = "epubcfi(/4/2,/1:2,/1:4)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
         });
 
         it("can compare given character offset range CFI inputs: the ranges don't overlap, the first range is before", function () {
             var CFI1 = "epubcfi(/4/2,/1:0,/1:2)";
             var CFI2 = "epubcfi(/4/2,/1:2,/1:4)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
         });
 
         it("can compare given character offset range CFI inputs: the ranges don't overlap, the first range is ahead, the common component differs", function () {
             var CFI1 = "epubcfi(/4/106,/1:6,/1:8)";
             var CFI2 = "epubcfi(/4/62,/3:2,/3:4)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([1, 1]);
         });
 
         it("can compare given character offset range CFI inputs: the ranges don't overlap, the first range is before, the common component differs", function () {
             var CFI1 = "epubcfi(/4/62,/3:0,/3:2)";
             var CFI2 = "epubcfi(/4/106,/1:2,/1:4)";
 
-            expect(EPUBcfi.Interpreter.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
+            expect(EPUBcfi.compareCFIs(CFI1, CFI2)).toEqual([-1, -1]);
         });
     });
 });
@@ -692,37 +694,37 @@ describe('CFI INTERPRETER ERROR HANDLING', function () {
         beforeEach(function () {
 
             // Generate CFI AST to reference a paragraph in the Moby Dick test features
-            CFIAST = EPUBcfi.Parser.parse("epubcfi(/6/14!/4/2/14/1:4)");
+            CFIAST = EPUBcfi.parse("epubcfi(/6/14!/4/2/14/1:4)");
         });
 
         it('detects an index step "node type" error', function () {
 
             expect(function () {
-                EPUBcfi.Interpreter.interpretIndexStepNode(undefined, undefined)}
+                EPUBcfi.interpretIndexStepNode(undefined, undefined)}
             ).toThrow(
-                EPUBcfi.NodeTypeError(undefined, "expected index step node")
+                new EPUBcfi.NodeTypeError(undefined, "expected index step node")
                 );
         });
 
         it('detects an indirection step "node type" error', function () {
 
             expect(function () {
-                EPUBcfi.Interpreter.interpretIndirectionStepNode(
+                EPUBcfi.interpretIndirectionStepNode(
                     undefined, 
                     $('<itemref linear="yes" idref="xchapter_001"/>'))}
             ).toThrow(
-                EPUBcfi.NodeTypeError(undefined, "expected indirection step node")
+                new EPUBcfi.NodeTypeError(undefined, "expected indirection step node")
                 );
         });
 
         it('detects a text terminus "node type" error', function () {
 
             expect(function () {
-                EPUBcfi.Interpreter.interpretTextTerminusNode(
+                EPUBcfi.interpretTextTerminusNode(
                 undefined,
                 undefined)}
             ).toThrow(
-                EPUBcfi.NodeTypeError(undefined, "expected text terminus node")
+                new EPUBcfi.NodeTypeError(undefined, "expected text terminus node")
                 );
         });
     });
@@ -753,24 +755,24 @@ describe('ERROR HANDLING FOR ID AND TEXT ASSERTIONS', function () {
         it('detects a mis-match between an id assertion and a target element id, for an index step', function () {
 
             // Generate CFI AST to reference a paragraph in the Moby Dick test features
-            CFIAST = EPUBcfi.Parser.parse("epubcfi(/6/14!/4/2/14[c01p0002]/1:4)");
+            CFIAST = EPUBcfi.parse("epubcfi(/6/14!/4/2/14[c01p0002]/1:4)");
 
             expect(function () {
-                EPUBcfi.Interpreter.interpretIndexStepNode(
+                EPUBcfi.interpretIndexStepNode(
                 CFIAST.cfiString.localPath.steps[3],
                 $("section", $contentDocument))}
             ).toThrow(
-                EPUBcfi.CFIAssertionError("c01p0002", "c01p0006", "Id assertion failed")
+                new EPUBcfi.CFIAssertionError("c01p0002", "c01p0006", "Id assertion failed")
                 );
         });
 
         it('does not throw an error when the id assertion matches the target element id, for an index step', function () {
 
             // Generate CFI AST to reference a paragraph in the Moby Dick test features
-            CFIAST = EPUBcfi.Parser.parse("epubcfi(/6/14!/4/2/14[c01p0006]/1:4)");
+            CFIAST = EPUBcfi.parse("epubcfi(/6/14!/4/2/14[c01p0006]/1:4)");
 
             // Expecting that no error is thrown; if one is, it'll cause this test to fail
-            EPUBcfi.Interpreter.interpretIndexStepNode(
+            EPUBcfi.interpretIndexStepNode(
                 CFIAST.cfiString.localPath.steps[3],
                 $("section", $contentDocument));
         });
@@ -778,36 +780,36 @@ describe('ERROR HANDLING FOR ID AND TEXT ASSERTIONS', function () {
         it('detects a mis-match between an id assertion and a target element id, for an indirection step', function () {
 
             // Generate CFI AST to reference a paragraph in the Moby Dick test features
-            CFIAST = EPUBcfi.Parser.parse("epubcfi(/6/14!/4[body2]/2/14[c01p0006]/1:4)");
+            CFIAST = EPUBcfi.parse("epubcfi(/6/14!/4[body2]/2/14[c01p0006]/1:4)");
 
             // Faking the follow indirection step, it'll return an element with an id that doesn't match the assertion
-            spyOn(EPUBcfi.CFIInstructions, "followIndirectionStep").and.callFake(function (params) {
+            spyOn(EPUBcfi, "followIndirectionStep").and.callFake(function (params) {
 
                 return $('<body></body>').attr("id", "body1");
             });
 
             expect(function () {
-                EPUBcfi.Interpreter.interpretIndirectionStepNode(
+                EPUBcfi.interpretIndirectionStepNode(
                 CFIAST.cfiString.localPath.steps[1],
                 undefined)}
             ).toThrow(
-                EPUBcfi.CFIAssertionError("body2", "body1", "Id assertion failed")
+                new EPUBcfi.CFIAssertionError("body2", "body1", "Id assertion failed")
                 );
         });
 
         it('does not throw an error when the id assertion matches the target element id, for an indirection step', function () {
 
             // Generate CFI AST to reference a paragraph in the Moby Dick test features
-            CFIAST = EPUBcfi.Parser.parse("epubcfi(/6/14!/4[body1]/2/14[c01p0002]/1:4)");
+            CFIAST = EPUBcfi.parse("epubcfi(/6/14!/4[body1]/2/14[c01p0002]/1:4)");
 
             // Faking the follow indirection step, it'll return an element with an id that matches the assertion
-            spyOn(EPUBcfi.CFIInstructions, "followIndirectionStep").and.callFake(function (params) {
+            spyOn(EPUBcfi, "followIndirectionStep").and.callFake(function (params) {
 
                 return $('<body></body>').attr("id", "body1");
             });
 
             // Expecting that no error is thrown; if one is, it'll cause this test to fail
-            EPUBcfi.Interpreter.interpretIndirectionStepNode(
+            EPUBcfi.interpretIndirectionStepNode(
                 CFIAST.cfiString.localPath.steps[1],
                 undefined);
         });

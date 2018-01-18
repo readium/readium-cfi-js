@@ -11,9 +11,11 @@
 //  used to endorse or promote products derived from this software without specific
 //  prior written permission.
 
-export * from './instructions';
-export * from './interpreter';
-export * from './generator';
-export * from './parser';
-export * from './errors';
-export * from './util';
+import generatedParser from '../gen/parser';
+
+const {
+  SyntaxError,
+  parse,
+} = generatedParser;
+
+export { SyntaxError, parse };
