@@ -7,8 +7,17 @@ const pkg = require('./package.json');
 export default {
   input: 'src/index.js',
   output: [
-    { file: pkg.main, format: 'umd', name: 'EPUBcfi' },
-    { file: pkg.module, format: 'es' },
+    {
+      file: pkg.main,
+      format: 'umd',
+      name: 'EPUBcfi',
+      sourcemap: true,
+    },
+    {
+      file: pkg.module,
+      format: 'es',
+      sourcemap: true,
+    },
   ],
   plugins: [
     resolve(),
