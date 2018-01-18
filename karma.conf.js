@@ -13,8 +13,9 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      '../dist/readium-cfi.umd.js',
-      '../node_modules/jquery/dist/jquery.js',
+      'dist/readium-cfi.umd.js',
+      'node_modules/jquery/dist/jquery.js',
+      {pattern: 'dist/readium-cfi.umd.js.map', included: false, served: true},
       {pattern: 'spec/fixtures/*.*', included: false, served: true},
 
       'spec/helpers/*.js',
