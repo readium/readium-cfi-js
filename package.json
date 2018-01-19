@@ -69,7 +69,6 @@
   },
   "scripts": {
     "clean": "rimraf dist/* && rimraf api-docs/* && rimraf gen/*",
-    "apidocs": "node ./node_modules/yuidocjs/lib/cli.js -N -C -c yuidocs.json",
     "prebuild": "npm run clean && pegjs -o gen/parser.js src/parser.pegjs",
     "build": "rollup -c",
     "lint": "eslint src/**/*.js",
