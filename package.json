@@ -72,7 +72,10 @@
     "prebuild": "npm run clean && pegjs -o gen/parser.js src/parser.pegjs",
     "build": "rollup -c",
     "lint": "eslint src/**/*.js",
+    "pretest": "npm run build",
     "test": "karma start karma.conf.js --singleRun --no-auto-watch",
+    "test:watch": "karma start karma.conf.js --auto-watch --browsers ChromeHeadless",
+    "test:debug": "karma start karma.conf.js --no-auto-watch",
     "test:travis": "karma start karma.travis.conf.js --singleRun --no-auto-watch",
     "test:travis:firefox": "npm run test:travis --readium-cfi-js:MODE=firefox",
     "test:travis:chrome": "npm run test:travis --readium-cfi-js:MODE=chrome"

@@ -234,6 +234,10 @@ export function followIndexStep(
   return $targetNode;
 }
 
+// Rationale: Compatibility.
+//   `followIndexStep` used to be named `getNextNode`
+export { followIndexStep as getNextNode };
+
 // Description: This instruction executes an indirection step, where a resource is retrieved using a
 //   link contained on a attribute of the target element.
 //   The attribute that contains the link differs depending on the target.
@@ -314,3 +318,7 @@ export function textTermination($currNode, textOffset, elementToInject) {
 export function targetIdMatchesIdAssertion($foundNode, idAssertion) {
   return $foundNode.attr('id') === idAssertion;
 }
+
+// Rationale: Compatibility.
+//   `applyBlacklist` used to be exported by this module
+export { applyBlacklist };

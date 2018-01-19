@@ -67,6 +67,129 @@ function getFirstIndirectionStepNum(CFIAST) {
   return undefined;
 }
 
+function searchLocalPathForHref(
+  $currElement,
+  packageDocument,
+  localPathNode,
+  classBlacklist,
+  elementBlacklist,
+  idBlacklist,
+) {
+  // Interpret the first local_path node, which is a set of steps and and a terminus condition
+  let nextStepNode;
+  let $foundElement;
+  for (let stepNum = 0; stepNum <= localPathNode.steps.length - 1; stepNum += 1) {
+    nextStepNode = localPathNode.steps[stepNum];
+    if (nextStepNode.type === 'indexStep') {
+      $foundElement = interpretIndexStepNode(
+        nextStepNode,
+        $currElement,
+        classBlacklist,
+        elementBlacklist,
+        idBlacklist,
+      );
+    } else if (nextStepNode.type === 'indirectionStep') {
+      $foundElement = interpretIndirectionStepNode(
+        nextStepNode,
+        $currElement,
+        classBlacklist,
+        elementBlacklist,
+        idBlacklist,
+      );
+    }
+    const [foundElement] = $foundElement;
+    // Found the content document href referenced by the spine item
+    if (matchesLocalNameOrElement(foundElement, 'itemref')) {
+      return retrieveItemRefHref(foundElement, packageDocument);
+    }
+  }
+
+  return undefined;
+}
+
+function splitRangeCFIAST(CFIAST, firstRange) {
+  const outCFIAST = $.extend(true, {}, CFIAST);
+  const targetRange = firstRange ? CFIAST.cfiString.range1 : CFIAST.cfiString.range2;
+
+  delete outCFIAST.cfiString.range1;
+  delete outCFIAST.cfiString.range2;
+  outCFIAST.cfiString.type = 'path';
+
+  outCFIAST.cfiString.localPath.steps =
+    outCFIAST.cfiString.localPath.steps.concat(targetRange.steps);
+
+  outCFIAST.cfiString.localPath.termStep = targetRange.termStep;
+
+  return outCFIAST;
+}
+
+function decomposeCFI(CFI) {
+  const decodedCFI = decodeURI(CFI);
+  const CFIAST = parseCFI(decodedCFI);
+
+  if (!CFIAST || CFIAST.type !== 'CFIAST') {
+    throw new NodeTypeError(CFIAST, 'expected CFI AST root node');
+  }
+
+  const decomposedASTs = [];
+  if (CFIAST.cfiString.type === 'range') {
+    decomposedASTs.push(splitRangeCFIAST(CFIAST, true));
+    decomposedASTs.push(splitRangeCFIAST(CFIAST, false));
+  } else {
+    decomposedASTs.push(CFIAST);
+  }
+
+  return decomposedASTs;
+}
+
+function concatStepsFromCFIAST(CFIAST) {
+  return CFIAST.cfiString.localPath.steps.map(o => parseInt(o.stepLength, 10));
+}
+
+function compareCFIASTs(CFIAST1, CFIAST2) {
+  let result = null;
+  let index = 0;
+  const steps1 = concatStepsFromCFIAST(CFIAST1);
+  const steps2 = concatStepsFromCFIAST(CFIAST2);
+  const term1 = CFIAST1.cfiString.localPath.termStep;
+  const term2 = CFIAST2.cfiString.localPath.termStep;
+
+  for (; ;) {
+    const L = steps1[index];
+    const R = steps2[index];
+    if (!L || !R) {
+      if (result === 0 && (term1.offsetValue || term2.offsetValue)) {
+        const tL = parseInt(term1.offsetValue, 10) || 0;
+        const tR = parseInt(term2.offsetValue, 10) || 0;
+        if (tL > tR) {
+          result = 1;
+        } else if (tL < tR) {
+          result = -1;
+        } else {
+          result = 0;
+        }
+      }
+      break;
+    }
+    if (L > R) {
+      result = 1;
+      break;
+    } else if (L < R) {
+      result = -1;
+      break;
+    } else {
+      result = 0;
+    }
+    index += 1;
+  }
+
+  return result;
+}
+
+// ------------------------------------------------------------------------------------ //
+//  "PUBLIC" METHODS (THE API)                                                          //
+// ------------------------------------------------------------------------------------ //
+
 export function interpretIndexStepNode(
   indexStepNode,
   $currElement,
@@ -191,129 +314,6 @@ export function interpretTextTerminusNode(terminusNode, $currElement, elementToI
     elementToInject,
   );
 }
-
-function searchLocalPathForHref(
-  $currElement,
-  packageDocument,
-  localPathNode,
-  classBlacklist,
-  elementBlacklist,
-  idBlacklist,
-) {
-  // Interpret the first local_path node, which is a set of steps and and a terminus condition
-  let nextStepNode;
-  let $foundElement;
-  for (let stepNum = 0; stepNum <= localPathNode.steps.length - 1; stepNum += 1) {
-    nextStepNode = localPathNode.steps[stepNum];
-    if (nextStepNode.type === 'indexStep') {
-      $foundElement = interpretIndexStepNode(
-        nextStepNode,
-        $currElement,
-        classBlacklist,
-        elementBlacklist,
-        idBlacklist,
-      );
-    } else if (nextStepNode.type === 'indirectionStep') {
-      $foundElement = interpretIndirectionStepNode(
-        nextStepNode,
-        $currElement,
-        classBlacklist,
-        elementBlacklist,
-        idBlacklist,
-      );
-    }
-    const [foundElement] = $foundElement;
-    // Found the content document href referenced by the spine item
-    if (matchesLocalNameOrElement(foundElement, 'itemref')) {
-      return retrieveItemRefHref(foundElement, packageDocument);
-    }
-  }
-
-  return undefined;
-}
-
-function splitRangeCFIAST(CFIAST, firstRange) {
-  const outCFIAST = $.extend(true, {}, CFIAST);
-  const targetRange = firstRange ? CFIAST.cfiString.range1 : CFIAST.cfiString.range2;
-
-  delete outCFIAST.cfiString.range1;
-  delete outCFIAST.cfiString.range2;
-  outCFIAST.cfiString.type = 'path';
-
-  outCFIAST.cfiString.localPath.steps =
-    outCFIAST.cfiString.localPath.steps.concat(targetRange.steps);
-
-  outCFIAST.cfiString.localPath.termStep = targetRange.termStep;
-
-  return outCFIAST;
-}
-
-function decomposeCFI(CFI) {
-  const decodedCFI = decodeURI(CFI);
-  const CFIAST = parseCFI(decodedCFI);
-
-  if (!CFIAST || CFIAST.type !== 'CFIAST') {
-    throw new NodeTypeError(CFIAST, 'expected CFI AST root node');
-  }
-
-  const decomposedASTs = [];
-  if (CFIAST.cfiString.type === 'range') {
-    decomposedASTs.push(splitRangeCFIAST(CFIAST, true));
-    decomposedASTs.push(splitRangeCFIAST(CFIAST, false));
-  } else {
-    decomposedASTs.push(CFIAST);
-  }
-
-  return decomposedASTs;
-}
-
-function concatStepsFromCFIAST(CFIAST) {
-  return CFIAST.cfiString.localPath.steps.map(o => parseInt(o.stepLength, 10));
-}
-
-function compareCFIASTs(CFIAST1, CFIAST2) {
-  let result = null;
-  let index = 0;
-  const steps1 = concatStepsFromCFIAST(CFIAST1);
-  const steps2 = concatStepsFromCFIAST(CFIAST2);
-  const term1 = CFIAST1.cfiString.localPath.termStep;
-  const term2 = CFIAST2.cfiString.localPath.termStep;
-
-  for (; ;) {
-    const L = steps1[index];
-    const R = steps2[index];
-    if (!L || !R) {
-      if (result === 0 && (term1.offsetValue || term2.offsetValue)) {
-        const tL = parseInt(term1.offsetValue, 10) || 0;
-        const tR = parseInt(term2.offsetValue, 10) || 0;
-        if (tL > tR) {
-          result = 1;
-        } else if (tL < tR) {
-          result = -1;
-        } else {
-          result = 0;
-        }
-      }
-      break;
-    }
-    if (L > R) {
-      result = 1;
-      break;
-    } else if (L < R) {
-      result = -1;
-      break;
-    } else {
-      result = 0;
-    }
-    index += 1;
-  }
-
-  return result;
-}
-
-// ------------------------------------------------------------------------------------ //
-//  "PUBLIC" METHODS (THE API)                                                          //
-// ------------------------------------------------------------------------------------ //
 
 // Description: Find the content document referenced by the spine item.
 //   This should be the spine item referenced by the first indirection step in the CFI.

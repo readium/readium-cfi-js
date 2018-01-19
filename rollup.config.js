@@ -4,8 +4,35 @@ import babel from 'rollup-plugin-babel';
 
 const pkg = require('./package.json');
 
-export default {
+const plugins = [
+  resolve(),
+  babel({
+    exclude: 'node_modules/**', // only transpile our source code
+  }),
+  commonjs({
+    // non-CommonJS modules will be ignored, but you can also
+    // specifically include/exclude files
+    include: ['node_modules/**', 'gen/parser.js'], // Default: undefined
+
+    // if false then skip sourceMap generation for CommonJS modules
+    sourceMap: false, // Default: true
+  }),
+];
+
+const standardConfig = {
   input: 'src/index.js',
+  output: [
+    {
+      file: pkg.module,
+      format: 'es',
+      sourcemap: true,
+    },
+  ],
+  plugins,
+};
+
+const compatibilityConfig = {
+  input: 'src/index-compat.js',
   output: [
     {
       file: pkg.main,
@@ -13,24 +40,8 @@ export default {
       name: 'EPUBcfi',
       sourcemap: true,
     },
-    {
-      file: pkg.module,
-      format: 'es',
-      sourcemap: true,
-    },
   ],
-  plugins: [
-    resolve(),
-    babel({
-      exclude: 'node_modules/**', // only transpile our source code
-    }),
-    commonjs({
-      // non-CommonJS modules will be ignored, but you can also
-      // specifically include/exclude files
-      include: ['node_modules/**', 'gen/parser.js'], // Default: undefined
-
-      // if false then skip sourceMap generation for CommonJS modules
-      sourceMap: false, // Default: true
-    }),
-  ],
+  plugins,
 };
+
+export default [standardConfig, compatibilityConfig];
