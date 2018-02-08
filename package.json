@@ -70,6 +70,7 @@
     "clean": "rimraf dist/* && rimraf api-docs/* && rimraf gen/*",
     "prebuild": "npm run clean && pegjs -o gen/parser.js src/parser.pegjs",
     "build": "rollup -c",
+    "watch": "npm run build -- --watch",
     "lint": "eslint src/**/*.js",
     "pretest": "npm run build",
     "test": "karma start karma.conf.js --singleRun --no-auto-watch",
