@@ -49,6 +49,9 @@ import {
 //   DOM node property and the two are unrelated.
 //   Whoops. There shouldn't be any interference, however, I think this should be changed.
 
+// ------------------------------------------------------------------------------------ //
+//  "PUBLIC" METHODS (THE API) are exported using the `export` keyword                  //
+// ------------------------------------------------------------------------------------ //
 
 function getFirstIndirectionStepNum(CFIAST) {
   // Find the first indirection step in the local path; follow it like a regular step,
@@ -142,10 +145,6 @@ function compareCFIASTs(CFIAST1, CFIAST2) {
 
   return result;
 }
-
-// ------------------------------------------------------------------------------------ //
-//  "PUBLIC" METHODS (THE API)                                                          //
-// ------------------------------------------------------------------------------------ //
 
 export function interpretIndexStepNode(
   indexStepNode,

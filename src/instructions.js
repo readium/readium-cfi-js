@@ -23,7 +23,7 @@ import { applyBlacklist, matchesLocalNameOrElement } from './util';
 //   executable instructions in the AST.
 
 // ------------------------------------------------------------------------------------ //
-//  "PRIVATE" HELPERS                                                                   //
+//  "PUBLIC" METHODS (THE API) are exported using the `export` keyword                  //
 // ------------------------------------------------------------------------------------ //
 
 function indexOutOfRange(targetIndex, numChildElements) {
@@ -193,10 +193,6 @@ function inferTargetTextNode(
   // return the text node list
   return $targetTextNodeList;
 }
-
-// ------------------------------------------------------------------------------------ //
-//  "PUBLIC" METHODS (THE API)                                                          //
-// ------------------------------------------------------------------------------------ //
 
 // Description: Follows a step
 // Rationale: The use of children() is important here
