@@ -16,7 +16,7 @@ import { NodeTypeError, OutOfRangeError } from './errors';
 import { applyBlacklist, matchesLocalNameOrElement } from './util';
 
 // ------------------------------------------------------------------------------------ //
-//  "PRIVATE" HELPERS                                                                   //
+//  "PUBLIC" METHODS (THE API) are exported using the `export` keyword                  //
 // ------------------------------------------------------------------------------------ //
 
 function validateStartTextNode(startTextNode, characterOffset) {
@@ -133,10 +133,6 @@ function normalizeDomRange(domRange) {
     }
   }
 }
-
-// ------------------------------------------------------------------------------------ //
-//  "PUBLIC" METHODS (THE API)                                                          //
-// ------------------------------------------------------------------------------------ //
 
 // Description: Creates a CFI terminating step to a text node, with a character offset
 // REFACTORING CANDIDATE: Some of the parts of this method

@@ -49,9 +49,6 @@ import {
 //   DOM node property and the two are unrelated.
 //   Whoops. There shouldn't be any interference, however, I think this should be changed.
 
-// ------------------------------------------------------------------------------------ //
-//  "PRIVATE" HELPERS                                                                   //
-// ------------------------------------------------------------------------------------ //
 
 function getFirstIndirectionStepNum(CFIAST) {
   // Find the first indirection step in the local path; follow it like a regular step,
@@ -61,46 +58,6 @@ function getFirstIndirectionStepNum(CFIAST) {
     const nextStepNode = CFIAST.cfiString.localPath.steps[stepNum];
     if (nextStepNode.type === 'indirectionStep') {
       return stepNum;
-    }
-  }
-
-  return undefined;
-}
-
-function searchLocalPathForHref(
-  $currElement,
-  packageDocument,
-  localPathNode,
-  classBlacklist,
-  elementBlacklist,
-  idBlacklist,
-) {
-  // Interpret the first local_path node, which is a set of steps and and a terminus condition
-  let nextStepNode;
-  let $foundElement;
-  for (let stepNum = 0; stepNum <= localPathNode.steps.length - 1; stepNum += 1) {
-    nextStepNode = localPathNode.steps[stepNum];
-    if (nextStepNode.type === 'indexStep') {
-      $foundElement = interpretIndexStepNode(
-        nextStepNode,
-        $currElement,
-        classBlacklist,
-        elementBlacklist,
-        idBlacklist,
-      );
-    } else if (nextStepNode.type === 'indirectionStep') {
-      $foundElement = interpretIndirectionStepNode(
-        nextStepNode,
-        $currElement,
-        classBlacklist,
-        elementBlacklist,
-        idBlacklist,
-      );
-    }
-    const [foundElement] = $foundElement;
-    // Found the content document href referenced by the spine item
-    if (matchesLocalNameOrElement(foundElement, 'itemref')) {
-      return retrieveItemRefHref(foundElement, packageDocument);
     }
   }
 
@@ -258,6 +215,46 @@ export function interpretIndirectionStepNode(
   }
 
   return $stepTarget;
+}
+
+function searchLocalPathForHref(
+  $currElement,
+  packageDocument,
+  localPathNode,
+  classBlacklist,
+  elementBlacklist,
+  idBlacklist,
+) {
+  // Interpret the first local_path node, which is a set of steps and and a terminus condition
+  let nextStepNode;
+  let $foundElement;
+  for (let stepNum = 0; stepNum <= localPathNode.steps.length - 1; stepNum += 1) {
+    nextStepNode = localPathNode.steps[stepNum];
+    if (nextStepNode.type === 'indexStep') {
+      $foundElement = interpretIndexStepNode(
+        nextStepNode,
+        $currElement,
+        classBlacklist,
+        elementBlacklist,
+        idBlacklist,
+      );
+    } else if (nextStepNode.type === 'indirectionStep') {
+      $foundElement = interpretIndirectionStepNode(
+        nextStepNode,
+        $currElement,
+        classBlacklist,
+        elementBlacklist,
+        idBlacklist,
+      );
+    }
+    const [foundElement] = $foundElement;
+    // Found the content document href referenced by the spine item
+    if (matchesLocalNameOrElement(foundElement, 'itemref')) {
+      return retrieveItemRefHref(foundElement, packageDocument);
+    }
+  }
+
+  return undefined;
 }
 
 // REFACTORING CANDIDATE: cfiString node and start step num could be merged into one argument,
