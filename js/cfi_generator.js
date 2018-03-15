@@ -66,6 +66,7 @@ var obj = {
     },
 
     generateDocumentRangeComponent : function (domRange, classBlacklist, elementBlacklist, idBlacklist) {
+        this._normalizeDomRange(domRange);
 
         var rangeStartElement = domRange.startContainer;
         var startOffset = domRange.startOffset;
@@ -193,10 +194,10 @@ var obj = {
         this.validatePackageDocument(packageDocument, contentDocumentName);
 
         // Get the start node (itemref element) that references the content document
-        $itemRefStartNode = $(packageDocument.querySelector('itemref[idref="' + contentDocumentName + '"]'));
+        var $itemRefStartNode = $(this._findSpineItemNode(packageDocument, contentDocumentName));
 
         // Create the steps up to the top element of the package document (the "package" element)
-        packageDocCFIComponent = this.createCFIElementSteps($itemRefStartNode, "package", classBlacklist, elementBlacklist, idBlacklist);
+        var packageDocCFIComponent = this.createCFIElementSteps($itemRefStartNode, "package", classBlacklist, elementBlacklist, idBlacklist);
 
         // Append an !; this assumes that a CFI content document CFI component will be appended at some point
         return packageDocCFIComponent + "!";
@@ -205,10 +206,11 @@ var obj = {
     generatePackageDocumentCFIComponentWithSpineIndex : function (spineIndex, packageDocument, classBlacklist, elementBlacklist, idBlacklist) {
 
         // Get the start node (itemref element) that references the content document
-        $itemRefStartNode = $($("spine", packageDocument).children()[spineIndex]);
+        var spineItemNode = packageDocument.getElementsByTagNameNS('*', 'spine');
+        var $itemRefStartNode = $($(spineItemNode).children()[spineIndex]);
 
         // Create the steps up to the top element of the package document (the "package" element)
-        packageDocCFIComponent = this.createCFIElementSteps($itemRefStartNode, "package", classBlacklist, elementBlacklist, idBlacklist);
+        var packageDocCFIComponent = this.createCFIElementSteps($itemRefStartNode, "package", classBlacklist, elementBlacklist, idBlacklist);
 
         // Append an !; this assumes that a CFI content document CFI component will be appended at some point
         return packageDocCFIComponent + "!";
@@ -271,9 +273,62 @@ var obj = {
         if (!packageDocument) {
             throw new Error("A package document must be supplied to generate a CFI");
         }
-      
-        if (!packageDocument.querySelector('itemref[idref="' + contentDocumentName + '"]')) {
+
+        var spineItemNode = this._findSpineItemNode(packageDocument, contentDocumentName);
+
+        if (!spineItemNode) {
             throw new Error("The idref of the content document could not be found in the spine");
+        }
+    },
+
+    _validNodeTypesFilter: function (node) {
+        return node.nodeType === Node.TEXT_NODE || node.nodeType === Node.ELEMENT_NODE;
+    },
+
+    _findSpineItemNode: function (packageDocument, idref) {
+        var spineItemNode = null;
+        $(packageDocument.getElementsByTagNameNS('*', 'itemref')).each(function () {
+            if (this.getAttribute('idref') === idref) {
+                spineItemNode = this;
+                return false;
+            }
+        });
+        return spineItemNode;
+    },
+
+    _normalizeDomRange: function (domRange) {
+        var rangeStartNode = domRange.startContainer;
+        var rangeEndNode = domRange.endContainer;
+        var commonAncestorNode = domRange.commonAncestorContainer;
+
+        if (commonAncestorNode.nodeType !== Node.ELEMENT_NODE) {
+            // No need for normalization on ranges where the ancestor is not an element
+            return;
+        }
+
+        if (rangeStartNode.nodeType !== Node.TEXT_NODE && rangeEndNode.nodeType !== Node.TEXT_NODE) {
+            // and one of the start/end nodes must be a text node
+            return;
+        }
+
+        if (rangeStartNode === commonAncestorNode) {
+            var firstChildNode = _.first(_.filter(rangeStartNode.childNodes, this._validNodeTypesFilter));
+            if (firstChildNode) {
+                domRange.setStart(firstChildNode, 0);
+            }
+        }
+
+        if (rangeEndNode === commonAncestorNode) {
+            var lastChildNode = _.last(_.filter(rangeEndNode.childNodes, this._validNodeTypesFilter));
+            if (lastChildNode) {
+                if (lastChildNode.length) {
+                    domRange.setEnd(lastChildNode, lastChildNode.length);
+                } else if (lastChildNode.hasChildNodes()) {
+                    domRange.setEnd(lastChildNode, lastChildNode.childNodes.length);
+                } else {
+                    domRange.setEnd(lastChildNode, 1);
+                }
+            }
         }
     },
 
@@ -382,20 +437,18 @@ var obj = {
     createCFIElementSteps : function ($currNode, topLevelElement, classBlacklist, elementBlacklist, idBlacklist) {
 
         var $blacklistExcluded;
+        var $parentNode;
         var currNodePosition;
         var CFIPosition;
         var idAssertion;
         var elementStep;
 
-        var $parentNode = $currNode.parent();
-        var currNode = $currNode[0];
-
         // Find position of current node in parent list
-        $blacklistExcluded = cfiInstructions.applyBlacklist($parentNode.children(), classBlacklist, elementBlacklist, idBlacklist);
+        $blacklistExcluded = cfiInstructions.applyBlacklist($currNode.parent().children(), classBlacklist, elementBlacklist, idBlacklist);
         $.each($blacklistExcluded, 
             function (index, value) {
 
-                if (this === currNode) {
+                if (this === $currNode[0]) {
 
                     currNodePosition = index;
 
@@ -408,9 +461,8 @@ var obj = {
         CFIPosition = (currNodePosition + 1) * 2;
 
         // Create CFI step with id assertion, if the element has an id
-        var nodeId = currNode.getAttribute('id');
-        if (nodeId) {
-            elementStep = "/" + CFIPosition + "[" + nodeId + "]";
+        if ($currNode.attr("id")) {
+            elementStep = "/" + CFIPosition + "[" + $currNode.attr("id") + "]";
         }
         else {
             elementStep = "/" + CFIPosition;
@@ -419,11 +471,12 @@ var obj = {
         // If a parent is an html element return the (last) step for this content document, otherwise, continue.
         //   Also need to check if the current node is the top-level element. This can occur if the start node is also the
         //   top level element.
+        $parentNode = $currNode.parent();
         if (typeof topLevelElement === 'string' &&
             cfiInstructions._matchesLocalNameOrElement($parentNode[0], topLevelElement) ||
-            cfiInstructions._matchesLocalNameOrElement(currNode, topLevelElement)) {
+            cfiInstructions._matchesLocalNameOrElement($currNode[0], topLevelElement)) {
             return elementStep;
-        } else if ($parentNode[0] === topLevelElement || currNode === topLevelElement) {
+        } else if ($parentNode[0] === topLevelElement || $currNode[0] === topLevelElement) {
             return elementStep;
         } else {
             return this.createCFIElementSteps($parentNode, topLevelElement, classBlacklist, elementBlacklist, idBlacklist) + elementStep;

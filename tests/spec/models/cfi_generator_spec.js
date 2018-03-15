@@ -216,6 +216,70 @@ describe("CFI GENERATOR", function () {
             expect(generatedCFI).toEqual("/4/2[startParent]/2");
         });
 
+        it("can generate a range component given a start text node as a text node, and the end node being the parent of that text node", function () {
+
+            var dom =
+                "<html>"
+                +    "<div></div>"
+                +    "<div>"
+                +         "<div id='startParent'>"
+                +             "textnode0"
+                +             "<p id='theParagraph'>textnode1</p>"
+                +             "textnode2"
+                +             "<div></div>"
+                +         "</div>"
+                +     "</div>"
+                +     "<div></div>"
+                + "</html>";
+            var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+
+            var paragraphElement = $('#theParagraph', $dom)[0];
+            var paragraphTextNode = paragraphElement.childNodes[0];
+
+            // The setup here is a range that fits this profile
+            // - commonAncestorContainer: p#theParagraph
+            // - startContainer: 'textnode1', child of p#theParagraph
+            // - startOffset: 0 (start character offset)
+            // - endContainer: p#theParagraph
+            // - endOffset: 1 (length of p#theParagraph node)
+            // A browser may generate a Range that matches this when a paragraph is fully selected. (seen in MS Edge)
+
+            var generatedCFI = EPUBcfi.Generator.generateRangeComponent(paragraphTextNode, 0, paragraphElement, 1);
+            expect(generatedCFI).toEqual("/4/2[startParent]/2[theParagraph],/1:0,/1:9");
+        });
+
+        it("can generate a range component given a start node that's parent of a text node, and the end node being that text node", function () {
+
+            var dom =
+                "<html>"
+                +    "<div></div>"
+                +    "<div>"
+                +         "<div id='startParent'>"
+                +             "textnode0"
+                +             "<p id='theParagraph'>textnode1</p>"
+                +             "textnode2"
+                +             "<div></div>"
+                +         "</div>"
+                +     "</div>"
+                +     "<div></div>"
+                + "</html>";
+            var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+
+            var paragraphElement = $('#theParagraph', $dom)[0];
+            var paragraphTextNode = paragraphElement.childNodes[0];
+
+            // The setup here is a range that fits this profile
+            // - commonAncestorContainer: p#theParagraph
+            // - startContainer: p#theParagraph
+            // - startOffset: 0 (start offset of p#theParagraph node length)
+            // - endContainer: 'textnode1', child of `p#theParagraph
+            // - endtOffset: 9 (length of text node data)
+            // A browser may also theoretically generate a Range like this when a paragraph is fully selected.
+
+            var generatedCFI = EPUBcfi.Generator.generateRangeComponent(paragraphElement, 0, paragraphTextNode, paragraphTextNode.length);
+            expect(generatedCFI).toEqual("/4/2[startParent]/2[theParagraph],/1:0,/1:9");
+        });
+
         describe("character offset range CFIs", function () {
 
             it("generates for different start and end nodes", function () {
@@ -739,6 +803,64 @@ describe("CFI GENERATOR", function () {
             var packageDoc = (new window.DOMParser).parseFromString(packageDocXhtml, "text/xml");
             var packageDocCFIComponent = EPUBcfi.Generator.generatePackageDocumentCFIComponentWithSpineIndex(2, packageDoc);
             expect(packageDocCFIComponent).toEqual("/6/2/6!"); // [ te,xtn]
+        });
+
+        it("can generate a package document CFI with the spine index (XML document with namespace)", function () {
+
+            var packageDocXhtml =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
+                + "<opf:package xmlns:opf=\"http://www.idpf.org/2007/opf\" version=\"2.0\">"
+                +    "<opf:metadata></opf:metadata>"
+                +    "<opf:manifest></opf:manifest>"
+                +    "<opf:spine>"
+                +      "<opf:itemref/>"
+                +      "<opf:itemref/>"
+                +      "<opf:itemref idref=\"contentDocId\"/>"
+                +    "</opf:spine>"
+                + "</opf:package>";
+
+            var packageDoc = (new window.DOMParser).parseFromString(packageDocXhtml, "text/xml");
+            var packageDocCFIComponent = EPUBcfi.Generator.generatePackageDocumentCFIComponentWithSpineIndex(2, packageDoc);
+            expect(packageDocCFIComponent).toEqual("/6/6!");
+        });
+
+        it("can generate a package document CFI with the spine idref", function () {
+
+            var packageDocXhtml =
+                "<package>"
+                +   "<div></div>"
+                +   "<div></div>"
+                +   "<div>"
+                +       "<spine>"
+                +           "<itemref></itemref>"
+                +           "<itemref></itemref>"
+                +           "<itemref idref='contentDocId'></itemref>"
+                +       "</spine>"
+                +   "</div>"
+                + "</package>";
+
+            var packageDoc = (new window.DOMParser).parseFromString(packageDocXhtml, "text/xml");
+            var packageDocCFIComponent = EPUBcfi.Generator.generatePackageDocumentCFIComponent("contentDocId", packageDoc);
+            expect(packageDocCFIComponent).toEqual("/6/2/6!");
+        });
+
+        it("can generate a package document CFI with the spine idref (XML document with namespace)", function () {
+
+            var packageDocXhtml =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>"
+                + "<opf:package xmlns:opf=\"http://www.idpf.org/2007/opf\" version=\"2.0\">"
+                +    "<opf:metadata></opf:metadata>"
+                +    "<opf:manifest></opf:manifest>"
+                +    "<opf:spine>"
+                +      "<opf:itemref/>"
+                +      "<opf:itemref/>"
+                +      "<opf:itemref idref=\"contentDocId\"/>"
+                +    "</opf:spine>"
+                + "</opf:package>";
+
+            var packageDoc = (new window.DOMParser).parseFromString(packageDocXhtml, "text/xml");
+            var packageDocCFIComponent = EPUBcfi.Generator.generatePackageDocumentCFIComponent("contentDocId", packageDoc);
+            expect(packageDocCFIComponent).toEqual("/6/6!");
         });
 
         it("can generate a complete CFI for both the content document and package document", function () {

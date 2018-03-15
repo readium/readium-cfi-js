@@ -55,7 +55,6 @@ var obj = {
     //   the reading system, as it stands now.
     getContentDocHref : function (CFI, packageDocument, classBlacklist, elementBlacklist, idBlacklist) {
 
-        var $packageDocument = $(packageDocument);
         var decodedCFI = decodeURI(CFI);
         var CFIAST = cfiParser.parse(decodedCFI);
 
@@ -64,9 +63,9 @@ var obj = {
         }
 
         // Interpet the path node (the package document step)
-        $packageElement = $(packageDocument.querySelector("package"));
+        var $packageElement = $(packageDocument.getElementsByTagNameNS('*', 'package'));
         var $currElement = this.interpretIndexStepNode(CFIAST.cfiString.path, $packageElement, classBlacklist, elementBlacklist, idBlacklist);
-        foundHref = this.searchLocalPathForHref($currElement, $packageDocument, CFIAST.cfiString.localPath, classBlacklist, elementBlacklist, idBlacklist);
+        foundHref = this.searchLocalPathForHref($currElement, packageDocument, CFIAST.cfiString.localPath, classBlacklist, elementBlacklist, idBlacklist);
 
         if (foundHref) {
             return foundHref;
@@ -75,6 +74,44 @@ var obj = {
             return undefined;
         }
     },
+
+    // Description: Compare two given CFIs. Either CFI can be expressed in range form. Assuming the CFIs reference the same content document (partial CFIs)
+    //  Because of this the output is an array with two integers.
+    //  If both integers are the same then you can simplify the results into a single integer.
+    //  The integer indicates that:
+    //      -1 | CFI location point A is located before CFI location point B
+    //       0 | CFI location point A is the same as CFI location point B
+    //       1 | CFI location point A is located after CFI location point B
+    //  If both integers are different then the first integer is,
+    //      a comparison between the start location of CFI range A and the start location of CFI range B,
+    //  and the second integer is,
+    //      a comparison between the end location of CFI range A and the end location of CFI range B.
+    compareCFIs: function (cfiA, cfiB) {
+
+        var decomposedCFI1 = this._decomposeCFI(cfiA);
+        var decomposedCFI2 = this._decomposeCFI(cfiB);
+
+        if (decomposedCFI1.length > 1 && decomposedCFI2.length > 1) {
+            return [
+                this._compareCFIASTs(decomposedCFI1[0], decomposedCFI2[0]),
+                this._compareCFIASTs(decomposedCFI1[1], decomposedCFI2[1])
+            ];
+        } else if (decomposedCFI1.length > 1 && decomposedCFI2.length === 1) {
+            return [
+                this._compareCFIASTs(decomposedCFI1[0], decomposedCFI2[0]),
+                this._compareCFIASTs(decomposedCFI1[1], decomposedCFI2[0])
+            ];
+        } else if (decomposedCFI1.length === 1 && decomposedCFI2.length > 1) {
+            return [
+                this._compareCFIASTs(decomposedCFI1[0], decomposedCFI2[0]),
+                this._compareCFIASTs(decomposedCFI1[0], decomposedCFI2[1])
+            ];
+        } else {
+            var result = this._compareCFIASTs(decomposedCFI1[0], decomposedCFI2[0]);
+            return [result, result];
+        }
+    },
+
 
     // Description: Inject an arbitrary html element into a position in a content document referenced by a CFI
     injectElement : function (CFI, contentDocument, elementToInject, classBlacklist, elementBlacklist, idBlacklist) {
@@ -286,15 +323,25 @@ var obj = {
     },
 
     // Description: This function will determine if the input "partial" CFI is expressed as a range
-    isRangeCfi: function (cfi) {
-        var CFIAST = cfiParser.parse(cfi);
-        return CFIAST.cfiString.range1 ? true : false;
+    isRangeCfi: function (CFI) {
+
+        var decodedCFI = CFI ? decodeURI(CFI) : undefined;
+        var CFIAST = cfiParser.parse(decodedCFI);
+        if (!CFIAST || CFIAST.type !== "CFIAST") {
+            throw cfiRuntimeErrors.NodeTypeError(CFIAST, "expected CFI AST root node");
+        }
+        return CFIAST.cfiString.type === "range";
     },
 
     // Description: This function will determine if the input "partial" CFI has a text terminus step
-    hasTextTerminus: function (cfi) {
-        var CFIAST = cfiParser.parse(cfi);
-        return CFIAST.cfiString.localPath.termStep ? true : false;
+    hasTextTerminus: function (CFI) {
+
+        var decodedCFI = CFI ? decodeURI(CFI) : undefined;
+        var CFIAST = cfiParser.parse(decodedCFI);
+        if (!CFIAST || CFIAST.type !== "CFIAST") {
+            throw cfiRuntimeErrors.NodeTypeError(CFIAST, "expected CFI AST root node");
+        }
+        return !!CFIAST.cfiString.localPath.termStep;
     },
 
     // ------------------------------------------------------------------------------------ //
@@ -406,7 +453,7 @@ var obj = {
         return $injectedElement;
     },
 
-    searchLocalPathForHref : function ($currElement, $packageDocument, localPathNode, classBlacklist, elementBlacklist, idBlacklist) {
+    searchLocalPathForHref : function ($currElement, packageDocument, localPathNode, classBlacklist, elementBlacklist, idBlacklist) {
 
         // Interpret the first local_path node, which is a set of steps and and a terminus condition
         var stepNum = 0;
@@ -425,11 +472,88 @@ var obj = {
 
             // Found the content document href referenced by the spine item
             if (cfiInstructions._matchesLocalNameOrElement($currElement[0], "itemref")) {
-                return cfiInstructions.retrieveItemRefHref($currElement, $packageDocument);
+                return cfiInstructions.retrieveItemRefHref($currElement, packageDocument);
             }
         }
 
         return undefined;
+    },
+
+    _splitRangeCFIAST: function(CFIAST, firstRange) {
+        var outCFIAST = $.extend(true, {}, CFIAST);
+        var targetRange = firstRange? CFIAST.cfiString.range1 : CFIAST.cfiString.range2;
+
+        delete outCFIAST.cfiString.range1;
+        delete outCFIAST.cfiString.range2;
+        outCFIAST.cfiString.type = "path";
+
+        outCFIAST.cfiString.localPath.steps = outCFIAST.cfiString.localPath.steps.concat(targetRange.steps);
+        outCFIAST.cfiString.localPath.termStep = targetRange.termStep;
+
+        return outCFIAST;
+    },
+    _decomposeCFI: function (CFI) {
+        var decodedCFI = decodeURI(CFI);
+        var CFIAST = cfiParser.parse(decodedCFI);
+
+        if (!CFIAST || CFIAST.type !== "CFIAST") {
+            throw cfiRuntimeErrors.NodeTypeError(CFIAST, "expected CFI AST root node");
+        }
+
+        var decomposedASTs = [];
+        if (CFIAST.cfiString.type === "range") {
+            decomposedASTs.push(this._splitRangeCFIAST(CFIAST, true));
+            decomposedASTs.push(this._splitRangeCFIAST(CFIAST, false));
+        } else {
+            decomposedASTs.push(CFIAST);
+        }
+
+        return decomposedASTs;
+    },
+    _concatStepsFromCFIAST: function(CFIAST) {
+        return CFIAST.cfiString.localPath.steps.map(function (o) {
+            return parseInt(o.stepLength);
+        });
+    },
+    _compareCFIASTs: function (CFIAST1, CFIAST2) {
+
+        var result = null;
+        var index = 0;
+        var steps1 = this._concatStepsFromCFIAST(CFIAST1);
+        var steps2 = this._concatStepsFromCFIAST(CFIAST2);
+        var term1 = CFIAST1.cfiString.localPath.termStep;
+        var term2 = CFIAST2.cfiString.localPath.termStep;
+
+        while (true) {
+            var L = steps1[index];
+            var R = steps2[index];
+            if (!L || !R) {
+                if (result === 0 && (term1.offsetValue || term2.offsetValue)) {
+                    var tL = parseInt(term1.offsetValue) || 0;
+                    var tR = parseInt(term2.offsetValue) || 0;
+                    if (tL > tR) {
+                        result = 1;
+                    } else if (tL < tR) {
+                        result = -1;
+                    } else {
+                        result = 0;
+                    }
+                }
+                break;
+            }
+            if (L > R) {
+                result = 1;
+                break;
+            } else if (L < R) {
+                result = -1;
+                break;
+            } else {
+                result = 0;
+            }
+            index = index + 1;
+        }
+
+        return result;
     }
 };
 

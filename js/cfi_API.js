@@ -67,6 +67,9 @@ var init = function(cfiParser, cfiInterpreter, cfiInstructions, cfiRuntimeErrors
         getTextTerminusInfoWithPartialCFI : function (contentDocumentCFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist) {
             return cfiInterpreter.getTextTerminusInfoWithPartialCFI(contentDocumentCFI, contentDocument, classBlacklist, elementBlacklist, idBlacklist);
         },
+        compareCFIs : function (cfiA, cfiB) {
+            return cfiInterpreter.compareCFIs(cfiA, cfiB);
+        },
         generateCharacterOffsetCFIComponent : function (startTextNode, characterOffset, classBlacklist, elementBlacklist, idBlacklist) {
             return cfiGenerator.generateCharacterOffsetCFIComponent(startTextNode, characterOffset, classBlacklist, elementBlacklist, idBlacklist);
         },

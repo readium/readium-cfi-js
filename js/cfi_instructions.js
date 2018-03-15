@@ -147,10 +147,10 @@ var obj = {
         return $targetNode;
     },
 
-    retrieveItemRefHref : function ($itemRefElement, $packageDocument) {
+    retrieveItemRefHref : function ($itemRefElement, packageDocument) {
 
-        return $("#" + $itemRefElement.attr("idref").replace('.', '\\.'), $packageDocument).attr("href");
-	},
+        return $("#" + $itemRefElement.attr("idref"), packageDocument).attr("href");
+    },
 
     indexOutOfRange : function (targetIndex, numChildElements) {
 
@@ -250,7 +250,7 @@ var obj = {
                 if (currLogicalTextNodeIndex === targetLogicalTextNodeIndex) {
 
                     // If it's a text node
-                    if (this.nodeType === Node.TEXT_NODE  || this.nodeType === Node.COMMENT_NODE || this.nodeType === Node.PROCESSING_INSTRUCTION_NODE) {
+                    if (this.nodeType === Node.TEXT_NODE || this.nodeType === Node.COMMENT_NODE || this.nodeType === Node.PROCESSING_INSTRUCTION_NODE) {
                         prevNodeWasTextNode = true;
                         return true;
                     }
@@ -326,14 +326,6 @@ var obj = {
                     if (id && id.length && _.contains(idBlacklist, id)) {
                         return false;
                     }
-                }
-
-                // [MDA] Keeping this on our fork for now. I'm not sure this is the best place for this,
-                // but fixes the current comment issues we have. Will remove in the future when Readium
-                // supplies a fix.
-                // take out comment nodes
-                if(element.nodeType === Node.COMMENT_NODE) {
-                    return false;
                 }
 
                 return true;

@@ -15,7 +15,7 @@ env:
 #before_install:
 #- npm install -g grunt-cli
 install:
-- yarn run prepare:yarn:all
+- npm run prepare:all
 script:
 - npm run build
 - npm run test:travis
