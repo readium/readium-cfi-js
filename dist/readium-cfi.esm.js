@@ -1,9 +1,5 @@
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
-
-
-
-
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
 }
@@ -46,10 +42,6 @@ var jquery = createCommonjsModule(function (module) {
 // Pass this if window is not defined yet
 } )( typeof window !== "undefined" ? window : commonjsGlobal, function( window, noGlobal ) {
 
-// Edge <= 12 - 13+, Firefox <=18 - 45+, IE 10 - 11, Safari 5.1 - 9+, iOS 6 - 9.1
-// throw exceptions when non-strict code (e.g., ASP.NET 4.5) accesses strict mode
-// arguments.callee.caller (trac-13335). But as of jQuery 3.0 (2016), strict mode should be common
-// enough that all such attempts are guarded in a try block.
 var arr = [];
 
 var document = window.document;
@@ -2809,8 +2801,7 @@ function nodeName( elem, name ) {
 
   return elem.nodeName && elem.nodeName.toLowerCase() === name.toLowerCase();
 
-}
-var rsingleTag = ( /^<([a-z][^\/\0>:\x20\t\r\n\f]*)[\x20\t\r\n\f]*\/?>(?:<\/\1>|)$/i );
+}var rsingleTag = ( /^<([a-z][^\/\0>:\x20\t\r\n\f]*)[\x20\t\r\n\f]*\/?>(?:<\/\1>|)$/i );
 
 
 
@@ -10375,31 +10366,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
   return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
 };
 
-
-
-
-
-
-
-
-
-
-
 var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 };
-
-
-
-
-
-
-
-
-
-
 
 var inherits = function (subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
@@ -10417,16 +10388,6 @@ var inherits = function (subClass, superClass) {
   if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 };
 
-
-
-
-
-
-
-
-
-
-
 var possibleConstructorReturn = function (self, call) {
   if (!self) {
     throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -10434,10 +10395,6 @@ var possibleConstructorReturn = function (self, call) {
 
   return call && (typeof call === "object" || typeof call === "function") ? call : self;
 };
-
-
-
-
 
 var slicedToArray = function () {
   function sliceIterator(arr, i) {
@@ -10476,18 +10433,6 @@ var slicedToArray = function () {
     }
   };
 }();
-
-
-
-
-
-
-
-
-
-
-
-
 
 var toConsumableArray = function (arr) {
   if (Array.isArray(arr)) {
@@ -10688,8 +10633,8 @@ function objectToString(value) {
 }
 
 /** `Object#toString` result references. */
-var nullTag = '[object Null]';
-var undefinedTag = '[object Undefined]';
+var nullTag = '[object Null]',
+    undefinedTag = '[object Undefined]';
 
 /** Built-in value references. */
 var symToStringTag$1 = Symbol$1 ? Symbol$1.toStringTag : undefined;
@@ -10741,10 +10686,10 @@ function isObject(value) {
 }
 
 /** `Object#toString` result references. */
-var asyncTag = '[object AsyncFunction]';
-var funcTag = '[object Function]';
-var genTag = '[object GeneratorFunction]';
-var proxyTag = '[object Proxy]';
+var asyncTag = '[object AsyncFunction]',
+    funcTag = '[object Function]',
+    genTag = '[object GeneratorFunction]',
+    proxyTag = '[object Proxy]';
 
 /**
  * Checks if `value` is classified as a `Function` object.
@@ -10828,8 +10773,8 @@ var reRegExpChar = /[\\^$.*+?()[\]{}|]/g;
 var reIsHostCtor = /^\[object .+?Constructor\]$/;
 
 /** Used for built-in method references. */
-var funcProto$1 = Function.prototype;
-var objectProto$2 = Object.prototype;
+var funcProto$1 = Function.prototype,
+    objectProto$2 = Object.prototype;
 
 /** Used to resolve the decompiled source of functions. */
 var funcToString$1 = funcProto$1.toString;
@@ -11689,8 +11634,8 @@ var baseSetToString = !defineProperty$1 ? identity : function(func, string) {
 };
 
 /** Used to detect hot functions by number of calls within a span of milliseconds. */
-var HOT_COUNT = 800;
-var HOT_SPAN = 16;
+var HOT_COUNT = 800,
+    HOT_SPAN = 16;
 
 /* Built-in method references for those with the same name as other `lodash` methods. */
 var nativeNow = Date.now;
@@ -11902,17 +11847,6 @@ var intersection = baseRest(function(arrays) {
 });
 
 //  Copyright (c) 2014 Readium Foundation and/or its licensees. All rights reserved.
-//
-//  Redistribution and use in source and binary forms, with or without modification,
-//  are permitted provided that the following conditions are met:
-//  1. Redistributions of source code must retain the above copyright notice, this
-//  list of conditions and the following disclaimer.
-//  2. Redistributions in binary form must reproduce the above copyright notice,
-//  this list of conditions and the following disclaimer in the documentation and/or
-//  other materials provided with the distribution.
-//  3. Neither the name of the organization nor the names of its contributors may be
-//  used to endorse or promote products derived from this software without specific
-//  prior written permission.
 
 function matchesLocalNameOrElement(element, otherNameOrElement) {
   if (typeof otherNameOrElement === 'string') {
@@ -11983,17 +11917,6 @@ function retrieveItemRefHref(itemRefElement, packageDocument) {
 }
 
 //  Copyright (c) 2014 Readium Foundation and/or its licensees. All rights reserved.
-//
-//  Redistribution and use in source and binary forms, with or without modification,
-//  are permitted provided that the following conditions are met:
-//  1. Redistributions of source code must retain the above copyright notice, this
-//  list of conditions and the following disclaimer.
-//  2. Redistributions in binary form must reproduce the above copyright notice,
-//  this list of conditions and the following disclaimer in the documentation and/or
-//  other materials provided with the distribution.
-//  3. Neither the name of the organization nor the names of its contributors may be
-//  used to endorse or promote products derived from this software without specific
-//  prior written permission.
 
 // Description: This model contains the implementation for "instructions" included in the
 //   EPUB CFI domain specific language (DSL).
@@ -12216,9 +12139,7 @@ function targetIdMatchesIdAssertion($foundNode, idAssertion) {
   return $foundNode.attr('id') === idAssertion;
 }
 
-
-
-var instructions = Object.freeze({
+var instructions = /*#__PURE__*/Object.freeze({
 	injectCFIMarkerIntoText: injectCFIMarkerIntoText,
 	followIndexStep: followIndexStep,
 	getNextNode: followIndexStep,
@@ -12434,10 +12355,6 @@ function peg$parse(input, options) {
       peg$c36 = peg$classExpectation([["0", "9"]], false, false),
       peg$c37 = ".",
       peg$c38 = peg$literalExpectation(".", false),
-      peg$c39 = function (intPartVal, fracPartVal) {
-
-    
-  },
       peg$c40 = "0",
       peg$c41 = peg$literalExpectation("0", false),
       peg$c42 = function (integerVal) {
@@ -12457,11 +12374,6 @@ function peg$parse(input, options) {
       peg$c47 = peg$literalExpectation("^", false),
       peg$c48 = function () {
     return "^";
-  },
-      peg$c49 = "\"",
-      peg$c50 = peg$literalExpectation("\"", false),
-      peg$c51 = function () {
-    
   },
       peg$c52 = function (bracketVal) {
     return bracketVal;
@@ -12494,7 +12406,6 @@ function peg$parse(input, options) {
     return charVal;
   },
       peg$currPos = 0,
-      peg$savedPos = 0,
       peg$posDetailsCache = [{ line: 1, column: 1 }],
       peg$maxFailPos = 0,
       peg$maxFailExpected = [],
@@ -13638,41 +13549,16 @@ var parser = {
 };
 
 //  Copyright (c) 2014 Readium Foundation and/or its licensees. All rights reserved.
-//
-//  Redistribution and use in source and binary forms, with or without modification,
-//  are permitted provided that the following conditions are met:
-//  1. Redistributions of source code must retain the above copyright notice, this
-//  list of conditions and the following disclaimer.
-//  2. Redistributions in binary form must reproduce the above copyright notice,
-//  this list of conditions and the following disclaimer in the documentation and/or
-//  other materials provided with the distribution.
-//  3. Neither the name of the organization nor the names of its contributors may be
-//  used to endorse or promote products derived from this software without specific
-//  prior written permission.
 
-var SyntaxError = parser.SyntaxError;
-var parse = parser.parse;
+var SyntaxError = parser.SyntaxError,
+    parse = parser.parse;
 
-
-
-
-var parser$1 = Object.freeze({
+var parser$1 = /*#__PURE__*/Object.freeze({
 	SyntaxError: SyntaxError,
 	parse: parse
 });
 
 //  Copyright (c) 2014 Readium Foundation and/or its licensees. All rights reserved.
-//
-//  Redistribution and use in source and binary forms, with or without modification,
-//  are permitted provided that the following conditions are met:
-//  1. Redistributions of source code must retain the above copyright notice, this
-//  list of conditions and the following disclaimer.
-//  2. Redistributions in binary form must reproduce the above copyright notice,
-//  this list of conditions and the following disclaimer in the documentation and/or
-//  other materials provided with the distribution.
-//  3. Neither the name of the organization nor the names of its contributors may be
-//  used to endorse or promote products derived from this software without specific
-//  prior written permission.
 
 // Description: This is an interpreter that inteprets an Abstract Syntax Tree (AST) for a CFI.
 //   The result of executing the interpreter
@@ -14162,9 +14048,7 @@ function hasTextTerminus(CFI) {
   return !!CFIAST.cfiString.localPath.termStep;
 }
 
-
-
-var interpreter = Object.freeze({
+var interpreter = /*#__PURE__*/Object.freeze({
 	interpretIndexStepNode: interpretIndexStepNode,
 	interpretIndirectionStepNode: interpretIndirectionStepNode,
 	interpretTextTerminusNode: interpretTextTerminusNode,
@@ -14182,17 +14066,6 @@ var interpreter = Object.freeze({
 });
 
 //  Copyright (c) 2014 Readium Foundation and/or its licensees. All rights reserved.
-//
-//  Redistribution and use in source and binary forms, with or without modification,
-//  are permitted provided that the following conditions are met:
-//  1. Redistributions of source code must retain the above copyright notice, this
-//  list of conditions and the following disclaimer.
-//  2. Redistributions in binary form must reproduce the above copyright notice,
-//  this list of conditions and the following disclaimer in the documentation and/or
-//  other materials provided with the distribution.
-//  3. Neither the name of the organization nor the names of its contributors may be
-//  used to endorse or promote products derived from this software without specific
-//  prior written permission.
 
 // ------------------------------------------------------------------------------------ //
 //  "PUBLIC" METHODS (THE API) are exported using the `export` keyword                  //
@@ -14621,9 +14494,7 @@ function generateCompleteCFI(packageDocumentCFIComponent, contentDocumentCFIComp
   return 'epubcfi(' + packageDocumentCFIComponent + contentDocumentCFIComponent + ')';
 }
 
-
-
-var generator = Object.freeze({
+var generator = /*#__PURE__*/Object.freeze({
 	validateStartElement: validateStartElement,
 	createCFITextNodeStep: createCFITextNodeStep,
 	createCFIElementSteps: createCFIElementSteps,
@@ -14639,19 +14510,6 @@ var generator = Object.freeze({
 });
 
 //  Copyright (c) 2014 Readium Foundation and/or its licensees. All rights reserved.
-//
-//  Redistribution and use in source and binary forms, with or without modification,
-//  are permitted provided that the following conditions are met:
-//  1. Redistributions of source code must retain the above copyright notice, this
-//  list of conditions and the following disclaimer.
-//  2. Redistributions in binary form must reproduce the above copyright notice,
-//  this list of conditions and the following disclaimer in the documentation and/or
-//  other materials provided with the distribution.
-//  3. Neither the name of the organization nor the names of its contributors may be
-//  used to endorse or promote products derived from this software without specific
-//  prior written permission.
-
-// Description: Main entry point for the public API.
 
 export { instructions as Instructions, interpreter as Interpreter, generator as Generator, parser$1 as Parser };
 //# sourceMappingURL=readium-cfi.esm.js.map
