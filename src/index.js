@@ -18,9 +18,4 @@ import * as Interpreter from './interpreter';
 import * as Generator from './generator';
 import * as Parser from './parser';
 
-export {
-  Instructions,
-  Interpreter,
-  Generator,
-  Parser,
-};
+export { Instructions, Interpreter, Generator, Parser };

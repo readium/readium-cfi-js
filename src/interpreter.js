@@ -75,8 +75,9 @@ function splitRangeCFIAST(CFIAST, firstRange) {
   delete outCFIAST.cfiString.range2;
   outCFIAST.cfiString.type = 'path';
 
-  outCFIAST.cfiString.localPath.steps =
-    outCFIAST.cfiString.localPath.steps.concat(targetRange.steps);
+  outCFIAST.cfiString.localPath.steps = outCFIAST.cfiString.localPath.steps.concat(
+    targetRange.steps,
+  );
 
   outCFIAST.cfiString.localPath.termStep = targetRange.termStep;
 
@@ -103,7 +104,7 @@ function decomposeCFI(CFI) {
 }
 
 function concatStepsFromCFIAST(CFIAST) {
-  return CFIAST.cfiString.localPath.steps.map(o => parseInt(o.stepLength, 10));
+  return CFIAST.cfiString.localPath.steps.map((o) => parseInt(o.stepLength, 10));
 }
 
 function compareCFIASTs(CFIAST1, CFIAST2) {
@@ -114,7 +115,7 @@ function compareCFIASTs(CFIAST1, CFIAST2) {
   const term1 = CFIAST1.cfiString.localPath.termStep;
   const term2 = CFIAST2.cfiString.localPath.termStep;
 
-  for (; ;) {
+  for (;;) {
     const L = steps1[index];
     const R = steps2[index];
     if (!L || !R) {
@@ -304,11 +305,7 @@ export function interpretTextTerminusNode(terminusNode, $currElement, elementToI
     throw new NodeTypeError(terminusNode, 'expected text terminus node');
   }
 
-  return textTermination(
-    $currElement,
-    terminusNode.offsetValue,
-    elementToInject,
-  );
+  return textTermination($currElement, terminusNode.offsetValue, elementToInject);
 }
 
 // Description: Find the content document referenced by the spine item.
@@ -378,12 +375,14 @@ export function compareCFIs(cfiA, cfiB) {
       compareCFIASTs(decomposedCFI1[0], decomposedCFI2[0]),
       compareCFIASTs(decomposedCFI1[1], decomposedCFI2[1]),
     ];
-  } else if (decomposedCFI1.length > 1 && decomposedCFI2.length === 1) {
+  }
+  if (decomposedCFI1.length > 1 && decomposedCFI2.length === 1) {
     return [
       compareCFIASTs(decomposedCFI1[0], decomposedCFI2[0]),
       compareCFIASTs(decomposedCFI1[1], decomposedCFI2[0]),
     ];
-  } else if (decomposedCFI1.length === 1 && decomposedCFI2.length > 1) {
+  }
+  if (decomposedCFI1.length === 1 && decomposedCFI2.length > 1) {
     return [
       compareCFIASTs(decomposedCFI1[0], decomposedCFI2[0]),
       compareCFIASTs(decomposedCFI1[0], decomposedCFI2[1]),

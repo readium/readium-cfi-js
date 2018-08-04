@@ -21,14 +21,7 @@ import * as Generator from './generator';
 import * as Parser from './parser';
 import * as Util from './util';
 
-export {
-  CFIInstructions,
-  CFIInstructions as Instructions,
-  Interpreter,
-  Generator,
-  Parser,
-  Util,
-};
+export { CFIInstructions, CFIInstructions as Instructions, Interpreter, Generator, Parser, Util };
 
 // Export same functions again..
 export * from './instructions';

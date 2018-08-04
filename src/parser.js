@@ -13,9 +13,6 @@
 
 import generatedParser from '../gen/parser';
 
-const {
-  SyntaxError,
-  parse,
-} = generatedParser;
+const { SyntaxError, parse } = generatedParser;
 
 export { SyntaxError, parse };

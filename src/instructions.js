@@ -32,14 +32,11 @@ function indexOutOfRange(targetIndex, numChildElements) {
 
 // Description: Step reference for xml element node. Expected that CFIStepValue is an even integer
 function elementNodeStep(CFIStepValue, $currNode, classBlacklist, elementBlacklist, idBlacklist) {
-  const jqueryTargetNodeIndex = (CFIStepValue / 2) - 1;
+  const jqueryTargetNodeIndex = CFIStepValue / 2 - 1;
 
-  const $blacklistExcluded = $(applyBlacklist(
-    $currNode.children().toArray(),
-    classBlacklist,
-    elementBlacklist,
-    idBlacklist,
-  ));
+  const $blacklistExcluded = $(
+    applyBlacklist($currNode.children().toArray(), classBlacklist, elementBlacklist, idBlacklist),
+  );
   const numElements = $blacklistExcluded.length;
 
   if (indexOutOfRange(jqueryTargetNodeIndex, numElements)) {
@@ -81,7 +78,8 @@ export function injectCFIMarkerIntoText($textNodeList, textOffset, elementToInje
         $(newTextNode).insertAfter($injectedNode);
 
         return $injectedNode;
-      } else if (currNodeMaxIndex === textOffset) {
+      }
+      if (currNodeMaxIndex === textOffset) {
         $injectedNode = $(elementToInject).insertAfter($textNodeList.eq(nodeNum));
         return $injectedNode;
       }
@@ -126,15 +124,12 @@ function inferTargetTextNode(
   // Rationale: A filtering function is used, as simply using a class selector with
   //   jquery appears to result in behaviour where text nodes are also filtered out,
   //   along with the class element being filtered.
-  const $elementsWithoutMarkers = $(applyBlacklist(
-    $currNode.contents().toArray(),
-    classBlacklist,
-    elementBlacklist,
-    idBlacklist,
-  ));
+  const $elementsWithoutMarkers = $(
+    applyBlacklist($currNode.contents().toArray(), classBlacklist, elementBlacklist, idBlacklist),
+  );
 
   // Convert CFIStepValue to logical index; assumes odd integer for the step value
-  const targetLogicalTextNodeIndex = ((parseInt(CFIStepValue, 10) + 1) / 2) - 1;
+  const targetLogicalTextNodeIndex = (parseInt(CFIStepValue, 10) + 1) / 2 - 1;
 
   // Set text node position counter
   currLogicalTextNodeIndex = 0;
@@ -149,7 +144,8 @@ function inferTargetTextNode(
       ) {
         prevNodeWasTextNode = true;
         return true;
-      } else if (prevNodeWasTextNode && this.nodeType !== Node.TEXT_NODE) {
+      }
+      if (prevNodeWasTextNode && this.nodeType !== Node.TEXT_NODE) {
         // Rationale: The logical text node position is only incremented once a group of text nodes
         //   (a single logical text node) has been passed by the loop.
         currLogicalTextNodeIndex += 1;
@@ -263,12 +259,14 @@ export function followIndirectionStep(
     $contentDocument = $currNode.contents();
 
     // Go to the first XHTML element, which will be the first child of the top-level document object
-    $blacklistExcluded = $(applyBlacklist(
-      $contentDocument.children().toArray(),
-      classBlacklist,
-      elementBlacklist,
-      idBlacklist,
-    ));
+    $blacklistExcluded = $(
+      applyBlacklist(
+        $contentDocument.children().toArray(),
+        classBlacklist,
+        elementBlacklist,
+        idBlacklist,
+      ),
+    );
     $startElement = $($blacklistExcluded[0]);
 
     // Follow an index step

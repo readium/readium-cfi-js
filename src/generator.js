@@ -35,11 +35,7 @@ function validateStartTextNode(startTextNode, characterOffset) {
 
   // Check that the character offset is within a valid range for the text node supplied
   if (characterOffset < 0) {
-    throw new OutOfRangeError(
-      characterOffset,
-      0,
-      'Character offset cannot be less than 0',
-    );
+    throw new OutOfRangeError(characterOffset, 0, 'Character offset cannot be less than 0');
   } else if (characterOffset > startTextNode.nodeValue.length) {
     throw new OutOfRangeError(
       characterOffset,
@@ -59,10 +55,7 @@ export function validateStartElement(startElement) {
   validateTargetElement(startElement);
 
   if (!(startElement.nodeType && startElement.nodeType === 1)) {
-    throw new NodeTypeError(
-      startElement,
-      'CFI target element is not an HTML element',
-    );
+    throw new NodeTypeError(startElement, 'CFI target element is not an HTML element');
   }
 }
 
@@ -74,8 +67,9 @@ function validateContentDocumentName(contentDocumentName) {
 }
 
 function findSpineItemNode(packageDocument, idref) {
-  return [...packageDocument.getElementsByTagNameNS('*', 'itemref')]
-    .find(element => element.getAttribute('idref') === idref);
+  return [...packageDocument.getElementsByTagNameNS('*', 'itemref')].find(
+    (element) => element.getAttribute('idref') === idref,
+  );
 }
 
 function validatePackageDocument(packageDocument, contentDocumentName) {
@@ -97,11 +91,7 @@ function validNodeTypesFilter(node) {
 }
 
 function normalizeDomRange(domRange) {
-  const {
-    startContainer,
-    endContainer,
-    commonAncestorContainer,
-  } = domRange;
+  const { startContainer, endContainer, commonAncestorContainer } = domRange;
 
   if (commonAncestorContainer.nodeType !== Node.ELEMENT_NODE) {
     // No need for normalization on ranges where the ancestor is not an element
@@ -148,12 +138,9 @@ export function createCFITextNodeStep(
 
   // Find text node position in the set of child elements, ignoring any blacklisted elements
   const $parentNode = $startTextNode.parent();
-  const $contentsExcludingMarkers = $(applyBlacklist(
-    $parentNode.contents().toArray(),
-    classBlacklist,
-    elementBlacklist,
-    idBlacklist,
-  ));
+  const $contentsExcludingMarkers = $(
+    applyBlacklist($parentNode.contents().toArray(), classBlacklist, elementBlacklist, idBlacklist),
+  );
 
   // Find the text node index in the parent list,
   // inferring nodes that were originally a single text node
@@ -226,7 +213,7 @@ export function createCFITextNodeStep(
   });
 
   // Convert the text node index to a CFI odd-integer representation
-  const CFIIndex = (indexOfTextNode * 2) + 1;
+  const CFIIndex = indexOfTextNode * 2 + 1;
 
   // TODO: text assertions are not in the grammar yet, I think, or they're just causing problems.
   // This has been temporarily removed.
@@ -257,12 +244,17 @@ export function createCFIElementSteps(
   let elementStep;
 
   // Find position of current node in parent list
-  const $blacklistExcluded = $(applyBlacklist(
-    $currNode.parent().children().toArray(),
-    classBlacklist,
-    elementBlacklist,
-    idBlacklist,
-  ));
+  const $blacklistExcluded = $(
+    applyBlacklist(
+      $currNode
+        .parent()
+        .children()
+        .toArray(),
+      classBlacklist,
+      elementBlacklist,
+      idBlacklist,
+    ),
+  );
   $.each($blacklistExcluded, function each(index) {
     if (this === $currNode[0]) {
       currNodePosition = index;
@@ -294,9 +286,12 @@ export function createCFIElementSteps(
     matchesLocalNameOrElement($currNode[0], topLevelElement)
   ) {
     return elementStep;
-  } else if ($parentNode[0] === topLevelElement || $currNode[0] === topLevelElement) {
+  }
+
+  if ($parentNode[0] === topLevelElement || $currNode[0] === topLevelElement) {
     return elementStep;
   }
+
   return (
     createCFIElementSteps(
       $parentNode,
@@ -332,10 +327,7 @@ export function generateDocumentRangeComponent(
   let range2OffsetStep;
   let commonCFIComponent;
 
-  if (
-    startContainer.nodeType === Node.TEXT_NODE &&
-    endContainer.nodeType === Node.TEXT_NODE
-  ) {
+  if (startContainer.nodeType === Node.TEXT_NODE && endContainer.nodeType === Node.TEXT_NODE) {
     // Parent element is the same
     if ($(startContainer).parent()[0] === $(endContainer).parent()[0]) {
       range1OffsetStep = createCFITextNodeStep(
@@ -504,12 +496,7 @@ export function generateRangeComponent(
   docRange.setStart(rangeStartElement, startOffset);
   docRange.setEnd(rangeEndElement, endOffset);
 
-  return generateDocumentRangeComponent(
-    docRange,
-    classBlacklist,
-    elementBlacklist,
-    idBlacklist,
-  );
+  return generateDocumentRangeComponent(docRange, classBlacklist, elementBlacklist, idBlacklist);
 }
 
 export function generateCharOffsetRangeComponent(
@@ -531,12 +518,7 @@ export function generateCharOffsetRangeComponent(
   docRange.setStart(rangeStartElement, startOffset);
   docRange.setEnd(rangeEndElement, endOffset);
 
-  return generateDocumentRangeComponent(
-    docRange,
-    classBlacklist,
-    elementBlacklist,
-    idBlacklist,
-  );
+  return generateDocumentRangeComponent(docRange, classBlacklist, elementBlacklist, idBlacklist);
 }
 
 export function generateElementRangeComponent(
@@ -553,12 +535,7 @@ export function generateElementRangeComponent(
   docRange.setStartBefore(rangeStartElement);
   docRange.setEndAfter(rangeEndElement);
 
-  return generateDocumentRangeComponent(
-    docRange,
-    classBlacklist,
-    elementBlacklist,
-    idBlacklist,
-  );
+  return generateDocumentRangeComponent(docRange, classBlacklist, elementBlacklist, idBlacklist);
 }
 
 // Description: Generates a character offset CFI
@@ -586,13 +563,15 @@ export function generateCharacterOffsetCFIComponent(
   // Call the recursive method to create all the steps up to the head element
   // of the content document
   // (typically the "html" element, or the "svg" element)
-  return createCFIElementSteps(
-    $(startTextNode).parent(),
-    startTextNode.ownerDocument.documentElement,
-    classBlacklist,
-    elementBlacklist,
-    idBlacklist,
-  ) + textNodeStep;
+  return (
+    createCFIElementSteps(
+      $(startTextNode).parent(),
+      startTextNode.ownerDocument.documentElement,
+      classBlacklist,
+      elementBlacklist,
+      idBlacklist,
+    ) + textNodeStep
+  );
 }
 
 export function generateElementCFIComponent(
