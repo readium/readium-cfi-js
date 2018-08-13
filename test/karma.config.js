@@ -5,7 +5,13 @@ module.exports = function(config) {
     basePath: '',
     frameworks: ['jasmine'],
     files: ['dist/bundle.js'],
-    browsers: ['ChromeHeadless'],
+    browsers: ['ChromeHeadlessNoSandbox'],
+    customLaunchers: {
+      ChromeHeadlessNoSandbox: {
+        base: 'ChromeHeadless',
+        flags: ['--no-sandbox']
+      }
+    },
     reporters: ['dots'],
     port: 9876,
     colors: true,
