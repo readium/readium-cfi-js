@@ -1,3 +1,6 @@
+dist: trusty
+addons:
+  chrome: stable
 sudo: false
 branches:
   only:
@@ -11,7 +14,7 @@ env:
   - SAUCE_ACCESS_KEY=a36ebc10-e514-4da6-924c-307aec513550
   matrix:
   - MODE=chrome
-  - MODE=firefox
+#  - MODE=firefox
 #before_install:
 #- npm install -g grunt-cli
 install:
