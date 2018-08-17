@@ -1,6 +1,6 @@
 {
   "name": "readium-cfi-js",
-  "version": "0.32.0-alpha",
+  "version": "1.0.0-alpha.1",
   "engines": {
     "node": ">=4",
     "npm": ">=2",
@@ -8,6 +8,7 @@
   },
   "main": "dist/readium-cfi.umd.js",
   "module": "dist/readium-cfi.esm.js",
+  "types": "readium-cfi-js.d.ts",
   "description": "Readium - CFI javascript library",
   "keywords": [
     "readium",
