@@ -19,7 +19,7 @@ describe("CFI GENERATOR", function () {
                 +     "</div>"
                 +     "<div></div>"
                 + "</html>";
-            var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+            var $dom = $(XmlParse.fromString(dom));
 
             var commonAncestor = $($dom.children()[0]).children()[1];
             var $startElement = $($('#startParent', $dom).contents()[0]);
@@ -63,7 +63,7 @@ describe("CFI GENERATOR", function () {
                 +     "</div>"
                 +     "<div></div>"
                 + "</html>";
-            var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+            var $dom = $(XmlParse.fromString(dom));
 
             var $startElement1 = $($('#startParent', $dom).contents()[0]);
             var $startElement2 = $($('#startParent', $dom).contents()[1]);
@@ -86,7 +86,7 @@ describe("CFI GENERATOR", function () {
                 +     "</div>"
                 +     "<div></div>"
                 + "</html>";
-            var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+            var $dom = $(XmlParse.fromString(dom));
 
             var $startElement1 = $($('#startParent', $dom).contents()[1]);
             var $startElement2 = $($('#startParent', $dom).contents()[2]);
@@ -109,7 +109,7 @@ describe("CFI GENERATOR", function () {
               +     "</div>"
               +     "<div></div>"
               + "</html>";
-          var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+          var $dom = $(XmlParse.fromString(dom));
 
           var $startElement1 = $($('#startElement', $dom).contents()[0]);
           var $startElement2 = $($('#startParent', $dom).contents()[2]);
@@ -132,7 +132,7 @@ describe("CFI GENERATOR", function () {
                 +     "</div>"
                 +     "<div id='end'></div>"
                 + "</html>";
-            var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+            var $dom = $(XmlParse.fromString(dom));
 
             var $startElement1 = $($('#startParent', $dom).contents()[0]);
             var $startElement2 = $($('#end', $dom)[0]);
@@ -157,7 +157,7 @@ describe("CFI GENERATOR", function () {
                 +     "</div>"
                 +     "<div></div>"
                 + "</html>";
-            var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+            var $dom = $(XmlParse.fromString(dom));
 
             var $startElement1 = $($('#startParent', $dom).children()[0]);
             var $startElement2 = $($('#startParent', $dom).children()[2]);
@@ -183,7 +183,7 @@ describe("CFI GENERATOR", function () {
                 +     "</div>"
                 +     "<div></div>"
                 + "</html>";
-            var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+            var $dom = $(XmlParse.fromString(dom));
 
             var $startElement1 = $($('#startParent', $dom).children()[0]);
             var $startElement2 = $($('#startParent', $dom).children()[2]);
@@ -208,7 +208,7 @@ describe("CFI GENERATOR", function () {
                 +     "</div>"
                 +     "<div></div>"
                 + "</html>";
-            var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+            var $dom = $(XmlParse.fromString(dom));
 
             var $startElement1 = $($('#startParent', $dom).children()[0]);
             var $startElement2 = $($('#startParent', $dom).children()[0]);
@@ -299,7 +299,7 @@ describe("CFI GENERATOR", function () {
                     +     "</div>"
                     +     "<div></div>"
                     + "</html>";
-                var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+                var $dom = $(XmlParse.fromString(dom));
 
                 var $startElement = $($('#startParent', $dom).children()[0].firstChild);
                 var $endElement = $($('#startParent', $dom).children()[2].firstChild);
@@ -329,7 +329,7 @@ describe("CFI GENERATOR", function () {
                     +     "</div>"
                     +     "<div></div>"
                     + "</html>";
-                var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+                var $dom = $(XmlParse.fromString(dom));
 
                 var $startElement = $($('#startParent', $dom).children()[0].firstChild);
                 var $endElement = $($('#startParent', $dom).children()[0].firstChild);
@@ -357,7 +357,7 @@ describe("CFI GENERATOR", function () {
                     +     "</div>"
                     +     "<div></div>"
                     + "</html>";
-                var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+                var $dom = $(XmlParse.fromString(dom));
 
                 var $startElement = $($('#startParent', $dom).contents()[0]);
                 var $endElement = $($('#startParent', $dom).children()[0].firstChild);
@@ -382,7 +382,7 @@ describe("CFI GENERATOR", function () {
                     "    </body>" +
                     "</html>";
 
-                var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+                var $dom = $(XmlParse.fromString(dom));
                 // per the issue The CFI for "important text" should be : /2/4, /2/1:5, /3:5
                 var $startElement = $($("strong", $dom).contents()[0]); // "very important"
                 var $endElement = $($("p", $dom).contents()[2]); // " text"
@@ -415,7 +415,7 @@ describe("CFI GENERATOR", function () {
                     +     "</div>"
                     +     "<div></div>"
                     + "</html>";
-                var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+                var $dom = $(XmlParse.fromString(dom));
 
                 var $startElement = $($('#startParent', $dom).contents()[1]);
                 var $endElement = $($('#startParent', $dom).contents()[5]);
@@ -443,7 +443,7 @@ describe("CFI GENERATOR", function () {
                     +     "</div>"
                     +     "<div></div>"
                     + "</html>";
-                var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+                var $dom = $(XmlParse.fromString(dom));
 
                 var $startElement = $($('#startParent', $dom).contents()[0]);
                 var $endElement = $($('#startParent', $dom).contents()[2]);
@@ -470,7 +470,7 @@ describe("CFI GENERATOR", function () {
                     +     "</div>"
                     +     "<div></div>"
                     + "</html>";
-                var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+                var $dom = $(XmlParse.fromString(dom));
 
                 var $startElement = $($('#startParent', $dom).contents()[1]);
                 var $endElement = $($('#startParent', $dom).contents()[1]);
@@ -497,7 +497,7 @@ describe("CFI GENERATOR", function () {
                     +     "</div>"
                     +     "<div></div>"
                     + "</html>";
-                var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+                var $dom = $(XmlParse.fromString(dom));
 
                 var $startElement = $($('#startParent', $dom).contents()[0]);
                 var $endElement = $($('#startParent', $dom).contents()[2]);
@@ -523,7 +523,7 @@ describe("CFI GENERATOR", function () {
                     +     "</div>"
                     +     "<div></div>"
                     + "</html>";
-                var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+                var $dom = $(XmlParse.fromString(dom));
 
                 var $startElement = $($('#startParent', $dom).contents()[1]);
                 var $endElement = $($('#startParent', $dom).contents()[1]);
@@ -548,7 +548,7 @@ describe("CFI GENERATOR", function () {
                     +     "</div>"
                     +     "<div></div>"
                     + "</html>";
-                var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+                var $dom = $(XmlParse.fromString(dom));
 
                 var $startElement = $($('#startParent', $dom).contents()[0]);
                 var $endElement = $($('#startParent', $dom).contents()[0])
@@ -606,7 +606,7 @@ describe("CFI GENERATOR", function () {
                     +     "</div>"
                     +     "<div></div>"
                     + "</html>";
-                var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+                var $dom = $(XmlParse.fromString(dom));
 
                 var $startElement = $($('#startParent', $dom).contents()[1]);
                 var $endElement = $($('#startParent', $dom).contents()[3]);
@@ -636,7 +636,7 @@ describe("CFI GENERATOR", function () {
                     +     "</div>"
                     +     "<div></div>"
                     + "</html>";
-                var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+                var $dom = $(XmlParse.fromString(dom));
 
                 var $startElement = $($('#startParent', $dom).contents()[4]);
                 var $endElement = $($('#startParent', $dom).contents()[4])
@@ -668,7 +668,7 @@ describe("CFI GENERATOR", function () {
                     +     "</div>"
                     +     "<div></div>"
                     + "</html>";
-                var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+                var $dom = $(XmlParse.fromString(dom));
 
                 var $startElement = $($('#startParent', $dom).contents()[4]);
                 var $endElement = $($('#startParent', $dom).contents()[4])
@@ -696,7 +696,7 @@ describe("CFI GENERATOR", function () {
                     +     "</div>"
                     +     "<div></div>"
                     + "</html>";
-                var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+                var $dom = $(XmlParse.fromString(dom));
                 var $startElement = $($('#startParent', $dom).contents()[4]);
                 var $endElement = $($('#startParent', $dom).contents()[4])
                 var generatedCFI = EPUBcfi.Generator.generateCharOffsetRangeComponent(
@@ -733,7 +733,7 @@ describe("CFI GENERATOR", function () {
                 +     "</div>"
                 +     "<div></div>"
                 + "</html>";
-            var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+            var $dom = $(XmlParse.fromString(dom));
 
             var generatedCFI = EPUBcfi.Generator.createCFIElementSteps($($('#startParent', $dom).contents()[0]), "html");
             expect(generatedCFI).toEqual("/4/2[startParent]/2");
@@ -778,7 +778,7 @@ describe("CFI GENERATOR", function () {
                 +     "</div>"
                 +     "<div></div>"
                 + "</html>";
-            var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));
+            var $dom = $(XmlParse.fromString(dom));
             var $startNode = $($('#startParent', $dom).contents()[5]);
             var textTerminus = EPUBcfi.Generator.createCFITextNodeStep($startNode, 3, ["cfi-marker"]);
             var generatedCFI = EPUBcfi.Generator.createCFIElementSteps($startNode.parent(), "html", ["cfi-marker"]) + textTerminus;
@@ -801,7 +801,7 @@ describe("CFI GENERATOR", function () {
             +   "</div>"
             + "</package>";
 
-            var packageDoc = (new window.DOMParser).parseFromString(packageDocXhtml, "text/xml");
+            var packageDoc = XmlParse.fromString(packageDocXhtml);
             var packageDocCFIComponent = EPUBcfi.Generator.generatePackageDocumentCFIComponentWithSpineIndex(2, packageDoc);
             expect(packageDocCFIComponent).toEqual("/6/2/6!"); // [ te,xtn]
         });
@@ -894,8 +894,8 @@ describe("CFI GENERATOR", function () {
             +   "<div></div>"
             + "</html>";
 
-            var contentDoc = (new window.DOMParser).parseFromString(contentDocXhtml, "text/xml");
-            var packageDoc = (new window.DOMParser).parseFromString(packageDocXhtml, "text/xml");
+            var contentDoc = XmlParse.fromString(contentDocXhtml);
+            var packageDoc = XmlParse.fromString(packageDocXhtml);
 
             var contentDocCFIComponent = EPUBcfi.Generator.generateCharacterOffsetCFIComponent($('#startParent', contentDoc).contents()[1], 3);
             var packageDocCFIComponent = EPUBcfi.Generator.generatePackageDocumentCFIComponent("contentDocId", packageDoc);
@@ -907,9 +907,9 @@ describe("CFI GENERATOR", function () {
         it('can generate a CFI for an actual epub', function () {
 
             var contentDocXhtml = jasmine.getFixtures().read("moby_dick_content_doc.xhtml");
-            var contentDoc = (new window.DOMParser).parseFromString(contentDocXhtml, "text/xml");
+            var contentDoc = XmlParse.fromString(contentDocXhtml);
             var packageDocXhtml = jasmine.getFixtures().read("moby_dick_package.opf");
-            var packageDoc = (new window.DOMParser).parseFromString(packageDocXhtml, "text/xml");
+            var packageDoc = XmlParse.fromString(packageDocXhtml);
 
             var contentDocCFIComponent = EPUBcfi.Generator.generateCharacterOffsetCFIComponent($("#c01p0008", contentDoc)[0].firstChild, 103);
             var packageDocCFIComponent = EPUBcfi.Generator.generatePackageDocumentCFIComponent("xchapter_001", packageDoc);
@@ -921,9 +921,9 @@ describe("CFI GENERATOR", function () {
         it("can generate a CFI without a terminus", function () {
 
             var contentDocXhtml = jasmine.getFixtures().read("moby_dick_content_doc.xhtml");
-            var contentDoc = (new window.DOMParser).parseFromString(contentDocXhtml, "text/xml");
+            var contentDoc = XmlParse.fromString(contentDocXhtml);
             var packageDocXhtml = jasmine.getFixtures().read("moby_dick_package.opf");
-            var packageDoc = (new window.DOMParser).parseFromString(packageDocXhtml, "text/xml");
+            var packageDoc = XmlParse.fromString(packageDocXhtml);
 
             var contentDocCFIComponent = EPUBcfi.Generator.generateElementCFIComponent($("#c01p0008", contentDoc)[0]);
             var packageDocCFIComponent = EPUBcfi.Generator.generatePackageDocumentCFIComponent("xchapter_001", packageDoc);
@@ -935,9 +935,9 @@ describe("CFI GENERATOR", function () {
         it("can generate a CFI without a terminus when the start element is the 'html' element", function () {
 
             var contentDocXhtml = jasmine.getFixtures().read("moby_dick_content_doc.xhtml");
-            var contentDoc = (new window.DOMParser).parseFromString(contentDocXhtml, "text/xml");
+            var contentDoc = XmlParse.fromString(contentDocXhtml);
             var packageDocXhtml = jasmine.getFixtures().read("moby_dick_package.opf");
-            var packageDoc = (new window.DOMParser).parseFromString(packageDocXhtml, "text/xml");
+            var packageDoc = XmlParse.fromString(packageDocXhtml);
 
             var contentDocCFIComponent = EPUBcfi.Generator.generateElementCFIComponent($("html", contentDoc)[0]);
             var packageDocCFIComponent = EPUBcfi.Generator.generatePackageDocumentCFIComponent("xchapter_001", packageDoc);
@@ -958,9 +958,9 @@ describe("CFI GENERATOR", function () {
         beforeEach(function () {
 
             contentDocXhtml = jasmine.getFixtures().read("moby_dick_content_doc.xhtml");
-            contentDoc = (new window.DOMParser).parseFromString(contentDocXhtml, "text/xml");
+            contentDoc = XmlParse.fromString(contentDocXhtml);
             packageDocXhtml = jasmine.getFixtures().read("moby_dick_package.opf");
-            packageDoc = (new window.DOMParser).parseFromString(packageDocXhtml, "text/xml");
+            packageDoc = XmlParse.fromString(packageDocXhtml);
             startTextNode = $("#c01p0008", contentDoc)[0].firstChild;
         });
 

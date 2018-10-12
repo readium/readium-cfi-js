@@ -4,8 +4,8 @@ describe("CFI INSTRUCTION OBJECT", function () {
     it("finds the target element on an index step", function () {
 
         var contentDocXHTML = jasmine.getFixtures().read('moby_dick_content_doc.xhtml');
-        var domParser = new window.DOMParser();
-        var contentDoc = domParser.parseFromString(contentDocXHTML, "text/xml");
+        
+        var contentDoc = XmlParse.fromString(contentDocXHTML);
 
         var $nextNode = EPUBcfi.Instructions.getNextNode(4, $(contentDoc.firstChild), ["cfiMarker"]);
         var nodeType = $nextNode.is("body");
@@ -63,8 +63,8 @@ describe("CFI INSTRUCTION OBJECT", function () {
     it("injects text at the specified offset", function () {
 
         var contentDocXHTML = jasmine.getFixtures().read('moby_dick_content_doc.xhtml');
-        var domParser = new window.DOMParser();
-        var contentDoc = domParser.parseFromString(contentDocXHTML, "text/xml");
+        
+        var contentDoc = XmlParse.fromString(contentDocXHTML);
 
         var $injectedElement = EPUBcfi.Instructions.textTermination($($("#c01p0002", $(contentDoc))[0].firstChild), 4, '<span id="injected" class="epub_cfi"></span>');
 
@@ -103,9 +103,9 @@ describe("CFI INSTRUCTION OBJECT", function () {
 
     it('excludes elements that have a class that indicates they are "cfi markers" and returns a list of text nodes', function () {
 
-        var domParser = new window.DOMParser();
+        
         var xhtml = '<body><div>asdfsd <div class="cfiMarker"></div> ddfd</div><div></div></body>';
-        var doc = domParser.parseFromString(xhtml, 'text/xml');
+        var doc = XmlParse.fromString(xhtml);
         var $currentNode = $(doc.firstChild.firstChild);
 
         var $result = EPUBcfi.Instructions.followIndexStep(1, $currentNode, ["cfiMarker"], []);
@@ -116,9 +116,9 @@ describe("CFI INSTRUCTION OBJECT", function () {
 
     it('returns the correct text node if the first text node is empty', function () {
 
-        var domParser = new window.DOMParser();
+        
         var xhtml = '<div><div>text1</div>text2</div>';
-        var doc = domParser.parseFromString(xhtml, 'text/xml');
+        var doc = XmlParse.fromString(xhtml);
         var $currentNode = $(doc.firstChild);
 
         var $result = EPUBcfi.Instructions.followIndexStep(3, $currentNode, ["cfiMarker"], []);
@@ -128,9 +128,9 @@ describe("CFI INSTRUCTION OBJECT", function () {
 
     it('returns the correct text node if a previous one contains a comment node', function () {
 
-        var domParser = new window.DOMParser();
+        
         var xhtml = '<div>text1<!--comment-->text2<div>text</div>text3</div>';
-        var doc = domParser.parseFromString(xhtml, 'text/xml');
+        var doc = XmlParse.fromString(xhtml);
         var $currentNode = $(doc.firstChild);
 
         var $result = EPUBcfi.Instructions.followIndexStep(3, $currentNode, ["cfiMarker"], []);
@@ -140,9 +140,9 @@ describe("CFI INSTRUCTION OBJECT", function () {
 
     it('returns the correct text node if it contains a comment node', function () {
 
-        var domParser = new window.DOMParser();
+        
         var xhtml = '<div>text1<div>text</div>text2<!--comment-->text3</div>';
-        var doc = domParser.parseFromString(xhtml, 'text/xml');
+        var doc = XmlParse.fromString(xhtml);
         var $currentNode = $(doc.firstChild);
 
         var $result = EPUBcfi.Instructions.followIndexStep(3, $currentNode, ["cfiMarker"], []);
@@ -154,9 +154,9 @@ describe("CFI INSTRUCTION OBJECT", function () {
 
     it('returns the correct text node if it contains a processing instruction node', function () {
 
-        var domParser = new window.DOMParser();
+        
         var xhtml = '<div>text1<div>text</div>text2<?xml-stylesheet type="text/css" href="style.css"?>text3</div>';
-        var doc = domParser.parseFromString(xhtml, 'text/xml');
+        var doc = XmlParse.fromString(xhtml);
         var $currentNode = $(doc.firstChild);
 
         var $result = EPUBcfi.Instructions.followIndexStep(3, $currentNode, ["cfiMarker"], []);
@@ -168,9 +168,9 @@ describe("CFI INSTRUCTION OBJECT", function () {
 
     it('returns the correct text node if it start with a processing instruction node', function () {
 
-        var domParser = new window.DOMParser();
+        
         var xhtml = '<div><?xml-stylesheet type="text/css" href="style.css"?>text</div>';
-        var doc = domParser.parseFromString(xhtml, 'text/xml');
+        var doc = XmlParse.fromString(xhtml);
         var $currentNode = $(doc.firstChild);
 
         var $result = EPUBcfi.Instructions.followIndexStep(1, $currentNode, ["cfiMarker"], []);
@@ -181,9 +181,9 @@ describe("CFI INSTRUCTION OBJECT", function () {
 
     it('returns the correct text node if the node is in the first position of a set of child nodes', function () {
 
-        var domParser = new window.DOMParser();
+        
         var xhtml = '<div>text1<div></div>text2<div></div>text3</div>';
-        var doc = domParser.parseFromString(xhtml, 'text/xml');
+        var doc = XmlParse.fromString(xhtml);
         var $currentNode = $(doc.firstChild);
 
         var $result = EPUBcfi.Instructions.followIndexStep(1, $currentNode, ["cfiMarker"], []);
@@ -193,9 +193,9 @@ describe("CFI INSTRUCTION OBJECT", function () {
 
     it('returns the correct text node if the node is between elements in a set of child nodes', function () {
 
-        var domParser = new window.DOMParser();
+        
         var xhtml = '<div>text1<div></div>text2<div></div>text3</div>';
-        var doc = domParser.parseFromString(xhtml, 'text/xml');
+        var doc = XmlParse.fromString(xhtml);
         var $currentNode = $(doc.firstChild);
 
         var $result = EPUBcfi.Instructions.followIndexStep(3, $currentNode, ["cfiMarker"], []);
@@ -205,9 +205,9 @@ describe("CFI INSTRUCTION OBJECT", function () {
 
     it('returns the correct text node if the node is the last in a set of child nodes', function () {
 
-        var domParser = new window.DOMParser();
+        
         var xhtml = '<div>text1<div></div>text2<div></div>text3</div>';
-        var doc = domParser.parseFromString(xhtml, 'text/xml');
+        var doc = XmlParse.fromString(xhtml);
         var $currentNode = $(doc.firstChild);
 
         var $result = EPUBcfi.Instructions.followIndexStep(5, $currentNode, ["cfiMarker"], []);
@@ -382,8 +382,8 @@ describe('CFI INSTRUCTION ERROR HANDLING', function () {
     it('throws an out of range error for an index step', function () {
 
         var contentDocXHTML = jasmine.getFixtures().read('moby_dick_content_doc.xhtml');
-        var domParser = new window.DOMParser();
-        var contentDoc = domParser.parseFromString(contentDocXHTML, "text/xml");
+        
+        var contentDoc = XmlParse.fromString(contentDocXHTML);
 
         // A step of 16 is greater than the number of child elements of the content document
         expect(function () {
@@ -422,9 +422,9 @@ describe('CFI INSTRUCTION ERROR HANDLING', function () {
 
         var packageDocXML = jasmine.getFixtures().read('moby_dick_package.opf');
         var contentDocXHTML = jasmine.getFixtures().read('moby_dick_content_doc.xhtml');
-        var domParser = new window.DOMParser();
-        var packageDoc = domParser.parseFromString(packageDocXML, "text/xml");
-        var contentDoc = domParser.parseFromString(contentDocXHTML, "text/xml");
+        
+        var packageDoc = XmlParse.fromString(packageDocXML);
+        var contentDoc = XmlParse.fromString(contentDocXHTML);
         var spineElement = $($(packageDoc.firstChild).children()[2]).children()[6];
 
         var nextNode;

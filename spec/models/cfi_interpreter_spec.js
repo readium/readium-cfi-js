@@ -14,18 +14,18 @@ describe('CFI INTERPRETER OBJECT', function () {
         CFIAST = EPUBcfi.Parser.parse(CFI);
 
         // Set up package document
-        var domParser = new window.DOMParser();
+        
         var packageDocXML = jasmine.getFixtures().read("moby_dick_package.opf");
-        $packageDocument = $(domParser.parseFromString(packageDocXML, "text/xml"));
+        $packageDocument = $(XmlParse.fromString(packageDocXML));
 
         // Set up content document
         var contentDocXHTML = jasmine.getFixtures().read("moby_dick_content_doc.xhtml");
-        contentDocument = domParser.parseFromString(contentDocXHTML, 'text/xml');
+        contentDocument = XmlParse.fromString(contentDocXHTML);
         $contentDocument = $(contentDocument);
 
         spyOn($, "ajax").and.callFake(function (params) {
 
-            params.success(domParser.parseFromString(contentDocXHTML, 'text/xml'));
+            params.success(XmlParse.fromString(contentDocXHTML));
         });
     });
 
@@ -49,7 +49,7 @@ describe('CFI INTERPRETER OBJECT', function () {
             +     "<div></div>"
             + "</html>";
 
-        var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+        var $dom = $(XmlParse.fromString(dom));         
 
         var CFI = "epubcfi(/6/14!/4/2[startParent],/1:22,/1:27)";
 
@@ -79,7 +79,7 @@ describe('CFI INTERPRETER OBJECT', function () {
             +     "<div></div>"
             + "</html>";
 
-        var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+        var $dom = $(XmlParse.fromString(dom));         
 
         var CFI = "epubcfi(/6/14!/4/2[startParent],/1:57,/1:62)";
 
@@ -110,7 +110,7 @@ describe('CFI INTERPRETER OBJECT', function () {
             +     "<div></div>"
             + "</html>";
 
-        var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+        var $dom = $(XmlParse.fromString(dom));         
 
         var CFI = "epubcfi(/6/14!/4/2[startParent],/1:73,/1:78)";
 
@@ -143,7 +143,7 @@ describe('CFI INTERPRETER OBJECT', function () {
             +     "<div></div>"
             + "</html>";
 
-        var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+        var $dom = $(XmlParse.fromString(dom));         
 
         var CFI = "epubcfi(/6/14!/4/2[startParent],/1:6,/1:7)";
 
@@ -194,7 +194,7 @@ describe('CFI INTERPRETER OBJECT', function () {
             +     "<div></div>"
             + "</html>";
 
-        var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+        var $dom = $(XmlParse.fromString(dom));         
 
         var CFI = "epubcfi(/6/14!/4/2[start.Parent],/1:6,/1:8)";
 
@@ -230,7 +230,7 @@ describe('CFI INTERPRETER OBJECT', function () {
             +     "<div></div>"
             + "</html>";
 
-        var $dom = $((new window.DOMParser).parseFromString(dom, "text/xml"));         
+        var $dom = $(XmlParse.fromString(dom));         
 
         var CFI = "epubcfi(/6/14!/4/2[startParent],/1:6,/1:8)";
 
@@ -738,17 +738,17 @@ describe('ERROR HANDLING FOR ID AND TEXT ASSERTIONS', function () {
         beforeEach(function () {
 
             // Set up package document
-            var domParser = new window.DOMParser();
+            
             var packageDocXML = jasmine.getFixtures().read("moby_dick_package.opf");
-            $packageDocument = $(domParser.parseFromString(packageDocXML, "text/xml"));
+            $packageDocument = $(XmlParse.fromString(packageDocXML));
 
             // Set up content document
             var contentDocXHTML = jasmine.getFixtures().read("moby_dick_content_doc.xhtml");
-            $contentDocument = $(domParser.parseFromString(contentDocXHTML, 'text/xml'));
+            $contentDocument = $(XmlParse.fromString(contentDocXHTML));
 
             spyOn($, "ajax").and.callFake(function (params) {
 
-                params.success(domParser.parseFromString(contentDocXHTML, 'text/xml'));
+                params.success(XmlParse.fromString(contentDocXHTML));
             });
         });
 
