@@ -399,12 +399,19 @@ describe('CFI INTERPRETER OBJECT', () => {
     });
   });
 
-  describe('The hack zone! Interpretation of partial CFIs', () => {
+  describe('Interpretation of partial CFIs', () => {
     it('can interpret a partial CFI for a content document', () => {
       const CFI = 'epubcfi(/4/2/14)';
       const expectedResult = 'c01p0006';
       const $result = Interpreter.getTargetElementWithPartialCFI(CFI, contentDocument);
       expect($result.attr('id')).toBe(expectedResult);
+    });
+
+    it('can interpret a partial CFI with a single step', () => {
+      const CFI = 'epubcfi(/4)';
+      const expectedResult = 'body';
+      const $result = Interpreter.getTargetElementWithPartialCFI(CFI, contentDocument);
+      expect($result[0].tagName.toLowerCase()).toBe(expectedResult);
     });
 
     it('finds a text node and offset for a partial terminus CFI', () => {
