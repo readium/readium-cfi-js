@@ -48,7 +48,7 @@ A subset of the API could work without a browser, which may be planned for a fut
 
 * A decent terminal. On Windows, GitShell works great ( http://git-scm.com ), GitBash works too ( https://msysgit.github.io ), and Cygwin adds useful commands ( https://www.cygwin.com ).
 * NodeJS ( https://nodejs.org ) **v4+** (Note that NodeJS v6+ and NPM v3+ are now supported, including NodeJS v7+ and NPM v4+)
-
+* Firefox 55+ - For running the test suite.
 
 **Initial setup:**
 
