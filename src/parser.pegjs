@@ -53,9 +53,9 @@ range
   } 
 
 path 
-  = stepVal:indexStep localPathVal:local_path { 
+  = stepVal:indexStep localPathVal:local_path? { 
 
-        return { type:"path", path:stepVal, localPath:localPathVal }; 
+        return { type:"path", path:stepVal, localPath:localPathVal?localPathVal:{steps:[], termStep: ""} }; 
     }
 
 local_path

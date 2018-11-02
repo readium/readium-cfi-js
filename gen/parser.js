@@ -157,7 +157,7 @@ function peg$parse(input, options) {
         },
       peg$c8 = function(stepVal, localPathVal) { 
 
-              return { type:"path", path:stepVal, localPath:localPathVal }; 
+              return { type:"path", path:stepVal, localPath:localPathVal?localPathVal:{steps:[], termStep: ""} }; 
           },
       peg$c9 = function(localPathStepVal, termStepVal) { 
 
@@ -511,6 +511,9 @@ function peg$parse(input, options) {
     s1 = peg$parseindexStep();
     if (s1 !== peg$FAILED) {
       s2 = peg$parselocal_path();
+      if (s2 === peg$FAILED) {
+        s2 = null;
+      }
       if (s2 !== peg$FAILED) {
         peg$savedPos = s0;
         s1 = peg$c8(s1, s2);

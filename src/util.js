@@ -24,7 +24,8 @@ function getClassNameArray(element) {
   const { className } = element;
   if (typeof className === 'string') {
     return className.split(/\s/);
-  } else if (typeof className === 'object' && 'baseVal' in className) {
+  }
+  if (typeof className === 'object' && 'baseVal' in className) {
     return className.baseVal.split(/\s/);
   }
   return [];
@@ -35,15 +36,17 @@ function isElementBlacklisted(element, classBlacklist, elementBlacklist, idBlack
     const classList = getClassNameArray(element);
     if (classList.length === 1 && classBlacklist.includes(classList[0])) {
       return false;
-    } else if (classList.length && intersection(classBlacklist, classList).length) {
+    }
+    if (classList.length && intersection(classBlacklist, classList).length) {
       return false;
     }
   }
 
   if (elementBlacklist && elementBlacklist.length) {
     if (element.tagName) {
-      const isElementInBlacklist = elementBlacklist
-        .find(blacklistedTag => matchesLocalNameOrElement(element, blacklistedTag.toLowerCase()));
+      const isElementInBlacklist = elementBlacklist.find((blacklistedTag) =>
+        matchesLocalNameOrElement(element, blacklistedTag.toLowerCase()),
+      );
 
       if (isElementInBlacklist) {
         return false;
@@ -62,13 +65,9 @@ function isElementBlacklisted(element, classBlacklist, elementBlacklist, idBlack
 }
 
 export function applyBlacklist(elements, classBlacklist, elementBlacklist, idBlacklist) {
-  return [...elements]
-    .filter(element => isElementBlacklisted(
-      element,
-      classBlacklist,
-      elementBlacklist,
-      idBlacklist,
-    ));
+  return [...elements].filter((element) =>
+    isElementBlacklisted(element, classBlacklist, elementBlacklist, idBlacklist),
+  );
 }
 
 export function retrieveItemRefHref(itemRefElement, packageDocument) {
