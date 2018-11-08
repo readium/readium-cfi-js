@@ -1,6 +1,7 @@
 .history
 .DS_Store
 # dist
+test/dist
 node_modules
 build.txt
 http.log
