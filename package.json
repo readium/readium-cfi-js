@@ -42,7 +42,7 @@
     "README.md"
   ],
   "dependencies": {
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.0",
     "lodash-es": "^4.17.9"
   },
   "devDependencies": {
