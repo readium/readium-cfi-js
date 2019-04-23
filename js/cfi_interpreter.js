@@ -132,8 +132,13 @@ var obj = {
         // Interpret the rest of the steps
         $currElement = this.interpretLocalPath(CFIAST.cfiString.localPath, indirectionStepNum, $(contentDocument.documentElement, contentDocument), classBlacklist, elementBlacklist, idBlacklist);
 
-        // TODO: detect what kind of terminus; for now, text node termini are the only kind implemented
-        $currElement = this.interpretTextTerminusNode(CFIAST.cfiString.localPath.termStep, $currElement, elementToInject);
+        var termStep1 = CFIAST.cfiString.localPath.termStep;
+        if (termStep1 && termStep1.hasOwnProperty("type") && termStep1.type == "textTerminus") {
+            $currElement = this.interpretTextTerminusNode(CFIAST.cfiString.localPath.termStep, $currElement, elementToInject);
+        }
+        else {
+            $currElement = elementToInject.insertBefore($currElement);
+        }
 
         // Return the element that was injected into
         return $currElement;
@@ -162,11 +167,25 @@ var obj = {
 
         // Interpret the first range local_path
         $range1TargetElement = this.interpretLocalPath(CFIAST.cfiString.range1, 0, $currElement, classBlacklist, elementBlacklist, idBlacklist);
-        $range1TargetElement = this.interpretTextTerminusNode(CFIAST.cfiString.range1.termStep, $range1TargetElement, startElementToInject);
+        var termStep1 = CFIAST.cfiString.range1.termStep;
+        if (termStep1 && termStep1.hasOwnProperty("type") && termStep1.type == "textTerminus") {
+            $range1TargetElement = this.interpretTextTerminusNode(termStep1, $range1TargetElement, startElementToInject);
+        }
+        else {
+            // Insert before the start node
+            $range1TargetElement = startElementToInject.insertBefore($range1TargetElement);
+        }
 
         // Interpret the second range local_path
         $range2TargetElement = this.interpretLocalPath(CFIAST.cfiString.range2, 0, $currElement, classBlacklist, elementBlacklist, idBlacklist);
-        $range2TargetElement = this.interpretTextTerminusNode(CFIAST.cfiString.range2.termStep, $range2TargetElement, endElementToInject);
+        var termStep2 = CFIAST.cfiString.range2.termStep;
+        if (termStep2 && termStep2.hasOwnProperty("type") && termStep2.type == "textTerminus") {
+            $range2TargetElement = this.interpretTextTerminusNode(termStep2, $range2TargetElement, endElementToInject);
+        }
+        else {
+            // Inject after the end node
+            $range2TargetElement = endElementToInject.insertAfter($range2TargetElement);
+        }
 
         // Return the element that was injected into
         return {
